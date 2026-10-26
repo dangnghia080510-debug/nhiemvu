@@ -496,7 +496,7 @@ async function pAdmin(m=$("#m")){
  $("#hf").querySelectorAll("button").forEach(b=>b.onclick=()=>{hfl=b.dataset.f;$("#hf").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));drawH()});
  drawH();
  $("#mtb").onclick=async()=>{if(!CFG.mt&&!confirm("Bật bảo trì? Người dùng sẽ không vào được."))return;await setDoc(doc(db,"settings","main"),{mt:CFG.mt?0:1,mtmsg:$("#mtm").value.trim()},{merge:true});toast(CFG.mt?"Đã tắt bảo trì":"Đã bật bảo trì");pAdmin()};
- $("#sv").onclick=async()=>{const d={ann:$("#an").value.trim()};m.querySelectorAll("[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));m.querySelectorAll("[data-t]").forEach(i=>d[i.dataset.t]=i.value.trim());await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu");pAdmin()};
+ $("#sv").onclick=async()=>{const b=$("#sv");b.disabled=true;try{const d={ann:$("#an").value.trim()};m.querySelectorAll("input[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));m.querySelectorAll("input[data-t]").forEach(i=>d[i.dataset.t]=i.value.trim());await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu");pAdmin()}catch(e){b.disabled=false;console.error(e);toast("Không lưu được: "+(e.code||e.message),0)}};
 }
 async function decide(id,ok,x={}){
  try{
