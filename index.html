@@ -48,7 +48,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#000}
 .box{background:var(--card2);border-radius:12px;padding:12px;margin-bottom:12px}
 .box input{background:#fff}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#fffffff2;backdrop-filter:blur(12px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0);z-index:10}
-nav button{flex:1;padding:12px 4px;border:0;background:none;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:"Be Vietnam Pro",sans-serif}
+nav button{flex:1;padding:13px 2px;border:0;background:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:"Be Vietnam Pro",sans-serif}
 nav button.on{color:#000;box-shadow:inset 0 2px 0 #000}
 .auth{max-width:360px;margin:10vh auto 0}
 .auth h1{font-size:26px;margin-bottom:4px}
@@ -88,6 +88,13 @@ nav button.on{color:#000;box-shadow:inset 0 2px 0 #000}
 .us .nm{font-size:16.5px;font-weight:700}
 .us .ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
 .us .ac input{width:120px;margin:0;padding:8px 10px;font-size:15px}
+.rc{font-size:30px;font-weight:700;letter-spacing:4px;text-align:center;background:var(--card2);border-radius:12px;padding:14px;margin:10px 0 12px;font-family:"Chakra Petch",sans-serif}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ctl a{display:inline-block;padding:10px 14px;border:1.5px solid #000;border-radius:10px;color:#000;text-decoration:none;font-weight:600;font-size:15px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat div{background:var(--card2);border-radius:12px;padding:10px 6px;text-align:center}
+.stat b{display:block;font-size:16px}
+.stat span{font-size:13px;color:var(--muted)}
 </style></head>
 <body><div class="wrap" id="app"><p class="mu" style="text-align:center;margin-top:30vh">Đang tải...</p></div>
 <script type="module">
@@ -104,8 +111,9 @@ const CARDS=["Garena","Viettel","Vinaphone","Vietnamobile"];
 const DENOMS=[10000,20000,50000,100000,200000,500000];
 const BANKS=["Vietcombank","VietinBank","BIDV","Agribank","Techcombank","MB Bank","ACB","VPBank","TPBank","Sacombank","HDBank","SHB","VIB","OCB","MSB","SeABank","Eximbank","LPBank","Nam A Bank","Bac A Bank","ABBank","VietBank"];
 const MAXBANK=3;
-const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,mf:5,ml:10,sus:3,ann:""};
-const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Vượt link tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)",mf:"Sai key tối đa mỗi nhiệm vụ (lần)",ml:"Khóa nhập key khi sai quá nhiều (phút)",sus:"Số lần nghi bypass thì tự khóa tài khoản (0 = tắt)"};
+const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,mf:5,ml:10,sus:3,refbonus:2000,refneed:5,mt:0,mtmsg:"",czalo:"",ctele:"",cfb:"",cphone:"",cnote:"",ann:""};
+const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Vượt link tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)",mf:"Sai key tối đa mỗi nhiệm vụ (lần)",ml:"Khóa nhập key khi sai quá nhiều (phút)",sus:"Số lần nghi bypass thì tự khóa tài khoản (0 = tắt)",refbonus:"Thưởng giới thiệu mỗi bạn (đ)",refneed:"Bạn bè cần hoàn thành (nhiệm vụ) mới có thưởng"};
+const CT={cphone:"SĐT hỗ trợ",czalo:"Zalo (số điện thoại)",ctele:"Telegram (tên, không cần @)",cfb:"Facebook (dán link https://...)",cnote:"Ghi chú liên hệ (giờ làm việc...)"};
 const ST={pending:"Chờ duyệt",approved:"Đã duyệt",rejected:"Từ chối"};
 
 const $=s=>document.querySelector(s);
@@ -125,32 +133,97 @@ const copyTxt=async t=>{try{await navigator.clipboard.writeText(t)}catch{const a
 const bindCp=m=>m.querySelectorAll("[data-cp]").forEach(b=>b.onclick=()=>copyTxt(b.dataset.cp));
 let U=null,ME=null,CFG=DEF,tab="home",wmode="card";
 const isAd=()=>U?.email==="admin@vl.app";
+let amode="li",more="hist",hf="all";
+const RN=()=>Math.max(1,+CFG.refneed||1);
+const normPhone=x=>{x=String(x).replace(/[\s.\-]/g,"");return/^\+?84\d{9}$/.test(x)?"0"+x.replace(/^\+?84/,""):x};
+const isPhone=x=>/^0\d{9}$/.test(x);
+const mask=n=>isPhone(String(n))?String(n).slice(0,4)+"***"+String(n).slice(-3):String(n||"");
+const contactHTML=(title="Liên hệ admin")=>{
+ const l=[],E=encodeURIComponent;
+ if(CFG.cphone)l.push(`<a href="tel:${esc(CFG.cphone)}">Gọi ${esc(CFG.cphone)}</a>`);
+ if(CFG.czalo)l.push(`<a href="https://zalo.me/${E(CFG.czalo)}" target="_blank" rel="noopener">Zalo ${esc(CFG.czalo)}</a>`);
+ if(CFG.ctele)l.push(`<a href="https://t.me/${E(String(CFG.ctele).replace(/^@/,""))}" target="_blank" rel="noopener">Telegram</a>`);
+ if(/^https?:\/\//i.test(CFG.cfb||""))l.push(`<a href="${esc(CFG.cfb)}" target="_blank" rel="noopener">Facebook</a>`);
+ if(!l.length&&!CFG.cnote)return"";
+ return`<div class="card"><h2>${title}</h2>${CFG.cnote?`<p class="mu">${esc(CFG.cnote)}</p>`:""}<div class="ctl">${l.join("")}</div></div>`};
+const histHTML=l=>l.map(w=>{const b=isBank(w);return`<div class="hi"><div class="top"><span><b>${b?"Ngân hàng "+esc(w.bank):"Thẻ "+esc(w.card||"?")}</b> · ${fmt(w.amount)}<br><span class="mu">${b?esc(w.bankNo||"")+" · ":""}${new Date(w.created).toLocaleString("vi-VN")}</span></span><span class="tag ${w.status}">${b&&w.status==="approved"?"Đã chuyển":ST[w.status]}</span></div>${w.status==="rejected"&&w.reason?`<p class="mu" style="margin-top:6px">Lý do: ${esc(w.reason)}</p>`:""}${w.status==="approved"&&w.cardCode?`<div class="code"><div><span>Mã thẻ: ${esc(w.cardCode)}</span><button class="mini" data-cp="${esc(w.cardCode)}">Copy</button></div><div><span>Seri: ${esc(w.cardSerial)}</span><button class="mini" data-cp="${esc(w.cardSerial)}">Copy</button></div></div>`:""}</div>`}).join("")||'<p class="mu">Chưa có đơn nào.</p>';
 
 async function loadCfg(){const s=await getDoc(doc(db,"settings","main"));CFG={...DEF,...(s.exists()?s.data():{})}}
-async function loadMe(){for(let i=0;i<6;i++){const s=await getDoc(doc(db,"users",U.uid));if(s.exists()){ME={id:U.uid,...s.data()};return}await sleep(400)}await setDoc(doc(db,"users",U.uid),{name:U.email.split("@")[0],balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});ME={id:U.uid,...(await getDoc(doc(db,"users",U.uid))).data()}}
+async function loadMe(){for(let i=0;i<6;i++){const s=await getDoc(doc(db,"users",U.uid));if(s.exists()){ME={id:U.uid,...s.data()};if(!ME.rc){ME.rc=rnd(6);updateDoc(doc(db,"users",U.uid),{rc:ME.rc}).catch(()=>{})}return}await sleep(400)}const rc=rnd(6);await setDoc(doc(db,"users",U.uid),{name:U.email.split("@")[0],phone:"",rc,ref:"",balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});ME={id:U.uid,...(await getDoc(doc(db,"users",U.uid))).data()}}
 
 function loginView(){
- $("#app").innerHTML=`<div class="card auth"><h1 class="logo">VƯỢT<span>LINK</span></h1><p class="mu" style="margin-bottom:18px">Vượt link · Nhận xu · Rút tiền</p>
- <input id="u" placeholder="Tên đăng nhập" autocomplete="username"><input id="p" type="password" placeholder="Mật khẩu (từ 6 ký tự)" autocomplete="current-password">
- <div class="row"><button class="btn" id="li">Đăng nhập</button><button class="btn alt" id="rg">Tạo tài khoản</button></div></div>`;
- const cred=()=>{const u=$("#u").value.trim().toLowerCase(),p=$("#p").value;if(!/^[a-z0-9_]{3,20}$/.test(u)||p.length<6){toast("Tên 3-20 ký tự (a-z0-9_) và mật khẩu từ 6 ký tự",0);return null}return[u+"@vl.app",p,u]};
- $("#li").onclick=async()=>{const c=cred();if(!c)return;try{await signInWithEmailAndPassword(auth,c[0],c[1])}catch{toast("Sai tên hoặc mật khẩu",0)}};
- $("#rg").onclick=async()=>{const c=cred();if(!c)return;if(localStorage.reg)return toast("Thiết bị này đã đăng ký rồi",0);try{const r=await createUserWithEmailAndPassword(auth,c[0],c[1]);await setDoc(doc(db,"users",r.user.uid),{name:c[2],balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});localStorage.reg=1}catch(e){toast(ERR[e.code]||"Lỗi: "+(e.code||e.message),0)}};
+ const rf=(new URLSearchParams(location.search).get("ref")||localStorage.rf||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8);
+ if(rf)localStorage.rf=rf;
+ const reg=amode==="rg";
+ $("#app").innerHTML=`<div class="card auth"><h1 class="logo">VƯỢT<span>LINK</span></h1><p class="mu" style="margin-bottom:16px">Vượt link · Nhận tiền · Rút tiền</p>
+ <div class="seg" style="margin-top:0"><button data-am="li" class="${reg?"":"on"}">Đăng nhập</button><button data-am="rg" class="${reg?"on":""}">Đăng ký</button></div>
+ <label>Số điện thoại</label><input id="u" inputmode="tel" placeholder="VD: 0912345678" autocomplete="username">
+ <label>Mật khẩu</label><input id="p" type="password" placeholder="Từ 6 ký tự" autocomplete="${reg?"new-password":"current-password"}">
+ ${reg?`<label>Mã giới thiệu (không bắt buộc)</label><input id="rf" placeholder="Nhập mã của người mời" value="${esc(rf)}" autocomplete="off">`:""}
+ <button class="btn" id="go">${reg?"Tạo tài khoản":"Đăng nhập"}</button>
+ ${reg?"":'<p class="mu" style="margin-top:12px">Tài khoản cũ: nhập tên đăng nhập cũ vào ô trên, đăng nhập xong sẽ được yêu cầu cập nhật số điện thoại.</p>'}</div>`;
+ document.querySelectorAll("[data-am]").forEach(b=>b.onclick=()=>{amode=b.dataset.am;loginView()});
+ $("#go").onclick=async()=>{
+  const id=normPhone($("#u").value.trim().toLowerCase()),p=$("#p").value;
+  if(!/^[a-z0-9_]{3,20}$/.test(id)){toast("Nhập số điện thoại hợp lệ",0);return}
+  if(!reg){
+   if(!p){toast("Nhập mật khẩu",0);return}
+   try{await signInWithEmailAndPassword(auth,id+"@vl.app",p)}catch{
+    let ok=0;
+    if(isPhone(id)){try{const s=await getDoc(doc(db,"phones",id)),em=s.exists()&&s.data().email;if(em&&em!==id+"@vl.app"){await signInWithEmailAndPassword(auth,em,p);ok=1}}catch{}}
+    if(!ok)toast("Sai số điện thoại hoặc mật khẩu",0)}
+   return}
+  if(!isPhone(id)){toast("Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0)",0);return}
+  if(p.length<6){toast("Mật khẩu từ 6 ký tự",0);return}
+  if(localStorage.reg)return toast("Thiết bị này đã đăng ký rồi",0);
+  try{const s=await getDoc(doc(db,"phones",id));if(s.exists())return toast("Số điện thoại này đã được đăng ký",0)}catch{}
+  const code=($("#rf")?.value||"").trim().toUpperCase();
+  try{
+   const r=await createUserWithEmailAndPassword(auth,id+"@vl.app",p);
+   await setDoc(doc(db,"users",r.user.uid),{name:id,phone:id,rc:rnd(6),ref:"",balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});
+   localStorage.reg=1;localStorage.removeItem("rf");
+   try{await setDoc(doc(db,"phones",id),{uid:r.user.uid,email:id+"@vl.app"})}catch{}
+   if(code){try{const q=await rows(query(collection(db,"users"),where("rc","==",code))),f=q.find(x=>x.id!==r.user.uid);if(f)await updateDoc(doc(db,"users",r.user.uid),{ref:f.id});else toast("Mã giới thiệu không đúng, đã bỏ qua",0)}catch{}}
+  }catch(e){toast(ERR[e.code]==="Tên này đã có người dùng"?"Số điện thoại này đã được đăng ký":ERR[e.code]||"Lỗi: "+(e.code||e.message),0)}
+ };
 }
 onAuthStateChanged(auth,async u=>{U=u;if(!u){loginView();return}try{await Promise.race([Promise.all([loadCfg(),loadMe()]),new Promise((_,r)=>setTimeout(()=>r({code:"unavailable"}),10000))]);shell()}catch(e){const c=e.code||e.message||String(e);$("#app").innerHTML=`<div class="card auth"><h2>Không tải được</h2><p>Mã: <b>${esc(c)}</b></p><div class="row" style="margin-top:12px"><button class="btn" onclick="location.reload()">Thử lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`;$("#lo").onclick=()=>signOut(auth)}});
 
+const wrapA=h=>`<div class="auth">${h}${contactHTML()}</div>`;
+function mtScreen(){
+ $("#app").innerHTML=wrapA(`<div class="card"><h2>Hệ thống đang bảo trì</h2><p style="margin-bottom:14px">${esc(CFG.mtmsg||"Hệ thống đang được nâng cấp, vui lòng quay lại sau.")}</p><div class="row"><button class="btn" id="rf">Thử lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`);
+ $("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadCfg();shell()};
+}
+function phoneView(){
+ $("#app").innerHTML=wrapA(`<div class="card"><h2>Cập nhật số điện thoại</h2><p class="mu" style="margin-bottom:14px">Tài khoản <b>${esc(ME.name)}</b> cần thêm số điện thoại. Sau khi lưu, bạn có thể đăng nhập bằng số điện thoại này.</p><label>Số điện thoại</label><input id="ph" inputmode="tel" placeholder="VD: 0912345678" autocomplete="off"><div class="row"><button class="btn" id="phs">Lưu</button><button class="btn alt" id="lo">Thoát</button></div></div>`);
+ $("#lo").onclick=()=>signOut(auth);
+ $("#phs").onclick=async()=>{
+  const ph=normPhone($("#ph").value.trim());
+  if(!isPhone(ph))return toast("Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0)",0);
+  $("#phs").disabled=true;
+  try{
+   const s=await getDoc(doc(db,"phones",ph));
+   if(s.exists()&&s.data().uid!==U.uid){$("#phs").disabled=false;return toast("Số điện thoại này đã có người dùng",0)}
+   await setDoc(doc(db,"phones",ph),{uid:U.uid,email:U.email});
+   await updateDoc(doc(db,"users",U.uid),{phone:ph});
+   ME.phone=ph;toast("Đã lưu số điện thoại");shell();
+  }catch(e){$("#phs").disabled=false;toast("Không lưu được: "+(e.code||e.message),0)}
+ };
+}
 function shell(){
  if(isAd()&&ME.banned){ME.banned=false;updateDoc(doc(db,"users",U.uid),{banned:false})}
- if(ME.banned){$("#app").innerHTML=`<div class="card auth"><h2>Tài khoản bị khóa</h2><button class="btn alt" id="lo">Thoát</button></div>`;$("#lo").onclick=()=>signOut(auth);return}
- if(ME.approved===false&&!isAd()){$("#app").innerHTML=`<div class="card auth"><h2>Chờ admin duyệt</h2><p class="mu" style="margin-bottom:12px">Tài khoản mới cần được duyệt trước khi dùng.</p><div class="row"><button class="btn" id="rf">Kiểm tra lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`;$("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadMe();shell()};return}
- const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["doi","Rút tiền"],["top","Xếp hạng"]];if(isAd())t.push(["admin","Admin"]);
+ if(ME.banned){$("#app").innerHTML=wrapA('<div class="card"><h2>Tài khoản bị khóa</h2><p class="mu" style="margin-bottom:12px">Liên hệ admin nếu cần hỗ trợ.</p><button class="btn alt" id="lo">Thoát</button></div>');$("#lo").onclick=()=>signOut(auth);return}
+ if(ME.approved===false&&!isAd()){$("#app").innerHTML=wrapA('<div class="card"><h2>Chờ admin duyệt</h2><p class="mu" style="margin-bottom:12px">Tài khoản mới cần được duyệt trước khi dùng.</p><div class="row"><button class="btn" id="rf">Kiểm tra lại</button><button class="btn alt" id="lo">Thoát</button></div></div>');$("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadMe();shell()};return}
+ if(CFG.mt&&!isAd()){mtScreen();return}
+ if(!ME.phone&&!isAd()){phoneView();return}
+ const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["doi","Rút tiền"],["ref","Bạn bè"],["more","Thêm"]];if(isAd())t.push(["admin","Admin"]);
  $("#app").innerHTML=`<header><span class="logo">VƯỢT<span>LINK</span></span><span><span class="coin" id="bal"></span> <button class="mini" id="lo" style="margin-left:6px">Thoát</button></span></header><main id="m"></main><nav>${t.map(x=>`<button data-t="${x[0]}">${x[1]}</button>`).join("")}</nav>`;
  $("#lo").onclick=()=>signOut(auth);
  document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
  go(tab);
 }
 const hdr=()=>{const b=$("#bal");if(b)b.textContent=fmt(ME.balance)};
-async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{await({home:pHome,task:pTask,doi:pDoi,top:pTop,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
+async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{if(!isAd()){await loadCfg();if(CFG.mt)return mtScreen()}await({home:pHome,task:pTask,doi:pDoi,ref:pRef,more:pMore,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
 const today=()=>ME.dayKey===day()?ME.dayCount:0;
 
 async function pHome(m){
@@ -160,8 +233,10 @@ async function pHome(m){
  <p class="mu">Hôm nay: <b>${c}${l>0?" / "+l:""}</b> nhiệm vụ · +${fmt(CFG.tien)}/nv</p>
  ${l>0?`<div class="xp"><b style="width:${pc}%"></b></div>`:""}</div>
  <div class="row"><button class="btn" id="g1">Làm nhiệm vụ</button><button class="btn alt" id="g2">Rút tiền</button></div>
- <p class="mu" style="text-align:center;margin-top:14px">Tổng hoàn thành: ${ME.total||0} nhiệm vụ</p>`;
- $("#g1").onclick=()=>go("task");$("#g2").onclick=()=>go("doi");
+ <p class="mu" style="text-align:center;margin:14px 0">Tổng hoàn thành: ${ME.total||0} nhiệm vụ</p>
+ <div class="card"><h2>Mời bạn bè</h2><p class="mu" style="margin-bottom:12px">Nhận +${fmt(CFG.refbonus)} cho mỗi bạn làm đủ ${RN()} nhiệm vụ.</p><button class="btn alt" id="g3">Xem mã giới thiệu</button></div>
+ ${contactHTML()}`;
+ $("#g1").onclick=()=>go("task");$("#g2").onclick=()=>go("doi");$("#g3").onclick=()=>go("ref");
 }
 
 async function curTask(){const r=await rows(query(collection(db,"tasks"),where("uid","==",U.uid),where("status","==","pending")));return r.filter(t=>Date.now()-t.created<CFG.exp*6e4).sort((a,b)=>b.created-a.created)[0]}
@@ -176,6 +251,7 @@ async function pTask(m){
  if(t){$("#ol").onclick=async()=>{if(!t.opened){t.opened=Date.now();try{await updateDoc(doc(db,"tasks",t.id),{opened:t.opened})}catch{}}};$("#sk").onclick=()=>sendKey(t)}else $("#nt").onclick=newTask;
 }
 async function newTask(){
+  await loadCfg();if(CFG.mt&&!isAd())return shell();
   if(CFG.lim>0&&today()>=CFG.lim)return toast(`Hôm nay đã làm đủ ${CFG.lim} nhiệm vụ`,0);
   const left=Math.ceil((CFG.cd*1e3-(Date.now()-ME.last))/1e3);if(left>0)return toast(`Nghỉ thêm ${left}s`,0);
   $("#nt").disabled=true;
@@ -203,7 +279,7 @@ async function flag(why){
   if(CFG.sus>0&&n>=CFG.sus&&!isAd())d.banned=true;tx.update(r,d)})}catch{}
 }
 async function sendKey(t){
- await loadMe();
+ await loadMe();await loadCfg();if(CFG.mt&&!isAd())return shell();
  if((ME.lockUntil||0)>Date.now())return toast(`Đang bị khóa nhập key ${Math.ceil((ME.lockUntil-Date.now())/6e4)} phút`,0);
  if(!t.opened)return toast("Hãy bấm nút Mở link vượt trước",0);
  if(t.dev&&t.dev!==DEV){await flag("Nhập key từ thiết bị khác");return toast("Nhiệm vụ này phải làm trên thiết bị đã nhận",0)}
@@ -227,8 +303,16 @@ async function sendKey(t){
   if(u.banned)throw 1;
   if(CFG.lim>0&&(u.dayKey===d?u.dayCount:0)>=CFG.lim)throw 2;
   if(Date.now()-(u.last||0)<CFG.cd*1e3*0.5)throw 3;
+  const nt=(u.total||0)+1,due=!!u.ref&&!u.refPaid&&nt>=RN();
+  const rs=due?await tx.get(doc(db,"users",u.ref)):null;
+  const upd={balance:u.balance+CFG.tien,total:nt,dayKey:d,dayCount:(u.dayKey===d?u.dayCount:0)+1,last:Date.now()};
+  if(due){
+   const rd=rs.exists()?rs.data():null,ok=!!rd&&!rd.banned&&CFG.refbonus>0&&(!u.dev||rd.dev!==u.dev);
+   upd.refPaid=true;upd.refVoid=!ok;
+   if(ok)tx.update(rs.ref,{balance:(rd.balance||0)+CFG.refbonus,refEarn:(rd.refEarn||0)+CFG.refbonus});
+  }
   tx.update(tr,{status:"done",done:Date.now()});
-  tx.update(ur,{balance:u.balance+CFG.tien,total:(u.total||0)+1,dayKey:d,dayCount:(u.dayKey===d?u.dayCount:0)+1,last:Date.now()})})}
+  tx.update(ur,upd)})}
  catch(e){return toast(e===2?"Đã đủ nhiệm vụ hôm nay":e===3?"Làm quá nhanh, thử lại sau":"Nhiệm vụ không hợp lệ hoặc đã dùng",0)}
  toast("+"+fmt(CFG.tien));go("task");
 }
@@ -263,7 +347,7 @@ async function pDoi(m){
   ${pend||!bk.length?"":`<label>Số tiền muốn rút</label><input id="am" inputmode="numeric" placeholder="Tối thiểu ${fmt(CFG.minb)}"><button class="btn" id="wd">Gửi yêu cầu rút tiền</button>
   <p class="mu" style="margin-top:10px">Admin chuyển khoản và duyệt xong, tiền tự trừ khỏi ví.</p>`}`;
 
- const hist=()=>wds.map(w=>{const b=isBank(w);return`<div class="hi"><div class="top"><span><b>${b?"Ngân hàng "+esc(w.bank):"Thẻ "+esc(w.card||"?")}</b> · ${fmt(w.amount)}<br><span class="mu">${b?esc(w.bankNo||"")+" · ":""}${new Date(w.created).toLocaleDateString("vi-VN")}</span></span><span class="tag ${w.status}">${b&&w.status==="approved"?"Đã chuyển":ST[w.status]}</span></div>${w.status==="approved"&&w.cardCode?`<div class="code"><div><span>Mã thẻ: ${esc(w.cardCode)}</span><button class="mini" data-cp="${esc(w.cardCode)}">Copy</button></div><div><span>Seri: ${esc(w.cardSerial)}</span><button class="mini" data-cp="${esc(w.cardSerial)}">Copy</button></div></div>`:""}</div>`}).join("")||'<p class="mu">Chưa có đơn nào.</p>';
+ const hist=()=>histHTML(wds.slice(0,5));
 
  const draw=()=>{
   const bm=wmode==="bank";
@@ -272,8 +356,9 @@ async function pDoi(m){
   <div class="seg"><button data-md="card" class="${bm?"":"on"}">Đổi thẻ cào</button><button data-md="bank" class="${bm?"on":""}">Rút ngân hàng</button></div>
   ${pend?'<p class="note">Đang có đơn chờ duyệt. Admin duyệt xong tiền mới tự trừ khỏi ví.</p>':""}
   ${bm?bankForm():cardForm()}</div>
-  <div class="card"><h2>Lịch sử</h2>${hist()}</div>`;
+  <div class="card"><h2>Lịch sử gần đây</h2>${hist()}${wds.length>5?'<button class="btn alt" id="hall" style="margin-top:12px">Xem tất cả lịch sử</button>':""}</div>`;
   bindCp(m);
+  if($("#hall"))$("#hall").onclick=()=>{more="hist";go("more")};
   m.querySelectorAll("[data-md]").forEach(b=>b.onclick=()=>{wmode=b.dataset.md;draw()});
   m.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{selCard=b.dataset.c;m.querySelectorAll("[data-c]").forEach(x=>x.classList.toggle("on",x.dataset.c===selCard))});
   m.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{selDenom=+b.dataset.d;m.querySelectorAll("[data-d]").forEach(x=>x.classList.toggle("on",+x.dataset.d===selDenom))});
@@ -289,6 +374,7 @@ async function pDoi(m){
    go("doi")};
   if($("#wd"))$("#wd").onclick=async e=>{
    const btn=e.currentTarget;
+   await loadCfg();if(CFG.mt&&!isAd())return shell();
    if(wmode==="bank"){
     const b=bk.find(x=>x.id===selBank);if(!b)return toast("Chọn tài khoản ngân hàng",0);
     const amt=num($("#am").value);
@@ -312,12 +398,42 @@ async function pDoi(m){
 
 async function pTop(m){
  const r=await rows(query(collection(db,"users"),orderBy("total","desc"),limit(10)));
- m.innerHTML=`<div class="card"><h2>Top 10 vượt link</h2>${r.filter(u=>u.total>0).map((u,i)=>`<div class="rk ${u.id===U.uid?"me":""}"><span class="n">${i+1}</span><span>${esc(u.name)}</span><span class="c">${u.total}</span></div>`).join("")||'<p class="mu">Chưa có ai.</p>'}</div>`;
+ m.innerHTML=`<div class="card"><h2>Top 10 vượt link</h2>${r.filter(u=>u.total>0).map((u,i)=>`<div class="rk ${u.id===U.uid?"me":""}"><span class="n">${i+1}</span><span>${esc(mask(u.name))}</span><span class="c">${u.total}</span></div>`).join("")||'<p class="mu">Chưa có ai.</p>'}</div>`;
+}
+
+async function pRef(m){
+ await loadMe();hdr();
+ const fr=(await rows(query(collection(db,"users"),where("ref","==",U.uid)))).sort((a,b)=>b.created-a.created);
+ const link=location.origin+location.pathname+"?ref="+(ME.rc||""),paid=fr.filter(f=>f.refPaid&&!f.refVoid).length;
+ m.innerHTML=`<div class="card"><h2>Giới thiệu bạn bè</h2><p class="mu">Bạn bè đăng ký bằng mã của bạn và hoàn thành <b>${RN()}</b> nhiệm vụ, bạn nhận <b>+${fmt(CFG.refbonus)}</b> cho mỗi người.</p>
+ <div class="rc">${esc(ME.rc||"...")}</div>
+ <div class="row"><button class="btn" data-cp="${esc(ME.rc||"")}">Copy mã</button><button class="btn alt" data-cp="${esc(link)}">Copy link</button></div></div>
+ <div class="card"><h2>Bạn bè đã mời</h2><div class="stat"><div><b>${fr.length}</b><span>Đã mời</span></div><div><b>${paid}</b><span>Có thưởng</span></div><div><b>${fmt(ME.refEarn||0)}</b><span>Tiền thưởng</span></div></div>
+ ${fr.map(f=>`<div class="item"><span><b>${esc(mask(f.name))}</b><br><span class="mu">${new Date(f.created).toLocaleDateString("vi-VN")} · ${Math.min(f.total||0,RN())}/${RN()} nhiệm vụ</span></span><span class="tag ${f.refPaid&&!f.refVoid?"approved":"pending"}">${f.refVoid?"Không hợp lệ":f.refPaid?"Đã thưởng":"Đang làm"}</span></div>`).join("")||'<p class="mu">Chưa có bạn bè nào.</p>'}</div>`;
+ bindCp(m);
+}
+async function pMore(m){
+ const tabs=[["hist","Lịch sử"],["top","Xếp hạng"],["ct","Liên hệ"]];
+ m.innerHTML=`<div class="seg" style="margin-top:0">${tabs.map(x=>`<button data-mo="${x[0]}" class="${more===x[0]?"on":""}">${x[1]}</button>`).join("")}</div><div id="mb"></div>`;
+ m.querySelectorAll("[data-mo]").forEach(b=>b.onclick=()=>{more=b.dataset.mo;pMore(m)});
+ const mb=$("#mb");
+ if(more==="top")return pTop(mb);
+ if(more==="ct"){mb.innerHTML=contactHTML()||'<div class="card"><p class="mu">Admin chưa cập nhật thông tin liên hệ.</p></div>';return}
+ mb.innerHTML='<p class="mu" style="text-align:center;padding:20px">Đang tải...</p>';
+ const ws=(await rows(query(collection(db,"withdrawals"),where("uid","==",U.uid)))).sort((a,b)=>b.created-a.created);
+ const ok=ws.filter(w=>w.status==="approved"),sum=t=>ok.filter(w=>t==="bank"?isBank(w):!isBank(w)).reduce((a,w)=>a+w.amount,0);
+ const draw=()=>{
+  let l=ws;if(hf==="card")l=l.filter(w=>!isBank(w));else if(hf==="bank")l=l.filter(isBank);else if(hf==="pending"||hf==="rejected")l=l.filter(w=>w.status===hf);
+  mb.innerHTML=`<div class="card"><h2>Tổng quan</h2><div class="stat"><div><b>${fmt(sum("card"))}</b><span>Đã đổi thẻ</span></div><div><b>${fmt(sum("bank"))}</b><span>Đã rút ngân hàng</span></div><div><b>${ws.filter(w=>w.status==="pending").length}</b><span>Đang chờ</span></div></div></div>
+  <div class="card"><h2>Lịch sử rút tiền / đổi thẻ</h2><div class="fl">${[["all","Tất cả"],["card","Thẻ cào"],["bank","Ngân hàng"],["pending","Chờ duyệt"],["rejected","Từ chối"]].map(x=>`<button data-f="${x[0]}" class="${hf===x[0]?"on":""}">${x[1]}</button>`).join("")}</div>${histHTML(l)}</div>`;
+  bindCp(mb);mb.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{hf=b.dataset.f;draw()});
+ };
+ draw();
 }
 
 async function pAdmin(m=$("#m")){
  if(!isAd())return;await loadCfg();
- const[wd,us,rg,sc]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(300))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret"))]);
+ const[wd,us,rg,sc,hd]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(300))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret")),rows(query(collection(db,"withdrawals"),where("status","in",["approved","rejected"])))]);
  const all=[...new Map([...rg,...us].map(u=>[u.id,u])).values()],dup=u=>u.dev?all.filter(x=>x.dev===u.dev).length:1;
  const pr=rg.filter(u=>!u.banned).sort((a,b)=>a.created-b.created);
  const wl=wd.sort((a,b)=>a.created-b.created).map(w=>{const b=isBank(w);return`<div class="wr" data-t="${b?"bank":"card"}">
@@ -325,9 +441,12 @@ async function pAdmin(m=$("#m")){
   ${b?`<div class="box"><span class="mu">Chuyển khoản tới</span><br><b>${esc(w.bank)}</b><br>STK: <b>${esc(w.bankNo)}</b> <button class="mini" data-cp="${esc(w.bankNo)}">Copy</button><br>Chủ TK: <b>${esc(w.bankOwner)}</b><br><span class="mu">Chuyển xong mới bấm Duyệt, ví sẽ tự trừ ${fmt(w.amount)}.</span></div>`
   :`<input data-cc placeholder="Mã thẻ" autocomplete="off"><input data-cs placeholder="Số seri" autocomplete="off">`}
   <div class="row"><button class="mini ok" data-ok="${w.id}">Duyệt</button><button class="mini bad" data-no="${w.id}">Từ chối</button></div></div>`}).join("");
- m.innerHTML=`<div class="card"><h2>Chờ duyệt tài khoản (${pr.length})</h2>${pr.map(u=>`<div class="item"><span><b>${esc(u.name)}</b><br><span class="mu">${new Date(u.created).toLocaleString("vi-VN")}</span>${dup(u)>1?`<br><span class="tag pending">${dup(u)} tk cùng máy</span>`:""}</span><span><button class="mini ok" data-ap="${u.id}">Duyệt</button> <button class="mini bad" data-rj="${u.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có.</p>'}</div>
+ m.innerHTML=`<div class="card" style="${CFG.mt?"border:2px solid #000":""}"><h2>Bảo trì ${CFG.mt?'<span class="tag approved">ĐANG BẬT</span>':'<span class="tag pending">Đang tắt</span>'}</h2><p class="mu" style="margin-bottom:10px">Khi bật, người dùng (trừ admin) chỉ thấy màn hình bảo trì.</p><label>Nội dung thông báo bảo trì</label><textarea id="mtm" rows="2">${esc(CFG.mtmsg)}</textarea><button class="btn ${CFG.mt?"alt":""}" id="mtb">${CFG.mt?"Tắt bảo trì":"Bật bảo trì"}</button></div>
+ <div class="card"><h2>Chờ duyệt tài khoản (${pr.length})</h2>${pr.map(u=>`<div class="item"><span><b>${esc(u.name)}</b><br><span class="mu">${new Date(u.created).toLocaleString("vi-VN")}</span>${dup(u)>1?`<br><span class="tag pending">${dup(u)} tk cùng máy</span>`:""}</span><span><button class="mini ok" data-ap="${u.id}">Duyệt</button> <button class="mini bad" data-rj="${u.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có.</p>'}</div>
  <div class="card"><h2>Đơn rút / đổi thẻ chờ duyệt (${wd.length})</h2>${wl||'<p class="mu">Không có.</p>'}</div>
+ <div class="card"><h2>Lịch sử đơn đã xử lý (${hd.length})</h2><div class="fl" id="hf"><button data-f="all" class="on">Tất cả</button><button data-f="card">Thẻ</button><button data-f="bank">Ngân hàng</button><button data-f="rejected">Từ chối</button></div><div id="hl"></div></div>
  <div class="card"><h2>Cài đặt</h2>${Object.keys(SET).map(k=>`<label>${SET[k]}</label><input data-s="${k}" inputmode="numeric" value="${CFG[k]}">`).join("")}
+ ${Object.keys(CT).map(k=>`<label>${CT[k]}</label><input data-t="${k}" value="${esc(CFG[k]||"")}">`).join("")}
  <label>API key sitetop</label><input id="sk" type="password" placeholder="${sc.exists()?"Đã lưu":"Dán API key"}">
  <label>Thông báo</label><textarea id="an" rows="2">${esc(CFG.ann)}</textarea>
  <button class="btn" id="sv">Lưu</button></div>
@@ -345,16 +464,16 @@ async function pAdmin(m=$("#m")){
    if(!x.code||!x.serial)return toast("Nhập mã thẻ và số seri trước khi duyệt",0);
   }
   b.disabled=true;decide(b.dataset.ok,1,x)});
- m.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{if(!confirm("Từ chối đơn này?"))return;b.disabled=true;decide(b.dataset.no,0)});
+ m.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const r=prompt("Lý do từ chối (có thể bỏ trống):");if(r===null)return;b.disabled=true;decide(b.dataset.no,0,{reason:r.trim()})});
  let uf="all";
  const drawU=()=>{
   const q=$("#uq").value.trim().toLowerCase();
-  let l=us.filter(u=>!q||(u.name||"").toLowerCase().includes(q));
+  let l=us.filter(u=>!q||((u.name||"")+" "+(u.phone||"")).toLowerCase().includes(q));
   if(uf==="ban")l=l.filter(u=>u.banned);
   if(uf==="sus")l=l.filter(u=>(u.sus||0)>0);
   if(uf==="top")l=[...l].sort((a,b)=>(b.balance||0)-(a.balance||0));
   $("#ul").innerHTML=l.map(u=>{const me=u.id===U.uid;return`<div class="us"><div class="nm">${u.banned?"🚫 ":u.approved===false?"⏳ ":""}${esc(u.name)} ${me?'<span class="tag pending">Bạn</span>':""}${(u.sus||0)>0?`<span class="tag rejected">Nghi bypass ×${u.sus}</span>`:""}</div>
-   <div class="mu">Số dư <b>${fmt(u.balance)}</b> · ${u.total||0} nhiệm vụ · ${dup(u)>1?dup(u)+" tk cùng máy · ":""}${u.banned?"Đang bị khóa":"Đang hoạt động"}${u.susWhy?`<br>Lý do nghi: ${esc(u.susWhy)}`:""}</div>
+   <div class="mu">${u.phone&&u.phone!==u.name?"SĐT <b>"+esc(u.phone)+"</b><br>":!u.phone?"Chưa có SĐT<br>":""}Số dư <b>${fmt(u.balance)}</b> · ${u.total||0} nhiệm vụ · ${dup(u)>1?dup(u)+" tk cùng máy · ":""}${u.banned?"Đang bị khóa":"Đang hoạt động"}${u.susWhy?`<br>Lý do nghi: ${esc(u.susWhy)}`:""}</div>
    ${me?"":`<div class="ac"><input inputmode="numeric" data-amt placeholder="Số tiền"><button class="mini ok" data-add="${u.id}">+ Cộng</button><button class="mini bad" data-sub="${u.id}">− Trừ</button><button class="mini ${u.banned?"ok":"bad"}" data-b="${u.id}" data-v="${u.banned?0:1}">${u.banned?"Mở khóa":"Khóa"}</button>${(u.sus||0)>0||u.lockUntil>Date.now()?`<button class="mini" data-clr="${u.id}">Xóa cờ</button>`:""}</div>`}</div>`}).join("")||'<p class="mu">Không tìm thấy.</p>';
   $("#ul").querySelectorAll("[data-b]").forEach(b=>b.onclick=async()=>{const ban=b.dataset.v==="1";if(ban&&!confirm("Khóa tài khoản này?"))return;await updateDoc(doc(db,"users",b.dataset.b),ban?{banned:true}:{banned:false,sus:0,lockUntil:0});toast(ban?"Đã khóa":"Đã mở khóa");pAdmin()});
   $("#ul").querySelectorAll("[data-clr]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.clr),{sus:0,susWhy:"",lockUntil:0});toast("Đã xóa cờ");pAdmin()});
@@ -367,7 +486,17 @@ async function pAdmin(m=$("#m")){
  $("#uq").oninput=drawU;
  $("#uf").querySelectorAll("button").forEach(b=>b.onclick=()=>{uf=b.dataset.f;$("#uf").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));drawU()});
  drawU();
- $("#sv").onclick=async()=>{const d={ann:$("#an").value.trim()};m.querySelectorAll("[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu");pAdmin()};
+ let hfl="all";
+ const hs=[...hd].sort((a,b)=>(b.done||b.created)-(a.done||a.created));
+ const hsum=t=>hd.filter(w=>w.status==="approved"&&(t==="bank"?isBank(w):!isBank(w))).reduce((a,w)=>a+w.amount,0);
+ const drawH=()=>{
+  let l=hs;if(hfl==="card")l=l.filter(w=>!isBank(w));else if(hfl==="bank")l=l.filter(isBank);else if(hfl==="rejected")l=l.filter(w=>w.status==="rejected");
+  $("#hl").innerHTML=`<p class="mu" style="margin-bottom:8px">Đã chi: thẻ <b>${fmt(hsum("card"))}</b> · ngân hàng <b>${fmt(hsum("bank"))}</b></p>`+(l.slice(0,50).map(w=>{const b=isBank(w);return`<div class="hi"><div class="top"><span><b>${esc(w.uname)}</b> · ${fmt(w.amount)}<br><span class="mu">${b?"Ngân hàng "+esc(w.bank||""):"Thẻ "+esc(w.card||"?")} · ${new Date(w.done||w.created).toLocaleString("vi-VN")}</span></span><span class="tag ${w.status}">${ST[w.status]}</span></div>${w.reason?`<p class="mu" style="margin-top:6px">Lý do: ${esc(w.reason)}</p>`:""}</div>`}).join("")||'<p class="mu">Không có.</p>');
+ };
+ $("#hf").querySelectorAll("button").forEach(b=>b.onclick=()=>{hfl=b.dataset.f;$("#hf").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));drawH()});
+ drawH();
+ $("#mtb").onclick=async()=>{if(!CFG.mt&&!confirm("Bật bảo trì? Người dùng sẽ không vào được."))return;await setDoc(doc(db,"settings","main"),{mt:CFG.mt?0:1,mtmsg:$("#mtm").value.trim()},{merge:true});toast(CFG.mt?"Đã tắt bảo trì":"Đã bật bảo trì");pAdmin()};
+ $("#sv").onclick=async()=>{const d={ann:$("#an").value.trim()};m.querySelectorAll("[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));m.querySelectorAll("[data-t]").forEach(i=>d[i.dataset.t]=i.value.trim());await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu");pAdmin()};
 }
 async function decide(id,ok,x={}){
  try{
@@ -380,6 +509,7 @@ async function decide(id,ok,x={}){
     if(u.data().balance<d.amount)throw"Ví người dùng không đủ tiền";
     tx.update(ur,{balance:u.data().balance-d.amount});
     if(x.code){upd.cardCode=x.code;upd.cardSerial=x.serial}
+   }else if(x.reason){upd.reason=x.reason;
    }
    tx.update(wr,upd);
   });
