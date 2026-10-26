@@ -10,48 +10,49 @@
   --border:#dcdcdc;
   --ink:#0a0a0a;
   --text:#0a0a0a;
-  --muted:#707070;
+  --muted:#505050;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:var(--bg);color:var(--text);font:400 15px/1.55 "Be Vietnam Pro",system-ui,sans-serif}
-h1,h2,.logo,.coin,.btn,.big,.rk .n,.rk .c,.code{font-family:"Chakra Petch",sans-serif}
-.wrap{max-width:480px;margin:0 auto;padding:14px 14px 90px}
+body{min-height:100vh;background:var(--bg);color:var(--text);font:400 16px/1.65 "Be Vietnam Pro",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.logo{font-family:"Chakra Petch",sans-serif}
+h1,h2,.coin,.btn,.big,.rk .n,.rk .c,.code{font-family:"Be Vietnam Pro",sans-serif}
+.wrap{max-width:520px;margin:0 auto;padding:14px 14px 90px}
 header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px}
 .logo{font-weight:700;font-size:22px;letter-spacing:.5px}
 .logo span{background:#000;color:#fff;padding:0 7px;border-radius:6px;margin-left:3px}
-.coin{border:1.5px solid #000;color:#000;padding:7px 14px;border-radius:20px;font-weight:700;font-size:15px}
+.coin{border:1.5px solid #000;color:#000;padding:7px 14px;border-radius:20px;font-weight:700;font-size:16px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px}
 .hero{background:#000;color:#fff;border-color:#000}
 .hero .big{font-size:36px;font-weight:700;color:#fff;margin:6px 0 10px}
-.hero .mu{color:#b8b8b8}
+.hero .mu{color:#e0e0e0}
 .hero b{color:#fff}
-.mu{color:var(--muted);font-size:13.5px}
-h2{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:12px;text-transform:uppercase;letter-spacing:.8px}
-label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
-input,select,textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text);font:inherit;font-size:15px;margin-bottom:12px;transition:border .2s}
+.mu{color:var(--muted);font-size:14.5px;line-height:1.6}
+h2{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:12px}
+label{display:block;font-size:14.5px;font-weight:600;color:#222;margin:0 0 6px}
+input,select,textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text);font:inherit;font-size:16px;margin-bottom:12px;transition:border .2s}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#000}
-.btn{width:100%;padding:14px;border:1.5px solid #000;border-radius:12px;background:#000;color:#fff;font-weight:700;font-size:15px;cursor:pointer;transition:transform .15s,opacity .15s}
+.btn{width:100%;padding:14px;border:1.5px solid #000;border-radius:12px;background:#000;color:#fff;font-weight:600;font-size:16px;cursor:pointer;transition:transform .15s,opacity .15s}
 .btn:active{transform:scale(.97)}.btn:disabled{opacity:.4}
 .btn.alt{background:#fff;color:#000}
 .row{display:flex;gap:10px}.row>*{flex:1}
 .item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
 .item:last-child{border:0}
-.mini{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:#000;font:500 13px "Be Vietnam Pro",sans-serif;cursor:pointer}
+.mini{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:#000;font:600 14px "Be Vietnam Pro",sans-serif;cursor:pointer;min-height:36px}
 .mini.ok{background:#000;color:#fff;border-color:#000}
 .mini.bad{background:#fff;color:#000;border-color:#000}
-.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap}
 .pending{background:#eee;color:#555}
 .approved{background:#000;color:#fff}
 .rejected{background:#fff;color:#000;border:1px solid #000}
-.note{background:var(--card2);border:1px dashed #999;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px}
+.note{background:var(--card2);border:1px dashed #999;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14.5px}
 .box{background:var(--card2);border-radius:12px;padding:12px;margin-bottom:12px}
 .box input{background:#fff}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#fffffff2;backdrop-filter:blur(12px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0);z-index:10}
-nav button{flex:1;padding:12px 4px;border:0;background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:"Be Vietnam Pro",sans-serif}
+nav button{flex:1;padding:12px 4px;border:0;background:none;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:"Be Vietnam Pro",sans-serif}
 nav button.on{color:#000;box-shadow:inset 0 2px 0 #000}
 .auth{max-width:360px;margin:10vh auto 0}
 .auth h1{font-size:26px;margin-bottom:4px}
-.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);padding:12px 18px;border-radius:12px;font-weight:600;z-index:99;max-width:90vw;border:2px solid #000;font-size:14px}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);padding:12px 18px;border-radius:12px;font-weight:600;z-index:99;max-width:90vw;border:2px solid #000;font-size:15px}
 .toast.ok{background:#000;color:#fff}
 .toast.bad{background:#fff;color:#000;box-shadow:0 4px 18px #0003}
 .rk{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
@@ -61,13 +62,13 @@ nav button.on{color:#000;box-shadow:inset 0 2px 0 #000}
 .xp{height:8px;background:#3a3a3a;border-radius:6px;overflow:hidden;margin-top:10px}
 .xp b{display:block;height:100%;background:#fff;border-radius:6px;transition:width .5s}
 .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.card-opt{padding:14px 10px;border-radius:12px;border:1.5px solid var(--border);background:#fff;text-align:center;cursor:pointer;transition:all .2s;font-weight:600;font-size:14px}
+.card-opt{padding:14px 10px;border-radius:12px;border:1.5px solid var(--border);background:#fff;text-align:center;cursor:pointer;transition:all .2s;font-weight:600;font-size:15px}
 .card-opt.on{border-color:#000;background:#000;color:#fff}
 .denom{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.denom button{flex:1 1 30%;padding:11px 6px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:#000;font-weight:600;font-size:13px;cursor:pointer}
+.denom button{flex:1 1 30%;padding:11px 6px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:#000;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
 .denom button.on{border-color:#000;background:#000;color:#fff}
 .seg{display:flex;background:var(--card2);border-radius:12px;padding:4px;margin:12px 0}
-.seg button{flex:1;padding:10px;border:0;background:none;border-radius:9px;font:600 14px "Be Vietnam Pro",sans-serif;cursor:pointer;color:var(--muted)}
+.seg button{flex:1;padding:10px;border:0;background:none;border-radius:9px;font:600 15px "Be Vietnam Pro",sans-serif;cursor:pointer;color:var(--muted)}
 .seg button.on{background:#000;color:#fff}
 .bk{display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer}
 .bk.on{border-color:#000;background:var(--card2)}
@@ -75,10 +76,18 @@ nav button.on{color:#000;box-shadow:inset 0 2px 0 #000}
 .bk.on .dot{background:#000;box-shadow:inset 0 0 0 3px #fff}
 .hi{padding:12px 0;border-bottom:1px solid var(--border)}.hi:last-child{border:0}
 .hi .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.code{background:#000;color:#fff;border-radius:10px;padding:10px 12px;margin-top:8px;font-weight:600;font-size:14px;line-height:1.9;word-break:break-all}
+.code{background:#000;color:#fff;border-radius:10px;padding:10px 12px;margin-top:8px;font-weight:600;font-size:15px;line-height:1.9;word-break:break-all}
 .code>div{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .code .mini{background:#fff;color:#000;border-color:#fff;padding:4px 10px}
 .wr{padding:14px 0;border-bottom:1px solid var(--border)}.wr:last-child{border:0}
+.srch{position:sticky;top:0;background:#fff;padding:6px 0;z-index:5}
+.fl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fl button{padding:8px 12px;border-radius:20px;border:1px solid var(--border);background:#fff;font:600 14px "Be Vietnam Pro",sans-serif;cursor:pointer}
+.fl button.on{background:#000;color:#fff;border-color:#000}
+.us{padding:14px 0;border-bottom:1px solid var(--border)}.us:last-child{border:0}
+.us .nm{font-size:16.5px;font-weight:700}
+.us .ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.us .ac input{width:120px;margin:0;padding:8px 10px;font-size:15px}
 </style></head>
 <body><div class="wrap" id="app"><p class="mu" style="text-align:center;margin-top:30vh">Đang tải...</p></div>
 <script type="module">
@@ -95,8 +104,8 @@ const CARDS=["Garena","Viettel","Vinaphone","Vietnamobile"];
 const DENOMS=[10000,20000,50000,100000,200000,500000];
 const BANKS=["Vietcombank","VietinBank","BIDV","Agribank","Techcombank","MB Bank","ACB","VPBank","TPBank","Sacombank","HDBank","SHB","VIB","OCB","MSB","SeABank","Eximbank","LPBank","Nam A Bank","Bac A Bank","ABBank","VietBank"];
 const MAXBANK=3;
-const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,ann:""};
-const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Vượt link tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)"};
+const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,mf:5,ml:10,sus:3,ann:""};
+const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Vượt link tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)",mf:"Sai key tối đa mỗi nhiệm vụ (lần)",ml:"Khóa nhập key khi sai quá nhiều (phút)",sus:"Số lần nghi bypass thì tự khóa tài khoản (0 = tắt)"};
 const ST={pending:"Chờ duyệt",approved:"Đã duyệt",rejected:"Từ chối"};
 
 const $=s=>document.querySelector(s);
@@ -107,6 +116,7 @@ const day=()=>new Date(Date.now()+252e5).toISOString().slice(0,10);
 const rnd=n=>{const a=new Uint32Array(n);crypto.getRandomValues(a);return[...a].map(x=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[x%32]).join("")};
 const DEV=localStorage.dv||(localStorage.dv=rnd(16));
 const ERR={"auth/email-already-in-use":"Tên này đã có người dùng","auth/operation-not-allowed":"Firebase chưa bật Email/Password","permission-denied":"Firestore đang chặn","auth/network-request-failed":"Mất mạng","auth/weak-password":"Mật khẩu từ 6 ký tự"};
+const sha=async t=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)))].map(x=>x.toString(16).padStart(2,"0")).join("");
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const toast=(m,ok=1)=>{const t=document.createElement("div");t.className="toast "+(ok?"ok":"bad");t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3200)};
 const rows=q=>getDocs(q).then(s=>s.docs.map(d=>({id:d.id,...d.data()})));
@@ -159,10 +169,11 @@ async function pTask(m){
  await loadMe();hdr();const t=await curTask(),l=CFG.lim;
  m.innerHTML=`<div class="card"><h2>Nhiệm vụ</h2><p class="mu">Hôm nay ${today()}${l>0?"/"+l:""} · Thưởng ${fmt(CFG.tien)} · Hết hạn ${CFG.exp} phút</p>
  ${t?`<p style="margin:12px 0">1. Mở link và vượt hết bước<br>2. Copy key hiện ra<br>3. Dán key vào ô dưới</p>
- <a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px" href="${esc(t.url)}" target="_blank" rel="noopener">Mở link vượt</a>
+ <a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px" id="ol" href="${esc(t.url)}" target="_blank" rel="noopener">Mở link vượt</a>
+ <p class="mu" style="margin:-4px 0 12px">${t.opened?"Đã mở link lúc "+new Date(t.opened).toLocaleTimeString("vi-VN")+". Phải mở link bằng nút này rồi vượt đủ thời gian mới nhận được thưởng.":"Bạn phải bấm nút này để bắt đầu tính giờ."}</p>
  <input id="k" placeholder="Dán key vào đây" autocomplete="off"><button class="btn alt" id="sk">Nhận thưởng</button>`
  :`<button class="btn" id="nt" style="margin-top:12px">Nhận nhiệm vụ mới</button>`}</div>`;
- if(t)$("#sk").onclick=()=>sendKey(t);else $("#nt").onclick=newTask;
+ if(t){$("#ol").onclick=async()=>{if(!t.opened){t.opened=Date.now();try{await updateDoc(doc(db,"tasks",t.id),{opened:t.opened})}catch{}}};$("#sk").onclick=()=>sendKey(t)}else $("#nt").onclick=newTask;
 }
 async function newTask(){
   if(CFG.lim>0&&today()>=CFG.lim)return toast(`Hôm nay đã làm đủ ${CFG.lim} nhiệm vụ`,0);
@@ -183,21 +194,43 @@ async function newTask(){
     why=j.message||j.error||j.msg||"";
   }catch(e){why=e.message||String(e)}
   if(!url||url===long||url.startsWith(LAG)){toast("Không tạo được link"+(why?": "+why:""),0);return go("task")}
-  await addDoc(collection(db,"tasks"),{uid:U.uid,key,url,status:"pending",created:Date.now()});
+  await addDoc(collection(db,"tasks"),{uid:U.uid,kh:await sha(key+":"+U.uid),url,status:"pending",created:Date.now(),dev:DEV,opened:0,fails:0});
   go("task");
 }
+async function flag(why){
+ // ghi nhận nghi bypass vào hồ sơ; vượt ngưỡng thì tự khóa
+ try{await runTransaction(db,async tx=>{const r=doc(db,"users",U.uid),x=await tx.get(r),u=x.data(),n=(u.sus||0)+1,d={sus:n,susWhy:why,susAt:Date.now()};
+  if(CFG.sus>0&&n>=CFG.sus&&!isAd())d.banned=true;tx.update(r,d)})}catch{}
+}
 async function sendKey(t){
- if((+localStorage.lk||0)>Date.now())return toast(`Khóa nhập key ${Math.ceil((localStorage.lk-Date.now())/6e4)} phút`,0);
- const bad=msg=>{const n=(+localStorage.fl||0)+1;if(n>=5){localStorage.lk=Date.now()+6e5;localStorage.fl=0;toast("Sai quá nhiều, khóa 10 phút",0)}else{localStorage.fl=n;toast(`${msg} (còn ${5-n} lần)`,0)}};
+ await loadMe();
+ if((ME.lockUntil||0)>Date.now())return toast(`Đang bị khóa nhập key ${Math.ceil((ME.lockUntil-Date.now())/6e4)} phút`,0);
+ if(!t.opened)return toast("Hãy bấm nút Mở link vượt trước",0);
+ if(t.dev&&t.dev!==DEV){await flag("Nhập key từ thiết bị khác");return toast("Nhiệm vụ này phải làm trên thiết bị đã nhận",0)}
  const k=$("#k").value.trim().toUpperCase();
- if(k!==t.key)return bad("Key sai");
- if(Date.now()-t.created<CFG.wait*1e3)return bad("Chưa vượt xong");
+ if(!k)return toast("Dán key vào ô trước",0);
+ const used=Date.now()-t.opened;
+ if(used<CFG.wait*1e3){
+  const left=Math.ceil((CFG.wait*1e3-used)/1e3);
+  // gửi key đúng nhưng quá nhanh = dấu hiệu bypass
+  if(await sha(k+":"+U.uid)===t.kh)await flag("Có key nhưng chưa đủ "+CFG.wait+"s (nhanh "+Math.round(used/1e3)+"s)");
+  return toast(`Chưa đủ thời gian vượt link, chờ thêm ${left}s`,0)}
+ if(await sha(k+":"+U.uid)!==t.kh){
+  let n=(t.fails||0)+1,lock=0;
+  try{await updateDoc(doc(db,"tasks",t.id),{fails:n,status:n>=CFG.mf?"failed":"pending"})}catch{}
+  if(n>=CFG.mf){lock=Date.now()+CFG.ml*6e4;await flag("Sai key "+n+" lần");try{await updateDoc(doc(db,"users",U.uid),{lockUntil:lock})}catch{}
+   toast(`Sai quá ${CFG.mf} lần, nhiệm vụ bị hủy và khóa nhập key ${CFG.ml} phút`,0);return go("task")}
+  t.fails=n;return toast(`Key sai (còn ${CFG.mf-n} lần)`,0)}
  try{await runTransaction(db,async tx=>{const tr=doc(db,"tasks",t.id),ur=doc(db,"users",U.uid),[ts,us]=[await tx.get(tr),await tx.get(ur)];
-  if(ts.data().status!=="pending")throw 1;const u=us.data(),d=day();
+  const td=ts.data();if(td.status!=="pending"||!td.opened||Date.now()-td.opened<CFG.wait*1e3)throw 1;
+  const u=us.data(),d=day();
+  if(u.banned)throw 1;
+  if(CFG.lim>0&&(u.dayKey===d?u.dayCount:0)>=CFG.lim)throw 2;
+  if(Date.now()-(u.last||0)<CFG.cd*1e3*0.5)throw 3;
   tx.update(tr,{status:"done",done:Date.now()});
   tx.update(ur,{balance:u.balance+CFG.tien,total:(u.total||0)+1,dayKey:d,dayCount:(u.dayKey===d?u.dayCount:0)+1,last:Date.now()})})}
- catch{return toast("Key đã dùng",0)}
- localStorage.fl=0;toast("+"+fmt(CFG.tien));go("task");
+ catch(e){return toast(e===2?"Đã đủ nhiệm vụ hôm nay":e===3?"Làm quá nhanh, thử lại sau":"Nhiệm vụ không hợp lệ hoặc đã dùng",0)}
+ toast("+"+fmt(CFG.tien));go("task");
 }
 
 // ====== RÚT TIỀN: ĐỔI THẺ CÀO + NGÂN HÀNG ======
@@ -284,7 +317,7 @@ async function pTop(m){
 
 async function pAdmin(m=$("#m")){
  if(!isAd())return;await loadCfg();
- const[wd,us,rg,sc]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(50))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret"))]);
+ const[wd,us,rg,sc]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(300))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret"))]);
  const all=[...new Map([...rg,...us].map(u=>[u.id,u])).values()],dup=u=>u.dev?all.filter(x=>x.dev===u.dev).length:1;
  const pr=rg.filter(u=>!u.banned).sort((a,b)=>a.created-b.created);
  const wl=wd.sort((a,b)=>a.created-b.created).map(w=>{const b=isBank(w);return`<div class="wr" data-t="${b?"bank":"card"}">
@@ -298,7 +331,10 @@ async function pAdmin(m=$("#m")){
  <label>API key sitetop</label><input id="sk" type="password" placeholder="${sc.exists()?"Đã lưu":"Dán API key"}">
  <label>Thông báo</label><textarea id="an" rows="2">${esc(CFG.ann)}</textarea>
  <button class="btn" id="sv">Lưu</button></div>
- <div class="card"><h2>Người dùng (${us.length})</h2>${us.map(u=>`<div class="item"><span>${u.banned?"🚫 ":u.approved===false?"⏳ ":""}<b>${esc(u.name)}</b><br><span class="mu">${fmt(u.balance)} · ${u.total||0} nv</span></span>${u.id===U.uid?'<span class="mu">Bạn</span>':`<span><button class="mini" data-m="${u.id}">±Xu</button> <button class="mini ${u.banned?"ok":"bad"}" data-b="${u.id}" data-v="${u.banned?0:1}">${u.banned?"Mở":"Khóa"}</button></span>`}</div>`).join("")}</div>`;
+ <div class="card"><h2>Người dùng (${us.length})</h2>
+ <div class="srch"><input id="uq" placeholder="Tìm theo tên người dùng..." autocomplete="off" style="margin-bottom:8px"></div>
+ <div class="fl" id="uf"><button data-f="all" class="on">Tất cả</button><button data-f="ban">Đã khóa</button><button data-f="sus">Nghi bypass</button><button data-f="top">Nhiều xu nhất</button></div>
+ <div id="ul"></div></div>`;
  bindCp(m);
  m.querySelectorAll("[data-ap]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.ap),{approved:true});toast("Đã duyệt");pAdmin()});
  m.querySelectorAll("[data-rj]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.rj),{banned:true});toast("Đã từ chối");pAdmin()});
@@ -310,9 +346,27 @@ async function pAdmin(m=$("#m")){
   }
   b.disabled=true;decide(b.dataset.ok,1,x)});
  m.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{if(!confirm("Từ chối đơn này?"))return;b.disabled=true;decide(b.dataset.no,0)});
- m.querySelectorAll("[data-b]").forEach(b=>b.onclick=async()=>{if(b.dataset.v==="1"&&!confirm("Khóa?"))return;await updateDoc(doc(db,"users",b.dataset.b),{banned:b.dataset.v==="1"});pAdmin()});
- m.querySelectorAll("[data-m]").forEach(b=>b.onclick=async()=>{const v=parseInt(prompt("Cộng (+) hoặc trừ (-) xu:"));if(!v)return;
-  try{await runTransaction(db,async tx=>{const r=doc(db,"users",b.dataset.m),s=await tx.get(r);if(s.data().balance+v<0)throw 1;tx.update(r,{balance:s.data().balance+v})});toast("OK")}catch{toast("Số dư không đủ",0)}pAdmin()});
+ let uf="all";
+ const drawU=()=>{
+  const q=$("#uq").value.trim().toLowerCase();
+  let l=us.filter(u=>!q||(u.name||"").toLowerCase().includes(q));
+  if(uf==="ban")l=l.filter(u=>u.banned);
+  if(uf==="sus")l=l.filter(u=>(u.sus||0)>0);
+  if(uf==="top")l=[...l].sort((a,b)=>(b.balance||0)-(a.balance||0));
+  $("#ul").innerHTML=l.map(u=>{const me=u.id===U.uid;return`<div class="us"><div class="nm">${u.banned?"🚫 ":u.approved===false?"⏳ ":""}${esc(u.name)} ${me?'<span class="tag pending">Bạn</span>':""}${(u.sus||0)>0?`<span class="tag rejected">Nghi bypass ×${u.sus}</span>`:""}</div>
+   <div class="mu">Số dư <b>${fmt(u.balance)}</b> · ${u.total||0} nhiệm vụ · ${dup(u)>1?dup(u)+" tk cùng máy · ":""}${u.banned?"Đang bị khóa":"Đang hoạt động"}${u.susWhy?`<br>Lý do nghi: ${esc(u.susWhy)}`:""}</div>
+   ${me?"":`<div class="ac"><input inputmode="numeric" data-amt placeholder="Số tiền"><button class="mini ok" data-add="${u.id}">+ Cộng</button><button class="mini bad" data-sub="${u.id}">− Trừ</button><button class="mini ${u.banned?"ok":"bad"}" data-b="${u.id}" data-v="${u.banned?0:1}">${u.banned?"Mở khóa":"Khóa"}</button>${(u.sus||0)>0||u.lockUntil>Date.now()?`<button class="mini" data-clr="${u.id}">Xóa cờ</button>`:""}</div>`}</div>`}).join("")||'<p class="mu">Không tìm thấy.</p>';
+  $("#ul").querySelectorAll("[data-b]").forEach(b=>b.onclick=async()=>{const ban=b.dataset.v==="1";if(ban&&!confirm("Khóa tài khoản này?"))return;await updateDoc(doc(db,"users",b.dataset.b),ban?{banned:true}:{banned:false,sus:0,lockUntil:0});toast(ban?"Đã khóa":"Đã mở khóa");pAdmin()});
+  $("#ul").querySelectorAll("[data-clr]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.clr),{sus:0,susWhy:"",lockUntil:0});toast("Đã xóa cờ");pAdmin()});
+  const adj=sign=>b=>b.onclick=async()=>{
+   const v=num(b.closest(".ac").querySelector("[data-amt]").value)*sign;if(!v)return toast("Nhập số tiền hợp lệ",0);
+   const id=b.dataset.add||b.dataset.sub;
+   try{await runTransaction(db,async tx=>{const r=doc(db,"users",id),x=await tx.get(r);if(x.data().balance+v<0)throw 1;tx.update(r,{balance:x.data().balance+v})});toast((v>0?"Đã cộng ":"Đã trừ ")+fmt(Math.abs(v)))}catch{toast("Số dư không đủ để trừ",0)}pAdmin()};
+  $("#ul").querySelectorAll("[data-add]").forEach(adj(1));$("#ul").querySelectorAll("[data-sub]").forEach(adj(-1));
+ };
+ $("#uq").oninput=drawU;
+ $("#uf").querySelectorAll("button").forEach(b=>b.onclick=()=>{uf=b.dataset.f;$("#uf").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));drawU()});
+ drawU();
  $("#sv").onclick=async()=>{const d={ann:$("#an").value.trim()};m.querySelectorAll("[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu");pAdmin()};
 }
 async function decide(id,ok,x={}){
