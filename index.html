@@ -74,7 +74,6 @@ const app=initializeApp({apiKey:"AIzaSyCPoZuP5xjMQZQhHZL3FMNGyhXcbcgWfpk",authDo
 const auth=getAuth(app),db=getFirestore(app);
 
 // ====== CẤU HÌNH ======
-// API key rút gọn link: nhập trong Admin > Cài đặt (lưu ở Firestore, không để trong file này)
 const LAG="https://dangnghia080510-debug.github.io/fake-lag/";
 const BANKS=["MB Bank","Vietcombank","Techcombank","ACB","BIDV","VPBank","Agribank","VietinBank","TPBank","Sacombank"];
 const DEF={tien:250,min:20000,exp:20,wait:45,lim:20,cd:30,ann:""};
@@ -153,38 +152,40 @@ async function newTask(){
   $("#nt").disabled=true;
   const key=rnd(12);
   const long=`${LAG}?vlpcode=${key}&vlpsid=${rnd(16)}&vlpuser=${U.uid}&vlpitem=task&vlpround=1&vlpts=${Date.now()}&vlpmin=${CFG.wait}`;
-  let url,why="";
+  let url="",why="",raw="";
   try{
     const sk=(await getDoc(doc(db,"settings","secret"))).data()?.k;
     if(!sk){toast("Admin chưa nhập API key rút gọn link (Admin > Cài đặt)",0);return go("task")}
     const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;
     
-    let t;
-    try{
-      const r=await fetch(api,{mode:"cors"});
-      if(!r.ok)throw new Error(r.status);
-      t=await r.text();
-    }catch{
-      const proxies=[
-        `https://corsproxy.io/?${encodeURIComponent(api)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`,
-        `https://cors-anywhere.herokuapp.com/${api}`
-      ];
-      for(const p of proxies){
-        try{
-          t=await (await fetch(p)).text();
-          if(t&&!t.includes("Failed to fetch"))break;
-        }catch{}
-      }
+    let t="";
+    const proxies=[
+      api,
+      `https://corsproxy.io/?${encodeURIComponent(api)}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(api)}`
+    ];
+    for(const p of proxies){
+      try{
+        const r=await fetch(p,{mode:"cors"});
+        t=await r.text();
+        if(t && t.trim().startsWith("{")) break;
+      }catch(e){}
     }
-    if(!t)throw new Error("Tất cả proxy đều fail");
+    raw=t;
+    if(!t || !t.trim().startsWith("{")) throw new Error("Không nhận được JSON: "+(t||"").slice(0,80));
+    
     const j=JSON.parse(t);
-    url=j.shortenedUrl||j.short_url||j.url;
-    why=j.message||j.error||j.msg||"";
+    // Thử tất cả field phổ biến
+    url = j.shortenedUrl || j.short_url || j.shorturl || j.shortUrl || j.url || j.link 
+       || (j.data && (j.data.shortenedUrl || j.data.short_url || j.data.url || j.data.link || j.data.shorturl))
+       || "";
+    why = j.message || j.error || j.msg || j.status || "";
+    console.log("Sitetop response:", j);
   }catch(e){why=e.message||String(e)}
   
-  if(!url||url===long||url.startsWith(LAG)){
-    toast("Không tạo được link"+(why?": "+why:", thử lại sau"),0);
+  if(!url || url===long || url.startsWith(LAG)){
+    toast("Không tạo được link"+(why?": "+why:"")+(raw?" | "+raw.slice(0,80):""),0);
     return go("task");
   }
   await addDoc(collection(db,"tasks"),{uid:U.uid,key,url,status:"pending",created:Date.now()});
