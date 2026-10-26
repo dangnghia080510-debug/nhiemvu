@@ -148,17 +148,47 @@ async function pTask(m){
  if(t)$("#sk").onclick=()=>sendKey(t);else $("#nt").onclick=newTask;
 }
 async function newTask(){
- if(CFG.lim>0&&today()>=CFG.lim)return toast(`Hôm nay bạn đã làm đủ ${CFG.lim} nhiệm vụ. Quay lại vào ngày mai.`,0);
- const left=Math.ceil((CFG.cd*1e3-(Date.now()-ME.last))/1e3);if(left>0)return toast(`Nghỉ thêm ${left} giây rồi nhận tiếp`,0);
- $("#nt").disabled=true;const key=rnd(12);
- const long=`${LAG}?vlpcode=${key}&vlpsid=${rnd(16)}&vlpuser=${U.uid}&vlpitem=task&vlpround=1&vlpts=${Date.now()}&vlpmin=${CFG.wait}`;
- let url,why="";
- try{const sk=(await getDoc(doc(db,"settings","secret"))).data()?.k;if(!sk){toast("Admin chưa nhập API key rút gọn link (Admin > Cài đặt)",0);return go("task")}
-  const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;let t;
-  try{t=await(await fetch(api)).text()}catch{t=await(await fetch("https://api.allorigins.win/raw?url="+encodeURIComponent(api))).text()}
-  const j=JSON.parse(t);url=j.shortenedUrl||j.short_url;why=j.message||j.error||""}catch(e){why=e.message}
- if(!url||url===long||url.startsWith(LAG)){toast("Không tạo được link"+(why?": "+why:", thử lại sau"),0);return go("task")}
- await addDoc(collection(db,"tasks"),{uid:U.uid,key,url,status:"pending",created:Date.now()});go("task");
+  if(CFG.lim>0&&today()>=CFG.lim)return toast(`Hôm nay bạn đã làm đủ ${CFG.lim} nhiệm vụ. Quay lại vào ngày mai.`,0);
+  const left=Math.ceil((CFG.cd*1e3-(Date.now()-ME.last))/1e3);if(left>0)return toast(`Nghỉ thêm ${left} giây rồi nhận tiếp`,0);
+  $("#nt").disabled=true;
+  const key=rnd(12);
+  const long=`${LAG}?vlpcode=${key}&vlpsid=${rnd(16)}&vlpuser=${U.uid}&vlpitem=task&vlpround=1&vlpts=${Date.now()}&vlpmin=${CFG.wait}`;
+  let url,why="";
+  try{
+    const sk=(await getDoc(doc(db,"settings","secret"))).data()?.k;
+    if(!sk){toast("Admin chưa nhập API key rút gọn link (Admin > Cài đặt)",0);return go("task")}
+    const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;
+    
+    let t;
+    try{
+      const r=await fetch(api,{mode:"cors"});
+      if(!r.ok)throw new Error(r.status);
+      t=await r.text();
+    }catch{
+      const proxies=[
+        `https://corsproxy.io/?${encodeURIComponent(api)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`,
+        `https://cors-anywhere.herokuapp.com/${api}`
+      ];
+      for(const p of proxies){
+        try{
+          t=await (await fetch(p)).text();
+          if(t&&!t.includes("Failed to fetch"))break;
+        }catch{}
+      }
+    }
+    if(!t)throw new Error("Tất cả proxy đều fail");
+    const j=JSON.parse(t);
+    url=j.shortenedUrl||j.short_url||j.url;
+    why=j.message||j.error||j.msg||"";
+  }catch(e){why=e.message||String(e)}
+  
+  if(!url||url===long||url.startsWith(LAG)){
+    toast("Không tạo được link"+(why?": "+why:", thử lại sau"),0);
+    return go("task");
+  }
+  await addDoc(collection(db,"tasks"),{uid:U.uid,key,url,status:"pending",created:Date.now()});
+  go("task");
 }
 async function sendKey(t){
  if((+localStorage.lk||0)>Date.now())return toast(`Bạn bị khóa nhập key, thử lại sau ${Math.ceil((localStorage.lk-Date.now())/6e4)} phút`,0);
