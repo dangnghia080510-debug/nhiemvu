@@ -4,66 +4,81 @@
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0b0f1a;
-  --card:#131a2e;
-  --card2:#1a2338;
-  --border:#2a3555;
-  --cyan:#00e5ff;
-  --pink:#ff4d9e;
-  --gold:#ffc107;
-  --green:#00e676;
-  --red:#ff5252;
-  --text:#e8ecf8;
-  --muted:#8b95b8;
-  --grad:linear-gradient(135deg,#00e5ff,#7c4dff);
-  --grad2:linear-gradient(135deg,#ff4d9e,#ff8a65);
+  --bg:#ffffff;
+  --card:#ffffff;
+  --card2:#f4f4f4;
+  --border:#dcdcdc;
+  --ink:#0a0a0a;
+  --text:#0a0a0a;
+  --muted:#707070;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:var(--bg);color:var(--text);font:400 15px/1.55 "Be Vietnam Pro",system-ui,sans-serif;
-background-image:radial-gradient(ellipse 80% 50% at 80% -20%,#1a0a4e55,transparent),radial-gradient(ellipse 60% 40% at -10% 30%,#0a3a5e44,transparent)}
-h1,h2,.logo,.coin,.btn,.big,.rk .n,.rk .c{font-family:"Chakra Petch",sans-serif}
+body{min-height:100vh;background:var(--bg);color:var(--text);font:400 15px/1.55 "Be Vietnam Pro",system-ui,sans-serif}
+h1,h2,.logo,.coin,.btn,.big,.rk .n,.rk .c,.code{font-family:"Chakra Petch",sans-serif}
 .wrap{max-width:480px;margin:0 auto;padding:14px 14px 90px}
 header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px}
-.logo{font-weight:700;font-size:22px;letter-spacing:.5px}.logo span{color:var(--pink)}
-.coin{background:linear-gradient(135deg,#1a2338,#2a1a3e);border:1px solid var(--gold);color:var(--gold);padding:7px 14px;border-radius:20px;font-weight:700;font-size:15px;box-shadow:0 0 12px #ffc10733}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 24px #00000044}
-.hero{background:linear-gradient(145deg,#1a1540,#0f2a4a);border-color:#3a2a6a;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;top:-40%;right:-20%;width:180px;height:180px;background:radial-gradient(circle,#ff4d9e22,transparent 70%)}
-.hero .big{font-size:36px;font-weight:700;color:var(--gold);margin:6px 0 10px;text-shadow:0 0 20px #ffc10744}
+.logo{font-weight:700;font-size:22px;letter-spacing:.5px}
+.logo span{background:#000;color:#fff;padding:0 7px;border-radius:6px;margin-left:3px}
+.coin{border:1.5px solid #000;color:#000;padding:7px 14px;border-radius:20px;font-weight:700;font-size:15px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px}
+.hero{background:#000;color:#fff;border-color:#000}
+.hero .big{font-size:36px;font-weight:700;color:#fff;margin:6px 0 10px}
+.hero .mu{color:#b8b8b8}
+.hero b{color:#fff}
 .mu{color:var(--muted);font-size:13.5px}
-h2{font-size:16px;font-weight:600;color:var(--cyan);margin-bottom:12px;text-transform:uppercase;letter-spacing:.8px}
+h2{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:12px;text-transform:uppercase;letter-spacing:.8px}
 label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
-input,select,textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:var(--text);font:inherit;font-size:15px;margin-bottom:12px;transition:border .2s}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cyan)}
-.btn{width:100%;padding:14px;border:0;border-radius:12px;background:var(--grad);color:#061018;font-weight:700;font-size:15px;cursor:pointer;transition:transform .15s,opacity .15s}
-.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5}
-.btn.alt{background:var(--card2);color:var(--text);border:1px solid var(--border)}
-.btn.pink{background:var(--grad2);color:#fff}
+input,select,textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text);font:inherit;font-size:15px;margin-bottom:12px;transition:border .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#000}
+.btn{width:100%;padding:14px;border:1.5px solid #000;border-radius:12px;background:#000;color:#fff;font-weight:700;font-size:15px;cursor:pointer;transition:transform .15s,opacity .15s}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4}
+.btn.alt{background:#fff;color:#000}
 .row{display:flex;gap:10px}.row>*{flex:1}
 .item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
 .item:last-child{border:0}
-.mini{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font:500 13px "Be Vietnam Pro",sans-serif;cursor:pointer}
-.mini.ok{color:var(--green)}.mini.bad{color:var(--red)}
-.tag{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
-.pending{background:#ffc10722;color:var(--gold)}.approved{background:#00e67622;color:var(--green)}.rejected{background:#ff525222;color:var(--red)}
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#0b0f1aee;backdrop-filter:blur(12px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0);z-index:10}
+.mini{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:#000;font:500 13px "Be Vietnam Pro",sans-serif;cursor:pointer}
+.mini.ok{background:#000;color:#fff;border-color:#000}
+.mini.bad{background:#fff;color:#000;border-color:#000}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.pending{background:#eee;color:#555}
+.approved{background:#000;color:#fff}
+.rejected{background:#fff;color:#000;border:1px solid #000}
+.note{background:var(--card2);border:1px dashed #999;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13.5px}
+.box{background:var(--card2);border-radius:12px;padding:12px;margin-bottom:12px}
+.box input{background:#fff}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#fffffff2;backdrop-filter:blur(12px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0);z-index:10}
 nav button{flex:1;padding:12px 4px;border:0;background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:"Be Vietnam Pro",sans-serif}
-nav button.on{color:var(--cyan)}
+nav button.on{color:#000;box-shadow:inset 0 2px 0 #000}
 .auth{max-width:360px;margin:10vh auto 0}
 .auth h1{font-size:26px;margin-bottom:4px}
-.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);padding:12px 18px;border-radius:12px;font-weight:600;z-index:99;max-width:90vw;background:var(--card2);border:1px solid;font-size:14px}
-.toast.ok{border-color:var(--green);color:var(--green)}.toast.bad{border-color:var(--red);color:var(--red)}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);padding:12px 18px;border-radius:12px;font-weight:600;z-index:99;max-width:90vw;border:2px solid #000;font-size:14px}
+.toast.ok{background:#000;color:#fff}
+.toast.bad{background:#fff;color:#000;box-shadow:0 4px 18px #0003}
 .rk{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
-.rk .n{width:28px;font-weight:700;font-size:16px;color:var(--gold)}.rk.me{background:#00e5ff11;border-radius:8px;margin:0 -8px;padding:11px 8px}
-.rk .c{margin-left:auto;font-weight:700;color:var(--cyan)}
-.xp{height:8px;background:#0b0f1a;border-radius:6px;overflow:hidden;margin-top:10px}
-.xp b{display:block;height:100%;background:var(--grad);border-radius:6px;transition:width .5s}
+.rk .n{width:28px;font-weight:700;font-size:16px;color:#000}
+.rk.me{background:#f0f0f0;border-radius:8px;margin:0 -8px;padding:11px 8px}
+.rk .c{margin-left:auto;font-weight:700;color:#000}
+.xp{height:8px;background:#3a3a3a;border-radius:6px;overflow:hidden;margin-top:10px}
+.xp b{display:block;height:100%;background:#fff;border-radius:6px;transition:width .5s}
 .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.card-opt{padding:14px 10px;border-radius:12px;border:1.5px solid var(--border);background:var(--card2);text-align:center;cursor:pointer;transition:all .2s;font-weight:600;font-size:14px}
-.card-opt.on{border-color:var(--cyan);background:#00e5ff15;color:var(--cyan);box-shadow:0 0 12px #00e5ff22}
+.card-opt{padding:14px 10px;border-radius:12px;border:1.5px solid var(--border);background:#fff;text-align:center;cursor:pointer;transition:all .2s;font-weight:600;font-size:14px}
+.card-opt.on{border-color:#000;background:#000;color:#fff}
 .denom{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.denom button{flex:1 1 30%;padding:11px 6px;border-radius:10px;border:1.5px solid var(--border);background:var(--card2);color:var(--text);font-weight:600;font-size:13px;cursor:pointer}
-.denom button.on{border-color:var(--pink);background:#ff4d9e18;color:var(--pink)}
+.denom button{flex:1 1 30%;padding:11px 6px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:#000;font-weight:600;font-size:13px;cursor:pointer}
+.denom button.on{border-color:#000;background:#000;color:#fff}
+.seg{display:flex;background:var(--card2);border-radius:12px;padding:4px;margin:12px 0}
+.seg button{flex:1;padding:10px;border:0;background:none;border-radius:9px;font:600 14px "Be Vietnam Pro",sans-serif;cursor:pointer;color:var(--muted)}
+.seg button.on{background:#000;color:#fff}
+.bk{display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer}
+.bk.on{border-color:#000;background:var(--card2)}
+.bk .dot{width:16px;height:16px;border-radius:50%;border:2px solid #000;flex:none}
+.bk.on .dot{background:#000;box-shadow:inset 0 0 0 3px #fff}
+.hi{padding:12px 0;border-bottom:1px solid var(--border)}.hi:last-child{border:0}
+.hi .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.code{background:#000;color:#fff;border-radius:10px;padding:10px 12px;margin-top:8px;font-weight:600;font-size:14px;line-height:1.9;word-break:break-all}
+.code>div{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.code .mini{background:#fff;color:#000;border-color:#fff;padding:4px 10px}
+.wr{padding:14px 0;border-bottom:1px solid var(--border)}.wr:last-child{border:0}
 </style></head>
 <body><div class="wrap" id="app"><p class="mu" style="text-align:center;margin-top:30vh">Đang tải...</p></div>
 <script type="module">
@@ -78,8 +93,10 @@ const LAG="https://dangnghia080510-debug.github.io/fake-lag/";
 const WORKER="https://summer-cloud-82c1.dangnghia080510.workers.dev";
 const CARDS=["Garena","Viettel","Vinaphone","Vietnamobile"];
 const DENOMS=[10000,20000,50000,100000,200000,500000];
-const DEF={tien:250,min:10000,exp:20,wait:45,lim:20,cd:30,ann:""};
-const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",exp:"Key hết hạn (phút)",wait:"Vượt link tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)"};
+const BANKS=["Vietcombank","VietinBank","BIDV","Agribank","Techcombank","MB Bank","ACB","VPBank","TPBank","Sacombank","HDBank","SHB","VIB","OCB","MSB","SeABank","Eximbank","LPBank","Nam A Bank","Bac A Bank","ABBank","VietBank"];
+const MAXBANK=3;
+const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,ann:""};
+const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Vượt link tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)"};
 const ST={pending:"Chờ duyệt",approved:"Đã duyệt",rejected:"Từ chối"};
 
 const $=s=>document.querySelector(s);
@@ -93,27 +110,30 @@ const ERR={"auth/email-already-in-use":"Tên này đã có người dùng","auth
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const toast=(m,ok=1)=>{const t=document.createElement("div");t.className="toast "+(ok?"ok":"bad");t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3200)};
 const rows=q=>getDocs(q).then(s=>s.docs.map(d=>({id:d.id,...d.data()})));
-let U=null,ME=null,CFG=DEF,tab="home";
+const isBank=w=>w.type==="bank"||(!w.type&&!w.card&&!!w.bank);
+const copyTxt=async t=>{try{await navigator.clipboard.writeText(t)}catch{const a=document.createElement("textarea");a.value=t;document.body.append(a);a.select();document.execCommand("copy");a.remove()}toast("Đã copy")};
+const bindCp=m=>m.querySelectorAll("[data-cp]").forEach(b=>b.onclick=()=>copyTxt(b.dataset.cp));
+let U=null,ME=null,CFG=DEF,tab="home",wmode="card";
 const isAd=()=>U?.email==="admin@vl.app";
 
 async function loadCfg(){const s=await getDoc(doc(db,"settings","main"));CFG={...DEF,...(s.exists()?s.data():{})}}
 async function loadMe(){for(let i=0;i<6;i++){const s=await getDoc(doc(db,"users",U.uid));if(s.exists()){ME={id:U.uid,...s.data()};return}await sleep(400)}await setDoc(doc(db,"users",U.uid),{name:U.email.split("@")[0],balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});ME={id:U.uid,...(await getDoc(doc(db,"users",U.uid))).data()}}
 
 function loginView(){
- $("#app").innerHTML=`<div class="card auth"><h1 class="logo">VƯỢT<span>LINK</span></h1><p class="mu" style="margin-bottom:18px">Vượt link · Nhận xu · Đổi thẻ cào</p>
+ $("#app").innerHTML=`<div class="card auth"><h1 class="logo">VƯỢT<span>LINK</span></h1><p class="mu" style="margin-bottom:18px">Vượt link · Nhận xu · Rút tiền</p>
  <input id="u" placeholder="Tên đăng nhập" autocomplete="username"><input id="p" type="password" placeholder="Mật khẩu (từ 6 ký tự)" autocomplete="current-password">
  <div class="row"><button class="btn" id="li">Đăng nhập</button><button class="btn alt" id="rg">Tạo tài khoản</button></div></div>`;
  const cred=()=>{const u=$("#u").value.trim().toLowerCase(),p=$("#p").value;if(!/^[a-z0-9_]{3,20}$/.test(u)||p.length<6){toast("Tên 3-20 ký tự (a-z0-9_) và mật khẩu từ 6 ký tự",0);return null}return[u+"@vl.app",p,u]};
  $("#li").onclick=async()=>{const c=cred();if(!c)return;try{await signInWithEmailAndPassword(auth,c[0],c[1])}catch{toast("Sai tên hoặc mật khẩu",0)}};
  $("#rg").onclick=async()=>{const c=cred();if(!c)return;if(localStorage.reg)return toast("Thiết bị này đã đăng ký rồi",0);try{const r=await createUserWithEmailAndPassword(auth,c[0],c[1]);await setDoc(doc(db,"users",r.user.uid),{name:c[2],balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});localStorage.reg=1}catch(e){toast(ERR[e.code]||"Lỗi: "+(e.code||e.message),0)}};
 }
-onAuthStateChanged(auth,async u=>{U=u;if(!u){loginView();return}try{await Promise.race([Promise.all([loadCfg(),loadMe()]),new Promise((_,r)=>setTimeout(()=>r({code:"unavailable"}),10000))]);shell()}catch(e){const c=e.code||e.message||String(e);$("#app").innerHTML=`<div class="card auth"><h2 style="color:var(--red)">Không tải được</h2><p>Mã: <b>${esc(c)}</b></p><div class="row"><button class="btn" onclick="location.reload()">Thử lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`;$("#lo").onclick=()=>signOut(auth)}});
+onAuthStateChanged(auth,async u=>{U=u;if(!u){loginView();return}try{await Promise.race([Promise.all([loadCfg(),loadMe()]),new Promise((_,r)=>setTimeout(()=>r({code:"unavailable"}),10000))]);shell()}catch(e){const c=e.code||e.message||String(e);$("#app").innerHTML=`<div class="card auth"><h2>Không tải được</h2><p>Mã: <b>${esc(c)}</b></p><div class="row" style="margin-top:12px"><button class="btn" onclick="location.reload()">Thử lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`;$("#lo").onclick=()=>signOut(auth)}});
 
 function shell(){
  if(isAd()&&ME.banned){ME.banned=false;updateDoc(doc(db,"users",U.uid),{banned:false})}
- if(ME.banned){$("#app").innerHTML=`<div class="card auth"><h2 style="color:var(--red)">Tài khoản bị khóa</h2><button class="btn alt" id="lo">Thoát</button></div>`;$("#lo").onclick=()=>signOut(auth);return}
- if(ME.approved===false&&!isAd()){$("#app").innerHTML=`<div class="card auth"><h2 style="color:var(--gold)">Chờ admin duyệt</h2><p class="mu">Tài khoản mới cần được duyệt trước khi dùng.</p><div class="row"><button class="btn" id="rf">Kiểm tra lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`;$("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadMe();shell()};return}
- const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["doi","Đổi thẻ"],["top","Xếp hạng"]];if(isAd())t.push(["admin","Admin"]);
+ if(ME.banned){$("#app").innerHTML=`<div class="card auth"><h2>Tài khoản bị khóa</h2><button class="btn alt" id="lo">Thoát</button></div>`;$("#lo").onclick=()=>signOut(auth);return}
+ if(ME.approved===false&&!isAd()){$("#app").innerHTML=`<div class="card auth"><h2>Chờ admin duyệt</h2><p class="mu" style="margin-bottom:12px">Tài khoản mới cần được duyệt trước khi dùng.</p><div class="row"><button class="btn" id="rf">Kiểm tra lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`;$("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadMe();shell()};return}
+ const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["doi","Rút tiền"],["top","Xếp hạng"]];if(isAd())t.push(["admin","Admin"]);
  $("#app").innerHTML=`<header><span class="logo">VƯỢT<span>LINK</span></span><span><span class="coin" id="bal"></span> <button class="mini" id="lo" style="margin-left:6px">Thoát</button></span></header><main id="m"></main><nav>${t.map(x=>`<button data-t="${x[0]}">${x[1]}</button>`).join("")}</nav>`;
  $("#lo").onclick=()=>signOut(auth);
  document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
@@ -125,11 +145,11 @@ const today=()=>ME.dayKey===day()?ME.dayCount:0;
 
 async function pHome(m){
  await loadMe();hdr();const c=today(),l=CFG.lim,pc=l>0?Math.min(100,c/l*100):0;
- m.innerHTML=`${CFG.ann?`<div class="card" style="border-color:var(--gold)"><h2 style="color:var(--gold)">Thông báo</h2><p>${esc(CFG.ann)}</p></div>`:""}
- <div class="card hero"><p class="mu">Xin chào, <b style="color:var(--text)">${esc(ME.name)}</b></p><div class="big">${fmt(ME.balance)}</div>
- <p class="mu">Hôm nay: <b style="color:var(--text)">${c}${l>0?" / "+l:""}</b> nhiệm vụ · +${fmt(CFG.tien)}/nv</p>
+ m.innerHTML=`${CFG.ann?`<div class="card" style="border-color:#000;border-width:1.5px"><h2>Thông báo</h2><p>${esc(CFG.ann)}</p></div>`:""}
+ <div class="card hero"><p class="mu">Xin chào, <b>${esc(ME.name)}</b></p><div class="big">${fmt(ME.balance)}</div>
+ <p class="mu">Hôm nay: <b>${c}${l>0?" / "+l:""}</b> nhiệm vụ · +${fmt(CFG.tien)}/nv</p>
  ${l>0?`<div class="xp"><b style="width:${pc}%"></b></div>`:""}</div>
- <div class="row"><button class="btn" id="g1">Làm nhiệm vụ</button><button class="btn pink" id="g2">Đổi thẻ cào</button></div>
+ <div class="row"><button class="btn" id="g1">Làm nhiệm vụ</button><button class="btn alt" id="g2">Rút tiền</button></div>
  <p class="mu" style="text-align:center;margin-top:14px">Tổng hoàn thành: ${ME.total||0} nhiệm vụ</p>`;
  $("#g1").onclick=()=>go("task");$("#g2").onclick=()=>go("doi");
 }
@@ -138,10 +158,10 @@ async function curTask(){const r=await rows(query(collection(db,"tasks"),where("
 async function pTask(m){
  await loadMe();hdr();const t=await curTask(),l=CFG.lim;
  m.innerHTML=`<div class="card"><h2>Nhiệm vụ</h2><p class="mu">Hôm nay ${today()}${l>0?"/"+l:""} · Thưởng ${fmt(CFG.tien)} · Hết hạn ${CFG.exp} phút</p>
- ${t?`<p style="margin-bottom:12px">1. Mở link và vượt hết bước<br>2. Copy key hiện ra<br>3. Dán key vào ô dưới</p>
+ ${t?`<p style="margin:12px 0">1. Mở link và vượt hết bước<br>2. Copy key hiện ra<br>3. Dán key vào ô dưới</p>
  <a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px" href="${esc(t.url)}" target="_blank" rel="noopener">Mở link vượt</a>
- <input id="k" placeholder="Dán key vào đây" autocomplete="off"><button class="btn pink" id="sk">Nhận thưởng</button>`
- :`<button class="btn" id="nt">Nhận nhiệm vụ mới</button>`}</div>`;
+ <input id="k" placeholder="Dán key vào đây" autocomplete="off"><button class="btn alt" id="sk">Nhận thưởng</button>`
+ :`<button class="btn" id="nt" style="margin-top:12px">Nhận nhiệm vụ mới</button>`}</div>`;
  if(t)$("#sk").onclick=()=>sendKey(t);else $("#nt").onclick=newTask;
 }
 async function newTask(){
@@ -180,34 +200,81 @@ async function sendKey(t){
  localStorage.fl=0;toast("+"+fmt(CFG.tien));go("task");
 }
 
-// ====== ĐỔI THẺ CÀO ======
+// ====== RÚT TIỀN: ĐỔI THẺ CÀO + NGÂN HÀNG ======
 async function pDoi(m){
  await loadMe();hdr();
- const ws=await rows(query(collection(db,"withdrawals"),where("uid","==",U.uid)));
- const wds=ws.sort((a,b)=>b.created-a.created).slice(0,10),pend=wds.some(w=>w.status==="pending");
- let selCard="Garena",selDenom=10000;
- m.innerHTML=`<div class="card"><h2>Đổi thẻ cào</h2>
- <p class="mu">Số dư ${fmt(ME.balance)} · Tối thiểu ${fmt(CFG.min)}</p>
- ${pend?'<p class="pending" style="margin:10px 0">Đang có đơn chờ duyệt. Chờ admin xử lý xong.</p>':`
- <label>Loại thẻ</label>
- <div class="card-grid" id="cg">${CARDS.map(c=>`<div class="card-opt ${c===selCard?"on":""}" data-c="${c}">${c}</div>`).join("")}</div>
- <label>Mệnh giá</label>
- <div class="denom" id="dg">${DENOMS.map(d=>`<button class="${d===selDenom?"on":""}" data-d="${d}">${fmt(d)}</button>`).join("")}</div>
- <button class="btn pink" id="wd">Gửi yêu cầu đổi thẻ</button>`}
- </div>
- <div class="card"><h2>Lịch sử đổi thẻ</h2>
- ${wds.map(w=>`<div class="item"><span><b>${esc(w.card||w.bank)}</b> · ${fmt(w.amount)}<br><span class="mu">${new Date(w.created).toLocaleDateString("vi-VN")}</span></span><span class="tag ${w.status}">${ST[w.status]}</span></div>`).join("")||'<p class="mu">Chưa có đơn nào.</p>'}
- </div>`;
- if(!pend){
+ const[ws,bk0]=await Promise.all([
+  rows(query(collection(db,"withdrawals"),where("uid","==",U.uid))),
+  rows(query(collection(db,"banks"),where("uid","==",U.uid)))]);
+ const wds=ws.sort((a,b)=>b.created-a.created).slice(0,20),pend=wds.some(w=>w.status==="pending");
+ const bk=bk0.sort((a,b)=>a.created-b.created);
+ let selCard=CARDS[0],selDenom=DENOMS[0],selBank=bk[0]?.id||"",showAdd=!bk.length;
+
+ const cardForm=()=>pend?"":`
+  <label>Loại thẻ</label>
+  <div class="card-grid">${CARDS.map(c=>`<div class="card-opt ${c===selCard?"on":""}" data-c="${c}">${c}</div>`).join("")}</div>
+  <label>Mệnh giá</label>
+  <div class="denom">${DENOMS.map(d=>`<button class="${d===selDenom?"on":""}" data-d="${d}">${fmt(d)}</button>`).join("")}</div>
+  <button class="btn" id="wd">Gửi yêu cầu đổi thẻ</button>
+  <p class="mu" style="margin-top:10px">Admin duyệt xong, mã thẻ và seri sẽ hiện ở Lịch sử bên dưới, tiền tự trừ khỏi ví.</p>`;
+
+ const bankForm=()=>`
+  <label>Tài khoản nhận tiền</label>
+  ${bk.map(b=>`<div class="bk ${b.id===selBank?"on":""}" data-bk="${b.id}"><span class="dot"></span><span style="flex:1;min-width:0"><b>${esc(b.bank)}</b> · ${esc(b.number)}<br><span class="mu">${esc(b.owner)}</span></span><button class="mini bad" data-del="${b.id}">Xóa</button></div>`).join("")}
+  ${showAdd?`<div class="box">
+    <label>Ngân hàng</label><input id="bn" list="bl" placeholder="VD: Vietcombank" autocomplete="off"><datalist id="bl">${BANKS.map(x=>`<option value="${x}">`).join("")}</datalist>
+    <label>Số tài khoản</label><input id="bs" inputmode="numeric" placeholder="Số tài khoản" autocomplete="off">
+    <label>Tên chủ tài khoản</label><input id="bo" placeholder="NGUYEN VAN A" autocomplete="off">
+    <div class="row"><button class="btn" id="bsv">Lưu tài khoản</button>${bk.length?'<button class="btn alt" id="bcn">Hủy</button>':""}</div></div>`
+   :(bk.length<MAXBANK?'<button class="btn alt" id="badd" style="margin-bottom:12px">+ Thêm tài khoản</button>':"")}
+  ${pend||!bk.length?"":`<label>Số tiền muốn rút</label><input id="am" inputmode="numeric" placeholder="Tối thiểu ${fmt(CFG.minb)}"><button class="btn" id="wd">Gửi yêu cầu rút tiền</button>
+  <p class="mu" style="margin-top:10px">Admin chuyển khoản và duyệt xong, tiền tự trừ khỏi ví.</p>`}`;
+
+ const hist=()=>wds.map(w=>{const b=isBank(w);return`<div class="hi"><div class="top"><span><b>${b?"Ngân hàng "+esc(w.bank):"Thẻ "+esc(w.card||"?")}</b> · ${fmt(w.amount)}<br><span class="mu">${b?esc(w.bankNo||"")+" · ":""}${new Date(w.created).toLocaleDateString("vi-VN")}</span></span><span class="tag ${w.status}">${b&&w.status==="approved"?"Đã chuyển":ST[w.status]}</span></div>${w.status==="approved"&&w.cardCode?`<div class="code"><div><span>Mã thẻ: ${esc(w.cardCode)}</span><button class="mini" data-cp="${esc(w.cardCode)}">Copy</button></div><div><span>Seri: ${esc(w.cardSerial)}</span><button class="mini" data-cp="${esc(w.cardSerial)}">Copy</button></div></div>`:""}</div>`}).join("")||'<p class="mu">Chưa có đơn nào.</p>';
+
+ const draw=()=>{
+  const bm=wmode==="bank";
+  m.innerHTML=`<div class="card"><h2>Rút tiền</h2>
+  <p class="mu">Số dư ${fmt(ME.balance)} · Tối thiểu ${fmt(bm?CFG.minb:CFG.min)}</p>
+  <div class="seg"><button data-md="card" class="${bm?"":"on"}">Đổi thẻ cào</button><button data-md="bank" class="${bm?"on":""}">Rút ngân hàng</button></div>
+  ${pend?'<p class="note">Đang có đơn chờ duyệt. Admin duyệt xong tiền mới tự trừ khỏi ví.</p>':""}
+  ${bm?bankForm():cardForm()}</div>
+  <div class="card"><h2>Lịch sử</h2>${hist()}</div>`;
+  bindCp(m);
+  m.querySelectorAll("[data-md]").forEach(b=>b.onclick=()=>{wmode=b.dataset.md;draw()});
   m.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{selCard=b.dataset.c;m.querySelectorAll("[data-c]").forEach(x=>x.classList.toggle("on",x.dataset.c===selCard))});
   m.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{selDenom=+b.dataset.d;m.querySelectorAll("[data-d]").forEach(x=>x.classList.toggle("on",+x.dataset.d===selDenom))});
-  $("#wd").onclick=async()=>{
-   if(selDenom<CFG.min)return toast("Tối thiểu "+fmt(CFG.min),0);
-   if(selDenom>ME.balance)return toast("Số dư không đủ",0);
-   await addDoc(collection(db,"withdrawals"),{uid:U.uid,uname:ME.name,amount:selDenom,card:selCard,status:"pending",created:Date.now()});
-   toast("Đã gửi yêu cầu "+selCard+" "+fmt(selDenom));go("doi");
+  m.querySelectorAll("[data-bk]").forEach(b=>b.onclick=e=>{if(e.target.closest("[data-del]"))return;selBank=b.dataset.bk;m.querySelectorAll("[data-bk]").forEach(x=>x.classList.toggle("on",x.dataset.bk===selBank))});
+  m.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(!confirm("Xóa tài khoản này?"))return;try{await deleteDoc(doc(db,"banks",b.dataset.del));toast("Đã xóa")}catch{toast("Không xóa được",0)}go("doi")});
+  if($("#badd"))$("#badd").onclick=()=>{showAdd=true;draw()};
+  if($("#bcn"))$("#bcn").onclick=()=>{showAdd=false;draw()};
+  if($("#bsv"))$("#bsv").onclick=async()=>{
+   const bank=$("#bn").value.trim(),number=$("#bs").value.replace(/\s/g,""),owner=$("#bo").value.trim().toUpperCase();
+   if(!bank||!/^\d{6,20}$/.test(number)||owner.length<3)return toast("Nhập đủ ngân hàng, số tài khoản (6-20 số) và tên chủ tài khoản",0);
+   if(bk.length>=MAXBANK)return toast("Tối đa "+MAXBANK+" tài khoản",0);
+   try{await addDoc(collection(db,"banks"),{uid:U.uid,bank,number,owner,created:Date.now()});toast("Đã lưu tài khoản")}catch{toast("Không lưu được",0)}
+   go("doi")};
+  if($("#wd"))$("#wd").onclick=async e=>{
+   const btn=e.currentTarget;
+   if(wmode==="bank"){
+    const b=bk.find(x=>x.id===selBank);if(!b)return toast("Chọn tài khoản ngân hàng",0);
+    const amt=num($("#am").value);
+    if(amt<CFG.minb)return toast("Tối thiểu "+fmt(CFG.minb),0);
+    if(amt>ME.balance)return toast("Số dư không đủ",0);
+    btn.disabled=true;
+    await addDoc(collection(db,"withdrawals"),{uid:U.uid,uname:ME.name,type:"bank",amount:amt,bank:b.bank,bankNo:b.number,bankOwner:b.owner,status:"pending",created:Date.now()});
+    toast("Đã gửi yêu cầu rút "+fmt(amt));
+   }else{
+    if(selDenom<CFG.min)return toast("Tối thiểu "+fmt(CFG.min),0);
+    if(selDenom>ME.balance)return toast("Số dư không đủ",0);
+    btn.disabled=true;
+    await addDoc(collection(db,"withdrawals"),{uid:U.uid,uname:ME.name,type:"card",amount:selDenom,card:selCard,status:"pending",created:Date.now()});
+    toast("Đã gửi yêu cầu "+selCard+" "+fmt(selDenom));
+   }
+   go("doi");
   };
- }
+ };
+ draw();
 }
 
 async function pTop(m){
@@ -220,26 +287,50 @@ async function pAdmin(m=$("#m")){
  const[wd,us,rg,sc]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(50))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret"))]);
  const all=[...new Map([...rg,...us].map(u=>[u.id,u])).values()],dup=u=>u.dev?all.filter(x=>x.dev===u.dev).length:1;
  const pr=rg.filter(u=>!u.banned).sort((a,b)=>a.created-b.created);
- m.innerHTML=`<div class="card"><h2>Chờ duyệt tài khoản (${pr.length})</h2>${pr.map(u=>`<div class="item"><span><b>${esc(u.name)}</b><br><span class="mu">${new Date(u.created).toLocaleString("vi-VN")}</span>${dup(u)>1?`<br><span class="pending">⚠️ ${dup(u)} tk cùng máy</span>`:""}</span><span><button class="mini ok" data-ap="${u.id}">Duyệt</button> <button class="mini bad" data-rj="${u.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có.</p>'}</div>
- <div class="card"><h2>Đơn đổi thẻ chờ duyệt (${wd.length})</h2>${wd.sort((a,b)=>a.created-b.created).map(w=>`<div class="item"><span><b>${esc(w.uname)}</b> · ${esc(w.card||"?")} ${fmt(w.amount)}<br><span class="mu">${new Date(w.created).toLocaleString("vi-VN")}</span></span><span><button class="mini ok" data-ok="${w.id}">Duyệt</button> <button class="mini bad" data-no="${w.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có.</p>'}</div>
+ const wl=wd.sort((a,b)=>a.created-b.created).map(w=>{const b=isBank(w);return`<div class="wr" data-t="${b?"bank":"card"}">
+  <div style="margin-bottom:10px"><b>${esc(w.uname)}</b> · ${fmt(w.amount)} <span class="tag pending">${b?"Ngân hàng":"Thẻ "+esc(w.card||"?")}</span><br><span class="mu">${new Date(w.created).toLocaleString("vi-VN")}</span></div>
+  ${b?`<div class="box"><span class="mu">Chuyển khoản tới</span><br><b>${esc(w.bank)}</b><br>STK: <b>${esc(w.bankNo)}</b> <button class="mini" data-cp="${esc(w.bankNo)}">Copy</button><br>Chủ TK: <b>${esc(w.bankOwner)}</b><br><span class="mu">Chuyển xong mới bấm Duyệt, ví sẽ tự trừ ${fmt(w.amount)}.</span></div>`
+  :`<input data-cc placeholder="Mã thẻ" autocomplete="off"><input data-cs placeholder="Số seri" autocomplete="off">`}
+  <div class="row"><button class="mini ok" data-ok="${w.id}">Duyệt</button><button class="mini bad" data-no="${w.id}">Từ chối</button></div></div>`}).join("");
+ m.innerHTML=`<div class="card"><h2>Chờ duyệt tài khoản (${pr.length})</h2>${pr.map(u=>`<div class="item"><span><b>${esc(u.name)}</b><br><span class="mu">${new Date(u.created).toLocaleString("vi-VN")}</span>${dup(u)>1?`<br><span class="tag pending">${dup(u)} tk cùng máy</span>`:""}</span><span><button class="mini ok" data-ap="${u.id}">Duyệt</button> <button class="mini bad" data-rj="${u.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có.</p>'}</div>
+ <div class="card"><h2>Đơn rút / đổi thẻ chờ duyệt (${wd.length})</h2>${wl||'<p class="mu">Không có.</p>'}</div>
  <div class="card"><h2>Cài đặt</h2>${Object.keys(SET).map(k=>`<label>${SET[k]}</label><input data-s="${k}" inputmode="numeric" value="${CFG[k]}">`).join("")}
  <label>API key sitetop</label><input id="sk" type="password" placeholder="${sc.exists()?"Đã lưu":"Dán API key"}">
  <label>Thông báo</label><textarea id="an" rows="2">${esc(CFG.ann)}</textarea>
  <button class="btn" id="sv">Lưu</button></div>
  <div class="card"><h2>Người dùng (${us.length})</h2>${us.map(u=>`<div class="item"><span>${u.banned?"🚫 ":u.approved===false?"⏳ ":""}<b>${esc(u.name)}</b><br><span class="mu">${fmt(u.balance)} · ${u.total||0} nv</span></span>${u.id===U.uid?'<span class="mu">Bạn</span>':`<span><button class="mini" data-m="${u.id}">±Xu</button> <button class="mini ${u.banned?"ok":"bad"}" data-b="${u.id}" data-v="${u.banned?0:1}">${u.banned?"Mở":"Khóa"}</button></span>`}</div>`).join("")}</div>`;
+ bindCp(m);
  m.querySelectorAll("[data-ap]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.ap),{approved:true});toast("Đã duyệt");pAdmin()});
  m.querySelectorAll("[data-rj]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.rj),{banned:true});toast("Đã từ chối");pAdmin()});
- m.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>decide(b.dataset.ok,1));
- m.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>decide(b.dataset.no,0));
+ m.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
+  const bx=b.closest(".wr"),x={};
+  if(bx.dataset.t==="card"){
+   x.code=bx.querySelector("[data-cc]").value.trim();x.serial=bx.querySelector("[data-cs]").value.trim();
+   if(!x.code||!x.serial)return toast("Nhập mã thẻ và số seri trước khi duyệt",0);
+  }
+  b.disabled=true;decide(b.dataset.ok,1,x)});
+ m.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{if(!confirm("Từ chối đơn này?"))return;b.disabled=true;decide(b.dataset.no,0)});
  m.querySelectorAll("[data-b]").forEach(b=>b.onclick=async()=>{if(b.dataset.v==="1"&&!confirm("Khóa?"))return;await updateDoc(doc(db,"users",b.dataset.b),{banned:b.dataset.v==="1"});pAdmin()});
  m.querySelectorAll("[data-m]").forEach(b=>b.onclick=async()=>{const v=parseInt(prompt("Cộng (+) hoặc trừ (-) xu:"));if(!v)return;
   try{await runTransaction(db,async tx=>{const r=doc(db,"users",b.dataset.m),s=await tx.get(r);if(s.data().balance+v<0)throw 1;tx.update(r,{balance:s.data().balance+v})});toast("OK")}catch{toast("Số dư không đủ",0)}pAdmin()});
  $("#sv").onclick=async()=>{const d={ann:$("#an").value.trim()};m.querySelectorAll("[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu");pAdmin()};
 }
-async function decide(id,ok){
- try{await runTransaction(db,async tx=>{const wr=doc(db,"withdrawals",id),w=await tx.get(wr);if(w.data().status!=="pending")throw"Đã xử lý";
-  if(ok){const ur=doc(db,"users",w.data().uid),u=await tx.get(ur);if(u.data().balance<w.data().amount)throw"Không đủ tiền";tx.update(ur,{balance:u.data().balance-w.data().amount})}
-  tx.update(wr,{status:ok?"approved":"rejected"})});toast(ok?"Đã duyệt. Gửi thẻ cho user.":"Đã từ chối")}
- catch(e){toast(typeof e==="string"?e:"Lỗi",0)}pAdmin();
+async function decide(id,ok,x={}){
+ try{
+  await runTransaction(db,async tx=>{
+   const wr=doc(db,"withdrawals",id),w=await tx.get(wr);
+   if(!w.exists()||w.data().status!=="pending")throw"Đã xử lý";
+   const d=w.data(),upd={status:ok?"approved":"rejected",done:Date.now()};
+   if(ok){
+    const ur=doc(db,"users",d.uid),u=await tx.get(ur);
+    if(u.data().balance<d.amount)throw"Ví người dùng không đủ tiền";
+    tx.update(ur,{balance:u.data().balance-d.amount});
+    if(x.code){upd.cardCode=x.code;upd.cardSerial=x.serial}
+   }
+   tx.update(wr,upd);
+  });
+  toast(ok?"Đã duyệt, đã trừ tiền trong ví":"Đã từ chối");
+ }catch(e){toast(typeof e==="string"?e:"Lỗi",0)}
+ pAdmin();
 }
 </script></body></html>
