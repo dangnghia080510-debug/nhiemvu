@@ -75,6 +75,7 @@ const auth=getAuth(app),db=getFirestore(app);
 
 // ====== CẤU HÌNH ======
 const LAG="https://dangnghia080510-debug.github.io/fake-lag/";
+const WORKER="https://summer-cloud-82c1.dangnghia080510.workers.dev";
 const BANKS=["MB Bank","Vietcombank","Techcombank","ACB","BIDV","VPBank","Agribank","VietinBank","TPBank","Sacombank"];
 const DEF={tien:250,min:20000,exp:20,wait:45,lim:20,cd:30,ann:""};
 const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu rút (đ)",exp:"Key hết hạn (phút)",wait:"Vượt link tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không giới hạn)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)"};
@@ -152,57 +153,24 @@ async function newTask(){
   $("#nt").disabled=true;
   const key=rnd(12);
   const long=`${LAG}?vlpcode=${key}&vlpsid=${rnd(16)}&vlpuser=${U.uid}&vlpitem=task&vlpround=1&vlpts=${Date.now()}&vlpmin=${CFG.wait}`;
-  let url="",why="",raw="";
+  let url="",why="";
   try{
     const sk=(await getDoc(doc(db,"settings","secret"))).data()?.k;
     if(!sk){toast("Admin chưa nhập API key rút gọn link (Admin > Cài đặt)",0);return go("task")}
     const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;
-    
-    // Proxy còn hoạt động (đã bỏ corsproxy vì bắt key)
-    const proxies=[
-      api, // thử trực tiếp trước
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`,
-      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(api)}`,
-      `https://cors-anywhere.herokuapp.com/${api}`
-    ];
-    
-    let t="",j=null;
-    for(const p of proxies){
-      try{
-        const r=await fetch(p,{mode:"cors"});
-        t=await r.text();
-        if(!t || !t.trim().startsWith("{")) continue;
-        const tmp=JSON.parse(t);
-        // Bỏ qua response lỗi của proxy
-        if(tmp.status===403 || tmp.error==="keyless_legacy" || (tmp.message&&tmp.message.includes("CORS PROXY"))) continue;
-        // Chỉ lấy nếu có field link hoặc success
-        const candidate = tmp.shortenedUrl || tmp.short_url || tmp.shorturl || tmp.shortUrl || tmp.url || tmp.link 
-          || (tmp.data && (tmp.data.shortenedUrl || tmp.data.short_url || tmp.data.url || tmp.data.link || tmp.data.shorturl));
-        if(candidate || tmp.success===true || tmp.status==="success"){
-          j=tmp;
-          raw=t;
-          break;
-        }
-        // Nếu là lỗi của sitetop (invalid key) thì cũng dừng để báo
-        if(tmp.success===false || tmp.error){
-          j=tmp;
-          raw=t;
-          break;
-        }
-      }catch(e){}
-    }
-    
-    if(!j) throw new Error("Tất cả proxy fail hoặc không nhận JSON hợp lệ");
-    
+    const r=await fetch(`${WORKER}?url=${encodeURIComponent(api)}`);
+    const t=await r.text();
+    if(!t || !t.trim().startsWith("{")) throw new Error("Worker trả về không phải JSON: "+(t||"").slice(0,80));
+    const j=JSON.parse(t);
+    console.log("Sitetop response:", j);
     url = j.shortenedUrl || j.short_url || j.shorturl || j.shortUrl || j.url || j.link 
        || (j.data && (j.data.shortenedUrl || j.data.short_url || j.data.url || j.data.link || j.data.shorturl))
        || "";
-    why = j.message || j.error || j.msg || (j.status==="error"?j.error:"") || "";
-    console.log("Sitetop response:", j);
+    why = j.message || j.error || j.msg || "";
   }catch(e){why=e.message||String(e)}
   
   if(!url || url===long || url.startsWith(LAG)){
-    toast("Không tạo được link"+(why?": "+why:"")+(raw?" | "+raw.slice(0,100):""),0);
+    toast("Không tạo được link"+(why?": "+why:""),0);
     return go("task");
   }
   await addDoc(collection(db,"tasks"),{uid:U.uid,key,url,status:"pending",created:Date.now()});
