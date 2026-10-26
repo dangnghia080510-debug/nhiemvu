@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vượt Link Arena</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
 <!--
 FIRESTORE RULES (Firebase Console > Firestore > Rules) - bật Authentication > Email/Password trước:
 rules_version='2'; service cloud.firestore{ match /databases/{d}/documents{
@@ -9,7 +9,7 @@ rules_version='2'; service cloud.firestore{ match /databases/{d}/documents{
  function own(){return request.auth!=null&&resource.data.uid==request.auth.uid}
  function mine(){return request.auth!=null&&request.resource.data.uid==request.auth.uid}
  function ok(){return get(/databases/$(d)/documents/users/$(request.auth.uid)).data.get('approved',true)!=false}
- match /settings/{x}{allow read:if true;allow write:if ad()}
+ match /settings/{x}{allow read:if x=='main'||(request.auth!=null&&ok());allow write:if ad()}
  match /users/{u}{allow read:if request.auth!=null;
   allow create:if request.auth.uid==u&&request.resource.data.balance==0&&request.resource.data.banned==false&&request.resource.data.approved==false;
   allow update:if ad()||(request.auth.uid==u&&ok()&&request.resource.data.banned==resource.data.banned&&request.resource.data.get('approved',null)==resource.data.get('approved',null))}
@@ -21,45 +21,50 @@ LƯU Ý: web thuần Firebase thì người dùng rành kỹ thuật vẫn có t
 Đăng ký tài khoản tên "admin" ĐẦU TIÊN để làm quản trị viên.
 -->
 <style>
-:root{--ink:#0b0a1e;--pan:#17143a;--pan2:#1f1b4d;--line:#34306e;--cy:#19e3ff;--mg:#ff2e9a;--gold:#ffc832;--ok:#3dff9a;--bad:#ff4d6d;--tx:#ecebff;--mu:#9b98cf}
+:root{--ink:#0c1030;--pan:#151a45;--pan2:#1e2559;--line:#39428f;--cy:#4de3ff;--mg:#ff5fae;--gold:#ffd45c;--ok:#52f2a6;--bad:#ff7088;--tx:#f5f6ff;--mu:#b3b9ec}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--tx);font:500 17px/1.4 Rajdhani,system-ui,sans-serif;background:radial-gradient(900px 500px at 85% -10%,#3a1470 0,transparent 60%),radial-gradient(700px 400px at -10% 30%,#07406a 0,transparent 60%),var(--ink) fixed}
-h1,h2,.coin,.btn,nav button{font-family:Orbitron,sans-serif}
-h2{font-size:15px;margin:0 0 12px;color:var(--cy);letter-spacing:.04em}
-.wrap{max-width:760px;margin:0 auto;padding:12px 14px 96px}
-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0}
-.logo{font:800 18px Orbitron;color:var(--tx)}.logo i{font-style:normal;color:var(--mg)}
-.coin{background:var(--pan);border:1px solid var(--gold);color:var(--gold);padding:6px 12px;border-radius:999px;font-size:14px;box-shadow:0 0 14px #ffc83033}
-.card{background:var(--pan);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px}
-.hero{background:linear-gradient(135deg,var(--pan2),#2a1559);border-color:var(--mg);box-shadow:0 0 28px #ff2e9a22}
-.hero .big{font:800 38px Orbitron;color:var(--gold);text-shadow:0 0 18px #ffc83066;margin:2px 0 10px}
-.xp{height:14px;background:#0b0a1e;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+body{margin:0;min-height:100vh;color:var(--tx);font:400 16px/1.55 "Be Vietnam Pro",system-ui,sans-serif;background:radial-gradient(800px 480px at 90% -10%,#3b2a8c 0,transparent 60%),radial-gradient(700px 420px at -10% 25%,#0f4f86 0,transparent 60%),var(--ink) fixed}
+h1,h2,.coin,.btn,nav button,.big,.rk .n,.rk .c,.logo{font-family:"Chakra Petch","Be Vietnam Pro",sans-serif}
+h2{font-size:19px;font-weight:700;margin:0 0 12px;color:var(--cy);text-transform:lowercase}
+h2::first-letter{text-transform:uppercase}
+label{display:block;font-size:14px;margin:2px 0 6px}
+p{margin:0 0 12px}
+.wrap{max-width:760px;margin:0 auto;padding:12px 14px 100px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 14px}
+.logo{font-weight:700;font-size:20px;color:var(--tx)}.logo i{font-style:normal;color:var(--mg)}
+.coin{background:var(--pan);border:1px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:999px;font-size:16px;font-weight:700;box-shadow:0 0 14px #ffd45c33}
+.card{background:var(--pan);border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 14px}
+.hero{background:linear-gradient(135deg,#222a68,#3a2475);border-color:var(--mg);box-shadow:0 0 28px #ff5fae22}
+.hero .big{font-weight:700;font-size:42px;line-height:1.2;color:var(--gold);margin:4px 0 12px}
+.xp{height:14px;background:var(--ink);border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .xp b{display:block;height:100%;background:linear-gradient(90deg,var(--cy),var(--mg));transition:width .6s}
 .mu{color:var(--mu)}
-input,select,textarea{width:100%;margin:0 0 10px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--ink);color:var(--tx);font:inherit}
+input,select,textarea{width:100%;margin:0 0 12px;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:#0e1238;color:var(--tx);font:inherit;font-size:16px}
+input::placeholder,textarea::placeholder{color:#8088c8}
 input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--cy);outline-offset:1px}
-.btn{width:100%;padding:13px;border:0;border-radius:10px;background:linear-gradient(90deg,var(--cy),#5b7cff);color:#04041a;font-weight:800;font-size:13px;cursor:pointer;letter-spacing:.03em}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;background:linear-gradient(90deg,var(--cy),#6f8bff);color:#061030;font-weight:700;font-size:16px;cursor:pointer}
 .btn:active{transform:scale(.98)}.btn.alt{background:var(--pan2);color:var(--tx);border:1px solid var(--line)}
-.btn.mg{background:linear-gradient(90deg,var(--mg),#ff7a45);color:#fff}
+.btn.mg{background:linear-gradient(90deg,var(--mg),#ff8a5c);color:#2a0620}
+.btn:disabled{opacity:.6}
 .row{display:flex;gap:10px}.row>*{flex:1}
-.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
 .item:last-child{border:0}
-.mini{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--pan2);color:var(--tx);font:inherit;cursor:pointer}
+.mini{padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--pan2);color:var(--tx);font:500 14px "Be Vietnam Pro",sans-serif;cursor:pointer}
 .mini.bad{color:var(--bad)}.mini.ok{color:var(--ok)}
-.tag{padding:2px 10px;border-radius:999px;font-size:14px;border:1px solid}
+.tag{padding:2px 12px;border-radius:999px;font-size:14px;font-weight:500;border:1px solid}
 .pending{color:var(--gold)}.approved{color:var(--ok)}.rejected{color:var(--bad)}
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#0d0b28f2;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0)}
-nav button{flex:1;padding:14px 4px;border:0;background:none;color:var(--mu);font-size:11px;cursor:pointer}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#0c1030f5;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{flex:1;padding:14px 4px;border:0;background:none;color:var(--mu);font-size:14px;font-weight:600;cursor:pointer}
 nav button.on{color:var(--cy);box-shadow:inset 0 3px var(--cy)}
-.auth{max-width:380px;margin:12vh auto 0}.auth h1{font-size:26px;margin:0 0 4px}
-.toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);padding:11px 18px;border-radius:10px;font-weight:700;z-index:9;max-width:92vw;background:var(--pan2);border:1px solid}
+.auth{max-width:380px;margin:12vh auto 0}.auth h1{font-size:28px;margin:0 0 6px}
+.toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);padding:12px 18px;border-radius:12px;font-weight:600;z-index:9;max-width:92vw;background:var(--pan2);border:1px solid}
 .toast.ok{border-color:var(--ok);color:var(--ok)}.toast.bad{border-color:var(--bad);color:var(--bad)}
-.rk{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.rk .n{width:34px;font:800 16px Orbitron;color:var(--gold)}.rk.me{background:#19e3ff14}
-.rk .c{margin-left:auto;font-family:Orbitron;color:var(--cy)}
+.rk{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.rk .n{width:34px;font-weight:700;font-size:18px;color:var(--gold)}.rk.me{background:#4de3ff14}
+.rk .c{margin-left:auto;font-weight:700;font-size:17px;color:var(--cy)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head>
-<body><div class="wrap" id="app"></div>
+<body><div class="wrap" id="app"><p class="mu" style="text-align:center;margin-top:30vh">Đang tải...</p></div>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -69,7 +74,7 @@ const app=initializeApp({apiKey:"AIzaSyCPoZuP5xjMQZQhHZL3FMNGyhXcbcgWfpk",authDo
 const auth=getAuth(app),db=getFirestore(app);
 
 // ====== CẤU HÌNH ======
-const SHORT_KEY="DAN_API_KEY_SITETOP_VAO_DAY"; // lưu ý: key đặt ở web thì ai cũng xem được
+// API key rút gọn link: nhập trong Admin > Cài đặt (lưu ở Firestore, không để trong file này)
 const LAG="https://dangnghia080510-debug.github.io/fake-lag/";
 const BANKS=["MB Bank","Vietcombank","Techcombank","ACB","BIDV","VPBank","Agribank","VietinBank","TPBank","Sacombank"];
 const DEF={tien:250,min:20000,exp:20,wait:45,lim:20,cd:30,ann:""};
@@ -103,7 +108,7 @@ function loginView(){
  $("#li").onclick=async()=>{const c=cred();if(!c)return;try{await signInWithEmailAndPassword(auth,c[0],c[1])}catch{toast("Sai tên đăng nhập hoặc mật khẩu",0)}};
  $("#rg").onclick=async()=>{const c=cred();if(!c)return;if(localStorage.reg)return toast("Thiết bị này đã đăng ký một tài khoản rồi. Hãy đăng nhập tài khoản đó.",0);try{const r=await createUserWithEmailAndPassword(auth,c[0],c[1]);await setDoc(doc(db,"users",r.user.uid),{name:c[2],balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});localStorage.reg=1}catch(e){toast(ERR[e.code]||"Lỗi đăng ký: "+(e.code||e.message),0)}};
 }
-onAuthStateChanged(auth,async u=>{U=u;if(!u){loginView();return}try{await Promise.all([loadCfg(),loadMe()]);shell()}catch(e){const c=e.code||e.message||String(e);$("#app").innerHTML=`<div class="card auth"><h2 style="color:var(--bad)">Không tải được dữ liệu</h2><p>Mã lỗi: <b>${esc(c)}</b></p><p class="mu">${c==="permission-denied"?"Firestore đang chặn: vào Firestore Database > Rules, dán Rules ở đầu file index.html rồi bấm Publish.":/unavailable|not-found|failed-precondition/.test(c)?"Có vẻ chưa tạo Firestore: vào Firestore Database và bấm Create database.":"Kiểm tra mạng rồi thử lại."}</p><div class="row"><button class="btn" onclick="location.reload()">Thử lại</button><button class="btn alt" id="lo">Đăng xuất</button></div></div>`;$("#lo").onclick=()=>signOut(auth)}});
+onAuthStateChanged(auth,async u=>{U=u;if(!u){loginView();return}try{await Promise.race([Promise.all([loadCfg(),loadMe()]),new Promise((_,r)=>setTimeout(()=>r({code:"unavailable"}),10000))]);shell()}catch(e){const c=e.code||e.message||String(e);$("#app").innerHTML=`<div class="card auth"><h2 style="color:var(--bad)">Không tải được dữ liệu</h2><p>Mã lỗi: <b>${esc(c)}</b></p><p class="mu">${c==="permission-denied"?"Firestore đang chặn: vào Firestore Database > Rules, dán Rules ở đầu file index.html rồi bấm Publish.":/unavailable|not-found|failed-precondition/.test(c)?"Có vẻ chưa tạo Firestore: vào Firestore Database và bấm Create database.":"Kiểm tra mạng rồi thử lại."}</p><div class="row"><button class="btn" onclick="location.reload()">Thử lại</button><button class="btn alt" id="lo">Đăng xuất</button></div></div>`;$("#lo").onclick=()=>signOut(auth)}});
 
 // ====== KHUNG CHÍNH ======
 function shell(){
@@ -146,8 +151,12 @@ async function newTask(){
  const left=Math.ceil((CFG.cd*1e3-(Date.now()-ME.last))/1e3);if(left>0)return toast(`Nghỉ thêm ${left} giây rồi nhận tiếp`,0);
  $("#nt").disabled=true;const key=rnd(12);
  const long=`${LAG}?vlpcode=${key}&vlpsid=${rnd(16)}&vlpuser=${U.uid}&vlpitem=task&vlpround=1&vlpts=${Date.now()}&vlpmin=${CFG.wait}`;
- let url;try{const j=await(await fetch(`https://sitetop.net/api?api=${SHORT_KEY}&url=${encodeURIComponent(long)}`)).json();url=j.shortenedUrl||j.short_url}catch{}
- if(!url||url===long||url.startsWith(LAG)){toast("Không tạo được link, thử lại sau",0);return go("task")}
+ let url,why="";
+ try{const sk=(await getDoc(doc(db,"settings","secret"))).data()?.k;if(!sk){toast("Admin chưa nhập API key rút gọn link (Admin > Cài đặt)",0);return go("task")}
+  const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;let t;
+  try{t=await(await fetch(api)).text()}catch{t=await(await fetch("https://api.allorigins.win/raw?url="+encodeURIComponent(api))).text()}
+  const j=JSON.parse(t);url=j.shortenedUrl||j.short_url;why=j.message||j.error||""}catch(e){why=e.message}
+ if(!url||url===long||url.startsWith(LAG)){toast("Không tạo được link"+(why?": "+why:", thử lại sau"),0);return go("task")}
  await addDoc(collection(db,"tasks"),{uid:U.uid,key,url,status:"pending",created:Date.now()});go("task");
 }
 async function sendKey(t){
@@ -194,13 +203,13 @@ async function pTop(m){
 // ====== ADMIN ======
 async function pAdmin(m=$("#m")){
  if(!isAd())return;await loadCfg();
- const[wd,us,rg]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(50))),rows(query(collection(db,"users"),where("approved","==",false)))]);
+ const[wd,us,rg,sc]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(50))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret"))]);
  const all=[...new Map([...rg,...us].map(u=>[u.id,u])).values()],dup=u=>u.dev?all.filter(x=>x.dev===u.dev).length:1;
  const pr=rg.filter(u=>!u.banned).sort((a,b)=>a.created-b.created);
  m.innerHTML=`<div class="card"><h2>ĐĂNG KÝ CHỜ DUYỆT (${pr.length})</h2>${pr.map(u=>`<div class="item"><span><b>${esc(u.name)}</b><br><span class="mu">${new Date(u.created).toLocaleString("vi-VN")}</span>${dup(u)>1?`<br><span class="pending">⚠️ ${dup(u)} tài khoản cùng thiết bị</span>`:""}</span><span><button class="mini ok" data-ap="${u.id}">Duyệt</button> <button class="mini bad" data-rj="${u.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có đăng ký nào đang chờ.</p>'}</div>
  <div class="card"><h2>ĐƠN RÚT CHỜ DUYỆT (${wd.length})</h2>${wd.sort((a,b)=>a.created-b.created).map(w=>`<div class="item"><span><b>${esc(w.uname)}</b> · ${fmt(w.amount)}<br><span class="mu">${esc(w.bank)} · ${esc(w.stk)} · ${esc(w.name)}</span></span><span><button class="mini ok" data-ok="${w.id}">Duyệt</button> <button class="mini bad" data-no="${w.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có đơn nào đang chờ.</p>'}</div>
  <div class="card"><h2>CÀI ĐẶT</h2>${Object.keys(SET).map(k=>`<label class="mu">${SET[k]}</label><input data-s="${k}" inputmode="numeric" value="${CFG[k]}">`).join("")}
- <label class="mu">Thông báo gửi tới mọi người dùng (để trống để tắt)</label><textarea id="an" rows="3">${esc(CFG.ann)}</textarea><button class="btn" id="sv">Lưu cài đặt</button></div>
+ <label class="mu">API key rút gọn link (sitetop)</label><input id="sk" type="password" autocomplete="off" placeholder="${sc.exists()?"Đã lưu. Để trống nếu giữ nguyên":"Dán API key vào đây"}"><label class="mu">Thông báo gửi tới mọi người dùng (để trống để tắt)</label><textarea id="an" rows="3">${esc(CFG.ann)}</textarea><button class="btn" id="sv">Lưu cài đặt</button></div>
  <div class="card"><h2>NGƯỜI DÙNG (${us.length})</h2>${us.map(u=>`<div class="item"><span>${u.banned?"🚫 ":u.approved===false?"⏳ ":""}<b>${esc(u.name)}</b><br><span class="mu">${fmt(u.balance)} · ${u.total||0} nhiệm vụ</span></span><span><button class="mini" data-m="${u.id}">±Xu</button> <button class="mini ${u.banned?"ok":"bad"}" data-b="${u.id}" data-v="${u.banned?0:1}">${u.banned?"Mở khóa":"Khóa"}</button></span></div>`).join("")}</div>`;
  m.querySelectorAll("[data-ap]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.ap),{approved:true});toast("Đã duyệt tài khoản");pAdmin()});
  m.querySelectorAll("[data-rj]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.rj),{banned:true});toast("Đã từ chối và khóa tài khoản");pAdmin()});
@@ -209,7 +218,7 @@ async function pAdmin(m=$("#m")){
  m.querySelectorAll("[data-b]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.b),{banned:b.dataset.v==="1"});pAdmin()});
  m.querySelectorAll("[data-m]").forEach(b=>b.onclick=async()=>{const v=parseInt(prompt("Nhập số tiền cộng (số dương) hoặc trừ (số âm):"));if(!v)return;
   try{await runTransaction(db,async tx=>{const r=doc(db,"users",b.dataset.m),s=await tx.get(r);if(s.data().balance+v<0)throw 1;tx.update(r,{balance:s.data().balance+v})});toast("Đã cập nhật số dư")}catch{toast("Số dư không đủ để trừ",0)}pAdmin()});
- $("#sv").onclick=async()=>{const d={ann:$("#an").value.trim()};m.querySelectorAll("[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));await setDoc(doc(db,"settings","main"),d,{merge:true});toast("Đã lưu cài đặt");pAdmin()};
+ $("#sv").onclick=async()=>{const d={ann:$("#an").value.trim()};m.querySelectorAll("[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu cài đặt");pAdmin()};
 }
 async function decide(id,ok){
  try{await runTransaction(db,async tx=>{const wr=doc(db,"withdrawals",id),w=await tx.get(wr);if(w.data().status!=="pending")throw"Đơn này đã được xử lý";
