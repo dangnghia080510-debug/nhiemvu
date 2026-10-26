@@ -84,6 +84,7 @@ const num=s=>parseInt(String(s).replace(/\D/g,""))||0;
 const day=()=>new Date(Date.now()+252e5).toISOString().slice(0,10);
 const rnd=n=>{const a=new Uint32Array(n);crypto.getRandomValues(a);return[...a].map(x=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[x%32]).join("")};
 const DEV=localStorage.dv||(localStorage.dv=rnd(16));
+const ERR={"auth/email-already-in-use":"Tên này đã có người dùng. Nếu là bạn, hãy bấm Đăng nhập","auth/operation-not-allowed":"Firebase chưa bật Email/Password: vào Authentication > Sign-in method để bật","permission-denied":"Firestore đang chặn: dán Rules ở đầu file rồi bấm Publish","auth/network-request-failed":"Mất mạng, thử lại","auth/weak-password":"Mật khẩu quá yếu, đặt từ 6 ký tự"};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const toast=(m,ok=1)=>{const t=document.createElement("div");t.className="toast "+(ok?"ok":"bad");t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3200)};
 const rows=q=>getDocs(q).then(s=>s.docs.map(d=>({id:d.id,...d.data()})));
@@ -91,7 +92,7 @@ let U=null,ME=null,CFG=DEF,tab="home";
 const isAd=()=>U?.email==="admin@vl.app";
 
 async function loadCfg(){const s=await getDoc(doc(db,"settings","main"));CFG={...DEF,...(s.exists()?s.data():{})}}
-async function loadMe(){for(let i=0;i<6;i++){const s=await getDoc(doc(db,"users",U.uid));if(s.exists()){ME={id:U.uid,...s.data()};return}await sleep(400)}throw 0}
+async function loadMe(){for(let i=0;i<6;i++){const s=await getDoc(doc(db,"users",U.uid));if(s.exists()){ME={id:U.uid,...s.data()};return}await sleep(400)}await setDoc(doc(db,"users",U.uid),{name:U.email.split("@")[0],balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});ME={id:U.uid,...(await getDoc(doc(db,"users",U.uid))).data()}}
 
 // ====== ĐĂNG NHẬP ======
 function loginView(){
@@ -100,9 +101,9 @@ function loginView(){
  <div class="row"><button class="btn" id="li">Đăng nhập</button><button class="btn alt" id="rg">Tạo tài khoản</button></div></div>`;
  const cred=()=>{const u=$("#u").value.trim().toLowerCase(),p=$("#p").value;if(!/^[a-z0-9_]{3,20}$/.test(u)||p.length<6){toast("Tên 3-20 ký tự (a-z, 0-9, _) và mật khẩu từ 6 ký tự",0);return null}return[u+"@vl.app",p,u]};
  $("#li").onclick=async()=>{const c=cred();if(!c)return;try{await signInWithEmailAndPassword(auth,c[0],c[1])}catch{toast("Sai tên đăng nhập hoặc mật khẩu",0)}};
- $("#rg").onclick=async()=>{const c=cred();if(!c)return;if(localStorage.reg)return toast("Thiết bị này đã đăng ký một tài khoản rồi. Hãy đăng nhập tài khoản đó.",0);try{const r=await createUserWithEmailAndPassword(auth,c[0],c[1]);await setDoc(doc(db,"users",r.user.uid),{name:c[2],balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});localStorage.reg=1}catch(e){toast(e.code==="auth/email-already-in-use"?"Tên này đã có người dùng":"Không đăng ký được, kiểm tra đã bật Email/Password chưa",0)}};
+ $("#rg").onclick=async()=>{const c=cred();if(!c)return;if(localStorage.reg)return toast("Thiết bị này đã đăng ký một tài khoản rồi. Hãy đăng nhập tài khoản đó.",0);try{const r=await createUserWithEmailAndPassword(auth,c[0],c[1]);await setDoc(doc(db,"users",r.user.uid),{name:c[2],balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});localStorage.reg=1}catch(e){toast(ERR[e.code]||"Lỗi đăng ký: "+(e.code||e.message),0)}};
 }
-onAuthStateChanged(auth,async u=>{U=u;if(!u){loginView();return}try{await Promise.all([loadCfg(),loadMe()]);shell()}catch{toast("Không tải được dữ liệu, thử tải lại trang",0)}});
+onAuthStateChanged(auth,async u=>{U=u;if(!u){loginView();return}try{await Promise.all([loadCfg(),loadMe()]);shell()}catch(e){const c=e.code||e.message||String(e);$("#app").innerHTML=`<div class="card auth"><h2 style="color:var(--bad)">Không tải được dữ liệu</h2><p>Mã lỗi: <b>${esc(c)}</b></p><p class="mu">${c==="permission-denied"?"Firestore đang chặn: vào Firestore Database > Rules, dán Rules ở đầu file index.html rồi bấm Publish.":/unavailable|not-found|failed-precondition/.test(c)?"Có vẻ chưa tạo Firestore: vào Firestore Database và bấm Create database.":"Kiểm tra mạng rồi thử lại."}</p><div class="row"><button class="btn" onclick="location.reload()">Thử lại</button><button class="btn alt" id="lo">Đăng xuất</button></div></div>`;$("#lo").onclick=()=>signOut(auth)}});
 
 // ====== KHUNG CHÍNH ======
 function shell(){
