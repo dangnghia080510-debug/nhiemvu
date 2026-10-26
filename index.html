@@ -158,34 +158,51 @@ async function newTask(){
     if(!sk){toast("Admin chưa nhập API key rút gọn link (Admin > Cài đặt)",0);return go("task")}
     const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;
     
-    let t="";
+    // Proxy còn hoạt động (đã bỏ corsproxy vì bắt key)
     const proxies=[
-      api,
-      `https://corsproxy.io/?${encodeURIComponent(api)}`,
+      api, // thử trực tiếp trước
       `https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`,
-      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(api)}`
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(api)}`,
+      `https://cors-anywhere.herokuapp.com/${api}`
     ];
+    
+    let t="",j=null;
     for(const p of proxies){
       try{
         const r=await fetch(p,{mode:"cors"});
         t=await r.text();
-        if(t && t.trim().startsWith("{")) break;
+        if(!t || !t.trim().startsWith("{")) continue;
+        const tmp=JSON.parse(t);
+        // Bỏ qua response lỗi của proxy
+        if(tmp.status===403 || tmp.error==="keyless_legacy" || (tmp.message&&tmp.message.includes("CORS PROXY"))) continue;
+        // Chỉ lấy nếu có field link hoặc success
+        const candidate = tmp.shortenedUrl || tmp.short_url || tmp.shorturl || tmp.shortUrl || tmp.url || tmp.link 
+          || (tmp.data && (tmp.data.shortenedUrl || tmp.data.short_url || tmp.data.url || tmp.data.link || tmp.data.shorturl));
+        if(candidate || tmp.success===true || tmp.status==="success"){
+          j=tmp;
+          raw=t;
+          break;
+        }
+        // Nếu là lỗi của sitetop (invalid key) thì cũng dừng để báo
+        if(tmp.success===false || tmp.error){
+          j=tmp;
+          raw=t;
+          break;
+        }
       }catch(e){}
     }
-    raw=t;
-    if(!t || !t.trim().startsWith("{")) throw new Error("Không nhận được JSON: "+(t||"").slice(0,80));
     
-    const j=JSON.parse(t);
-    // Thử tất cả field phổ biến
+    if(!j) throw new Error("Tất cả proxy fail hoặc không nhận JSON hợp lệ");
+    
     url = j.shortenedUrl || j.short_url || j.shorturl || j.shortUrl || j.url || j.link 
        || (j.data && (j.data.shortenedUrl || j.data.short_url || j.data.url || j.data.link || j.data.shorturl))
        || "";
-    why = j.message || j.error || j.msg || j.status || "";
+    why = j.message || j.error || j.msg || (j.status==="error"?j.error:"") || "";
     console.log("Sitetop response:", j);
   }catch(e){why=e.message||String(e)}
   
   if(!url || url===long || url.startsWith(LAG)){
-    toast("Không tạo được link"+(why?": "+why:"")+(raw?" | "+raw.slice(0,80):""),0);
+    toast("Không tạo được link"+(why?": "+why:"")+(raw?" | "+raw.slice(0,100):""),0);
     return go("task");
   }
   await addDoc(collection(db,"tasks"),{uid:U.uid,key,url,status:"pending",created:Date.now()});
