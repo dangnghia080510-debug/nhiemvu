@@ -1,16 +1,12 @@
 <!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vượt Link Arena</title>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0816">
+<title>Nguyệt Ma Tông</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=Chakra+Petch:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#ffffff;
-  --card:#ffffff;
-  --card2:#f4f4f4;
-  --border:#dcdcdc;
-  --ink:#0a0a0a;
-  --text:#0a0a0a;
-  --muted:#505050;
+  --bg:#0b0816;--card:#151029;--card2:#1e1838;--border:#33295a;
+  --ink:#f4efff;--text:#e9e4f7;--muted:#a9a1c8;--gold:#f0c969;
+  --grad:linear-gradient(135deg,#7c3aed,#c026d3);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;background:var(--bg);color:var(--text);font:400 16px/1.65 "Be Vietnam Pro",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -95,6 +91,51 @@ nav button.on{color:#000;box-shadow:inset 0 2px 0 #000}
 .stat div{background:var(--card2);border-radius:12px;padding:10px 6px;text-align:center}
 .stat b{display:block;font-size:16px}
 .stat span{font-size:13px;color:var(--muted)}
+
+html{color-scheme:dark}
+body{background:radial-gradient(700px 420px at 85% -5%,#35176d 0,transparent 65%),radial-gradient(600px 380px at -10% 8%,#4a1245 0,transparent 60%),var(--bg);background-attachment:fixed}
+.logo{font-family:"Playfair Display",serif;font-weight:800;font-size:22px;letter-spacing:.3px;background:linear-gradient(90deg,#f6e3a1,#f0c969 55%,#e9a8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.auth h1.logo{font-size:30px}
+.coin{border:1.5px solid var(--gold);color:var(--gold);background:#f0c9691a}
+.card{box-shadow:0 6px 24px #0006}
+.hero{background:linear-gradient(135deg,#4c1d95,#86198f 55%,#9f1239);border-color:#a855f7}
+.hero .mu{color:#eadcff}.hero .big{color:var(--gold)}
+label{color:#cfc7ee}
+input,select,textarea{background:#110c22;border-color:var(--border);color:var(--text)}
+input::placeholder,textarea::placeholder{color:#6f6794}
+input:focus,select:focus,textarea:focus{border-color:#a855f7;box-shadow:0 0 0 3px #a855f733}
+.box input{background:#110c22}
+.btn{background:var(--grad);border:0;color:#fff;box-shadow:0 4px 16px #7c3aed55}
+.btn.alt{background:transparent;border:1.5px solid #a855f7;color:#e2ccff;box-shadow:none}
+.mini{background:#1e1838;color:var(--text);border-color:var(--border)}
+.mini.ok{background:var(--grad);border-color:transparent;color:#fff}
+.mini.bad{background:transparent;color:#fda4af;border-color:#f43f5e}
+.pending{background:#2b2350;color:#cbb8ff}
+.approved{background:#14532d;color:#86efac}
+.rejected{background:transparent;color:#fda4af;border:1px solid #f43f5e}
+.note{background:var(--card2);border-color:#6d5bb0}
+nav{background:#0f0a20f2;overflow-x:auto}
+nav button{flex:1 0 auto;min-width:68px;font-size:12.5px;padding:13px 6px}
+nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
+.toast{border:1.5px solid var(--gold)}
+.toast.ok{background:#2a1558;color:#fff}
+.toast.bad{background:#3a0f22;color:#ffd0da;border-color:#f43f5e;box-shadow:0 4px 18px #0008}
+.rk .n,.rk .c,.rc{color:var(--gold)}
+.rk.me{background:#2a1f52}
+.xp{background:#ffffff33}.xp b{background:linear-gradient(90deg,#f0c969,#f9a8d4)}
+.card-opt,.denom button,.fl button,.bk{background:#110c22;color:var(--text);border-color:var(--border)}
+.card-opt.on,.denom button.on,.fl button.on,.seg button.on{background:var(--grad);border-color:transparent;color:#fff}
+.bk.on{border-color:#a855f7;background:var(--card2)}
+.bk .dot{border-color:#a855f7}.bk.on .dot{background:#a855f7;box-shadow:inset 0 0 0 3px #110c22}
+.code{background:#0b0816;border:1px solid var(--border);color:var(--gold)}
+.code .mini{background:var(--gold);color:#1a1033;border-color:var(--gold)}
+.ctl a{border-color:#a855f7;color:#e2ccff}
+.srch{background:var(--bg)}
+.wh{position:relative;width:min(300px,78vw);margin:10px auto 18px}
+.wh canvas{width:100%;display:block;border-radius:50%;box-shadow:0 0 0 5px var(--gold),0 0 38px #a855f777;transition:transform 4.6s cubic-bezier(.12,.72,.12,1)}
+.wh .ptr{position:absolute;left:50%;top:-12px;transform:translateX(-50%);width:0;height:0;border:13px solid transparent;border-top:24px solid var(--gold);border-bottom:0;z-index:2;filter:drop-shadow(0 2px 3px #000a)}
+.wh .hub{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:#150f2b;border:3px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font:normal 24px/1 sans-serif;z-index:2}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
 </style></head>
 <body><div class="wrap" id="app"><p class="mu" style="text-align:center;margin-top:30vh">Đang tải...</p></div>
 <script type="module">
@@ -111,8 +152,8 @@ const CARDS=["Garena","Viettel","Vinaphone","Vietnamobile"];
 const DENOMS=[10000,20000,50000,100000,200000,500000];
 const BANKS=["Vietcombank","VietinBank","BIDV","Agribank","Techcombank","MB Bank","ACB","VPBank","TPBank","Sacombank","HDBank","SHB","VIB","OCB","MSB","SeABank","Eximbank","LPBank","Nam A Bank","Bac A Bank","ABBank","VietBank"];
 const MAXBANK=3;
-const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,mf:5,ml:10,sus:3,refbonus:2000,refneed:5,mt:0,mtmsg:"",czalo:"",ctele:"",cfb:"",cphone:"",cnote:"",ann:""};
-const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Vượt link tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)",mf:"Sai key tối đa mỗi nhiệm vụ (lần)",ml:"Khóa nhập key khi sai quá nhiều (phút)",sus:"Số lần nghi bypass thì tự khóa tài khoản (0 = tắt)",refbonus:"Thưởng giới thiệu mỗi bạn (đ)",refneed:"Bạn bè cần hoàn thành (nhiệm vụ) mới có thưởng"};
+const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,mf:5,ml:10,sus:3,refbonus:2000,refneed:5,spinOn:1,spinCost:500,spinLim:0,wheel:[{a:0,w:30},{a:200,w:25},{a:300,w:15},{a:500,w:12},{a:800,w:8},{a:1000,w:6},{a:2000,w:3},{a:5000,w:1}],mt:0,mtmsg:"",czalo:"",ctele:"",cfb:"",cphone:"",cnote:"",ann:""};
+const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Thời gian làm nhiệm vụ tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)",mf:"Sai key tối đa mỗi nhiệm vụ (lần)",ml:"Khóa nhập key khi sai quá nhiều (phút)",sus:"Vi phạm nhẹ (sai key, đổi thiết bị) bao nhiêu lần thì tự khóa (0 = tắt). Bypass rõ ràng luôn bị khóa ngay",refbonus:"Thưởng giới thiệu mỗi bạn (đ)",refneed:"Bạn bè cần hoàn thành (nhiệm vụ) mới có thưởng"};
 const CT={cphone:"SĐT hỗ trợ",czalo:"Zalo (số điện thoại)",ctele:"Telegram (tên, không cần @)",cfb:"Facebook (dán link https://...)",cnote:"Ghi chú liên hệ (giờ làm việc...)"};
 const ST={pending:"Chờ duyệt",approved:"Đã duyệt",rejected:"Từ chối"};
 
@@ -155,7 +196,7 @@ function loginView(){
  const rf=(new URLSearchParams(location.search).get("ref")||localStorage.rf||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8);
  if(rf)localStorage.rf=rf;
  const reg=amode==="rg";
- $("#app").innerHTML=`<div class="card auth"><h1 class="logo">VƯỢT<span>LINK</span></h1><p class="mu" style="margin-bottom:16px">Vượt link · Nhận tiền · Rút tiền</p>
+ $("#app").innerHTML=`<div class="card auth"><h1 class="logo">☾ Nguyệt Ma Tông</h1><p class="mu" style="margin-bottom:16px">Làm nhiệm vụ · Nhận tiền · Quay thưởng</p>
  <div class="seg" style="margin-top:0"><button data-am="li" class="${reg?"":"on"}">Đăng nhập</button><button data-am="rg" class="${reg?"on":""}">Đăng ký</button></div>
  <label>Số điện thoại</label><input id="u" inputmode="tel" placeholder="VD: 0912345678" autocomplete="username">
  <label>Mật khẩu</label><input id="p" type="password" placeholder="Từ 6 ký tự" autocomplete="${reg?"new-password":"current-password"}">
@@ -212,31 +253,34 @@ function phoneView(){
 }
 function shell(){
  if(isAd()&&ME.banned){ME.banned=false;updateDoc(doc(db,"users",U.uid),{banned:false})}
- if(ME.banned){$("#app").innerHTML=wrapA('<div class="card"><h2>Tài khoản bị khóa</h2><p class="mu" style="margin-bottom:12px">Liên hệ admin nếu cần hỗ trợ.</p><button class="btn alt" id="lo">Thoát</button></div>');$("#lo").onclick=()=>signOut(auth);return}
+ if(ME.banned){$("#app").innerHTML=wrapA(`<div class="card"><h2>Tài khoản bị khóa</h2><p class="mu" style="margin-bottom:12px">${ME.sus>0?"Hệ thống phát hiện hành vi nghi gian lận / bypass link. ":""}Liên hệ admin nếu cần hỗ trợ.</p><button class="btn alt" id="lo">Thoát</button></div>`);$("#lo").onclick=()=>signOut(auth);return}
+ if(localStorage.bn===U.uid)localStorage.removeItem("bn");
+ if(!isAd()&&localStorage.bn&&localStorage.bn!==U.uid){flag("Đăng nhập từ thiết bị từng bị khóa vì bypass",1).then(b=>{if(!b){localStorage.removeItem("bn");shell()}});return}
  if(ME.approved===false&&!isAd()){$("#app").innerHTML=wrapA('<div class="card"><h2>Chờ admin duyệt</h2><p class="mu" style="margin-bottom:12px">Tài khoản mới cần được duyệt trước khi dùng.</p><div class="row"><button class="btn" id="rf">Kiểm tra lại</button><button class="btn alt" id="lo">Thoát</button></div></div>');$("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadMe();shell()};return}
  if(CFG.mt&&!isAd()){mtScreen();return}
  if(!ME.phone&&!isAd()){phoneView();return}
- const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["doi","Rút tiền"],["ref","Bạn bè"],["more","Thêm"]];if(isAd())t.push(["admin","Admin"]);
- $("#app").innerHTML=`<header><span class="logo">VƯỢT<span>LINK</span></span><span><span class="coin" id="bal"></span> <button class="mini" id="lo" style="margin-left:6px">Thoát</button></span></header><main id="m"></main><nav>${t.map(x=>`<button data-t="${x[0]}">${x[1]}</button>`).join("")}</nav>`;
+ const t=[["home","Trang chủ"],["task","Nhiệm vụ"],...(CFG.spinOn||isAd()?[["spin","Vòng quay"]]:[]),["doi","Rút tiền"],["ref","Bạn bè"],["more","Thêm"]];if(isAd())t.push(["admin","Admin"]);
+ $("#app").innerHTML=`<header><span class="logo">☾ Nguyệt Ma Tông</span><span><span class="coin" id="bal"></span> <button class="mini" id="lo" style="margin-left:6px">Thoát</button></span></header><main id="m"></main><nav>${t.map(x=>`<button data-t="${x[0]}">${x[1]}</button>`).join("")}</nav>`;
  $("#lo").onclick=()=>signOut(auth);
  document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
  go(tab);
 }
 const hdr=()=>{const b=$("#bal");if(b)b.textContent=fmt(ME.balance)};
-async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{if(!isAd()){await loadCfg();if(CFG.mt)return mtScreen()}await({home:pHome,task:pTask,doi:pDoi,ref:pRef,more:pMore,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
+async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{if(!isAd()){await loadCfg();if(CFG.mt)return mtScreen()}await({home:pHome,task:pTask,spin:pSpin,doi:pDoi,ref:pRef,more:pMore,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
 const today=()=>ME.dayKey===day()?ME.dayCount:0;
 
 async function pHome(m){
  await loadMe();hdr();const c=today(),l=CFG.lim,pc=l>0?Math.min(100,c/l*100):0;
- m.innerHTML=`${CFG.ann?`<div class="card" style="border-color:#000;border-width:1.5px"><h2>Thông báo</h2><p>${esc(CFG.ann)}</p></div>`:""}
+ m.innerHTML=`${CFG.ann?`<div class="card" style="border-color:#f0c969"><h2>Thông báo</h2><p>${esc(CFG.ann)}</p></div>`:""}
  <div class="card hero"><p class="mu">Xin chào, <b>${esc(ME.name)}</b></p><div class="big">${fmt(ME.balance)}</div>
  <p class="mu">Hôm nay: <b>${c}${l>0?" / "+l:""}</b> nhiệm vụ · +${fmt(CFG.tien)}/nv</p>
  ${l>0?`<div class="xp"><b style="width:${pc}%"></b></div>`:""}</div>
  <div class="row"><button class="btn" id="g1">Làm nhiệm vụ</button><button class="btn alt" id="g2">Rút tiền</button></div>
  <p class="mu" style="text-align:center;margin:14px 0">Tổng hoàn thành: ${ME.total||0} nhiệm vụ</p>
+ ${CFG.spinOn?`<div class="card"><h2>Vòng quay Nguyệt Ma</h2><p class="mu" style="margin-bottom:12px">Mỗi lượt ${fmt(CFG.spinCost)}, trúng tới ${fmt(Math.max(...wheelCfg().map(s=>s.a)))}.</p><button class="btn alt" id="g4">Quay ngay</button></div>`:""}
  <div class="card"><h2>Mời bạn bè</h2><p class="mu" style="margin-bottom:12px">Nhận +${fmt(CFG.refbonus)} cho mỗi bạn làm đủ ${RN()} nhiệm vụ.</p><button class="btn alt" id="g3">Xem mã giới thiệu</button></div>
  ${contactHTML()}`;
- $("#g1").onclick=()=>go("task");$("#g2").onclick=()=>go("doi");$("#g3").onclick=()=>go("ref");
+ $("#g1").onclick=()=>go("task");$("#g2").onclick=()=>go("doi");$("#g3").onclick=()=>go("ref");if($("#g4"))$("#g4").onclick=()=>go("spin");
 }
 
 async function curTask(){const r=await rows(query(collection(db,"tasks"),where("uid","==",U.uid),where("status","==","pending")));return r.filter(t=>Date.now()-t.created<CFG.exp*6e4).sort((a,b)=>b.created-a.created)[0]}
@@ -244,11 +288,13 @@ async function pTask(m){
  await loadMe();hdr();const t=await curTask(),l=CFG.lim;
  m.innerHTML=`<div class="card"><h2>Nhiệm vụ</h2><p class="mu">Hôm nay ${today()}${l>0?"/"+l:""} · Thưởng ${fmt(CFG.tien)} · Hết hạn ${CFG.exp} phút</p>
  ${t?`<p style="margin:12px 0">1. Mở link và vượt hết bước<br>2. Copy key hiện ra<br>3. Dán key vào ô dưới</p>
- <a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px" id="ol" href="${esc(t.url)}" target="_blank" rel="noopener">Mở link vượt</a>
+ <button class="btn" style="margin-bottom:12px" id="ol">Mở link nhiệm vụ</button>
  <p class="mu" style="margin:-4px 0 12px">${t.opened?"Đã mở link lúc "+new Date(t.opened).toLocaleTimeString("vi-VN")+". Phải mở link bằng nút này rồi vượt đủ thời gian mới nhận được thưởng.":"Bạn phải bấm nút này để bắt đầu tính giờ."}</p>
  <input id="k" placeholder="Dán key vào đây" autocomplete="off"><button class="btn alt" id="sk">Nhận thưởng</button>`
  :`<button class="btn" id="nt" style="margin-top:12px">Nhận nhiệm vụ mới</button>`}</div>`;
- if(t){$("#ol").onclick=async()=>{if(!t.opened){t.opened=Date.now();try{await updateDoc(doc(db,"tasks",t.id),{opened:t.opened})}catch{}}};$("#sk").onclick=()=>sendKey(t)}else $("#nt").onclick=newTask;
+ if(t){$("#ol").onclick=async()=>{const w=window.open(t.url,"_blank");if(w)w.opener=null;
+  if(!t.opened){const o=Date.now();for(let i=0;i<3&&!t.opened;i++){try{await updateDoc(doc(db,"tasks",t.id),{opened:o});t.opened=o}catch{await sleep(600)}}if(!t.opened){t.openFail=1;toast("Chưa ghi nhận được lượt mở, hãy bấm lại",0)}}
+  if(!w)location.href=t.url};$("#sk").onclick=()=>sendKey(t)}else $("#nt").onclick=newTask;
 }
 async function newTask(){
   await loadCfg();if(CFG.mt&&!isAd())return shell();
@@ -273,28 +319,33 @@ async function newTask(){
   await addDoc(collection(db,"tasks"),{uid:U.uid,kh:await sha(key+":"+U.uid),url,status:"pending",created:Date.now(),dev:DEV,opened:0,fails:0});
   go("task");
 }
-async function flag(why){
- // ghi nhận nghi bypass vào hồ sơ; vượt ngưỡng thì tự khóa
+async function flag(why,hard){
+ // hard = bằng chứng bypass rõ ràng -> khóa ngay. Vi phạm nhẹ thì cộng dồn tới ngưỡng CFG.sus
+ if(isAd())return 0;
+ let ban=0;
  try{await runTransaction(db,async tx=>{const r=doc(db,"users",U.uid),x=await tx.get(r),u=x.data(),n=(u.sus||0)+1,d={sus:n,susWhy:why,susAt:Date.now()};
-  if(CFG.sus>0&&n>=CFG.sus&&!isAd())d.banned=true;tx.update(r,d)})}catch{}
+  ban=!!hard||(CFG.sus>0&&n>=CFG.sus);if(ban)d.banned=true;tx.update(r,d)})}catch{ban=0}
+ if(ban){ME.banned=true;ME.sus=(ME.sus||0)+1;if(hard)localStorage.bn=U.uid;toast("Phát hiện bypass, tài khoản đã bị khóa",0);shell()}
+ return ban;
 }
 async function sendKey(t){
  await loadMe();await loadCfg();if(CFG.mt&&!isAd())return shell();
  if((ME.lockUntil||0)>Date.now())return toast(`Đang bị khóa nhập key ${Math.ceil((ME.lockUntil-Date.now())/6e4)} phút`,0);
- if(!t.opened)return toast("Hãy bấm nút Mở link vượt trước",0);
- if(t.dev&&t.dev!==DEV){await flag("Nhập key từ thiết bị khác");return toast("Nhiệm vụ này phải làm trên thiết bị đã nhận",0)}
  const k=$("#k").value.trim().toUpperCase();
  if(!k)return toast("Dán key vào ô trước",0);
+ if(t.dev&&t.dev!==DEV){if(await flag("Nhập key từ thiết bị khác"))return;return toast("Nhiệm vụ này phải làm trên thiết bị đã nhận",0)}
+ const good=await sha(k+":"+U.uid)===t.kh;
+ if(!t.opened){if(good&&!t.openFail){await flag("Có key đúng nhưng chưa từng bấm Mở link (nghi bypass)",1);return}return toast("Hãy bấm nút Mở link nhiệm vụ trước",0)}
  const used=Date.now()-t.opened;
  if(used<CFG.wait*1e3){
   const left=Math.ceil((CFG.wait*1e3-used)/1e3);
   // gửi key đúng nhưng quá nhanh = dấu hiệu bypass
-  if(await sha(k+":"+U.uid)===t.kh)await flag("Có key nhưng chưa đủ "+CFG.wait+"s (nhanh "+Math.round(used/1e3)+"s)");
+  if(good){await flag("Có key đúng nhưng chưa đủ "+CFG.wait+"s (nhanh "+Math.round(used/1e3)+"s)",1);return}
   return toast(`Chưa đủ thời gian vượt link, chờ thêm ${left}s`,0)}
- if(await sha(k+":"+U.uid)!==t.kh){
+ if(!good){
   let n=(t.fails||0)+1,lock=0;
   try{await updateDoc(doc(db,"tasks",t.id),{fails:n,status:n>=CFG.mf?"failed":"pending"})}catch{}
-  if(n>=CFG.mf){lock=Date.now()+CFG.ml*6e4;await flag("Sai key "+n+" lần");try{await updateDoc(doc(db,"users",U.uid),{lockUntil:lock})}catch{}
+  if(n>=CFG.mf){lock=Date.now()+CFG.ml*6e4;if(await flag("Sai key "+n+" lần"))return;try{await updateDoc(doc(db,"users",U.uid),{lockUntil:lock})}catch{}
    toast(`Sai quá ${CFG.mf} lần, nhiệm vụ bị hủy và khóa nhập key ${CFG.ml} phút`,0);return go("task")}
   t.fails=n;return toast(`Key sai (còn ${CFG.mf-n} lần)`,0)}
  try{await runTransaction(db,async tx=>{const tr=doc(db,"tasks",t.id),ur=doc(db,"users",U.uid),[ts,us]=[await tx.get(tr),await tx.get(ur)];
@@ -396,9 +447,51 @@ async function pDoi(m){
  draw();
 }
 
+const wheelCfg=()=>{const w=Array.isArray(CFG.wheel)?CFG.wheel.filter(s=>s&&+s.w>0&&+s.a>=0).map(s=>({a:+s.a,w:+s.w})):[];return w.length>=2?w.slice(0,12):DEF.wheel};
+const kfmt=n=>n>=1e6?+(n/1e6).toFixed(1)+"M":n>=1e3?+(n/1e3).toFixed(1)+"K":n>0?n+"đ":"Trượt";
+const pick=ws=>{const t=ws.reduce((a,b)=>a+b,0),a=new Uint32Array(1);crypto.getRandomValues(a);let r=a[0]/4294967296*t;for(let i=0;i<ws.length;i++){if((r-=ws[i])<0)return i}return ws.length-1};
+async function pSpin(m){
+ await loadMe();hdr();
+ if(!CFG.spinOn&&!isAd()){m.innerHTML='<div class="card"><h2>Vòng quay</h2><p class="mu">Vòng quay đang tạm tắt.</p></div>';return}
+ const W=wheelCfg(),N=W.length,cost=+CFG.spinCost||0,lim=+CFG.spinLim||0,sig=JSON.stringify([W,cost,lim]);
+ const used=()=>ME.spinDay===day()?(ME.spinN||0):0;
+ m.innerHTML=`<div class="card" style="text-align:center"><h2>Vòng quay Nguyệt Ma</h2><p class="mu">Mỗi lượt <b>${fmt(cost)}</b>${lim>0?` · Hôm nay <b id="sl"></b>/${lim} lượt`:""}</p>
+ <div class="wh"><i class="ptr"></i><canvas id="wc" width="640" height="640"></canvas><i class="hub">☾</i></div>
+ <button class="btn" id="sp">Quay · ${fmt(cost)}</button></div>
+ <div class="card"><h2>Các ô thưởng</h2><div class="chips">${[...new Set(W.map(s=>s.a))].sort((a,b)=>a-b).map(a=>`<span class="tag pending">${a?fmt(a):"Trượt"}</span>`).join("")}</div></div>
+ <div class="card"><h2>Lịch sử quay</h2><div id="sh"><p class="mu">Đang tải...</p></div></div>`;
+ const cv=$("#wc"),g=cv.getContext("2d"),R=320,st=2*Math.PI/N,P=["#4c1d95","#be185d","#6d28d9","#9d174d","#5b21b6","#a21caf"];
+ W.forEach((x,i)=>{const a0=-Math.PI/2+i*st;g.beginPath();g.moveTo(R,R);g.arc(R,R,R-6,a0,a0+st);g.closePath();g.fillStyle=x.a===0?"#1f1a33":P[i%P.length];g.fill();g.strokeStyle="#f0c969";g.lineWidth=3;g.stroke();
+  g.save();g.translate(R,R);g.rotate(a0+st/2);g.textAlign="right";g.textBaseline="middle";g.fillStyle="#fff7e0";g.font="700 34px 'Be Vietnam Pro',sans-serif";g.fillText(kfmt(x.a),R-30,0);g.restore()});
+ const sl=()=>{if($("#sl"))$("#sl").textContent=used()};sl();
+ const hist=async()=>{let l=[];try{l=(await rows(query(collection(db,"spins"),where("uid","==",U.uid)))).sort((a,b)=>b.t-a.t).slice(0,10)}catch{}
+  if($("#sh"))$("#sh").innerHTML=l.map(x=>`<div class="item"><span class="mu">${new Date(x.t).toLocaleString("vi-VN")}</span><b>${x.a?"+"+fmt(x.a):"Trượt"}</b></div>`).join("")||'<p class="mu">Chưa có lượt quay nào.</p>'};
+ hist();
+ let rot=0,busy=0;
+ $("#sp").onclick=async()=>{
+  if(busy)return;busy=1;const b=$("#sp");b.disabled=true;
+  await loadCfg();
+  if(JSON.stringify([wheelCfg(),+CFG.spinCost||0,+CFG.spinLim||0])!==sig){busy=0;toast("Vòng quay vừa được cập nhật",0);return pSpin(m)}
+  if(!CFG.spinOn&&!isAd()){busy=0;return pSpin(m)}
+  const idx=pick(W.map(x=>x.w));
+  try{await runTransaction(db,async tx=>{const r=doc(db,"users",U.uid),x=await tx.get(r),u=x.data(),d=day(),n=u.spinDay===d?(u.spinN||0):0;
+   if(u.banned)throw"Tài khoản đang bị khóa";
+   if(lim>0&&n>=lim)throw"Hôm nay đã hết lượt quay";
+   if((u.balance||0)<cost)throw"Số dư không đủ";
+   tx.update(r,{balance:u.balance-cost+W[idx].a,spinDay:d,spinN:n+1})})}
+  catch(e){busy=0;b.disabled=false;return toast(typeof e==="string"?e:"Không quay được: "+(e.code||e.message),0)}
+  rot=360*(Math.floor(rot/360)+6)-(idx+.5+(Math.random()-.5)*.7)*(360/N);
+  cv.style.transform=`rotate(${rot}deg)`;
+  await sleep(4700);
+  await loadMe();hdr();sl();
+  const a=W[idx].a;toast(a?"Trúng "+fmt(a)+"!":"Trượt rồi, chúc may mắn lần sau",a>=cost);
+  try{await addDoc(collection(db,"spins"),{uid:U.uid,a,cost,t:Date.now()})}catch{}
+  hist();busy=0;b.disabled=false};
+}
+
 async function pTop(m){
  const r=await rows(query(collection(db,"users"),orderBy("total","desc"),limit(10)));
- m.innerHTML=`<div class="card"><h2>Top 10 vượt link</h2>${r.filter(u=>u.total>0).map((u,i)=>`<div class="rk ${u.id===U.uid?"me":""}"><span class="n">${i+1}</span><span>${esc(mask(u.name))}</span><span class="c">${u.total}</span></div>`).join("")||'<p class="mu">Chưa có ai.</p>'}</div>`;
+ m.innerHTML=`<div class="card"><h2>Top 10 đệ tử</h2>${r.filter(u=>u.total>0).map((u,i)=>`<div class="rk ${u.id===U.uid?"me":""}"><span class="n">${i+1}</span><span>${esc(mask(u.name))}</span><span class="c">${u.total}</span></div>`).join("")||'<p class="mu">Chưa có ai.</p>'}</div>`;
 }
 
 async function pRef(m){
@@ -441,10 +534,11 @@ async function pAdmin(m=$("#m")){
   ${b?`<div class="box"><span class="mu">Chuyển khoản tới</span><br><b>${esc(w.bank)}</b><br>STK: <b>${esc(w.bankNo)}</b> <button class="mini" data-cp="${esc(w.bankNo)}">Copy</button><br>Chủ TK: <b>${esc(w.bankOwner)}</b><br><span class="mu">Chuyển xong mới bấm Duyệt, ví sẽ tự trừ ${fmt(w.amount)}.</span></div>`
   :`<input data-cc placeholder="Mã thẻ" autocomplete="off"><input data-cs placeholder="Số seri" autocomplete="off">`}
   <div class="row"><button class="mini ok" data-ok="${w.id}">Duyệt</button><button class="mini bad" data-no="${w.id}">Từ chối</button></div></div>`}).join("");
- m.innerHTML=`<div class="card" style="${CFG.mt?"border:2px solid #000":""}"><h2>Bảo trì ${CFG.mt?'<span class="tag approved">ĐANG BẬT</span>':'<span class="tag pending">Đang tắt</span>'}</h2><p class="mu" style="margin-bottom:10px">Khi bật, người dùng (trừ admin) chỉ thấy màn hình bảo trì.</p><label>Nội dung thông báo bảo trì</label><textarea id="mtm" rows="2">${esc(CFG.mtmsg)}</textarea><button class="btn ${CFG.mt?"alt":""}" id="mtb">${CFG.mt?"Tắt bảo trì":"Bật bảo trì"}</button></div>
+ m.innerHTML=`<div class="card" style="${CFG.mt?"border:2px solid #f0c969":""}"><h2>Bảo trì ${CFG.mt?'<span class="tag approved">ĐANG BẬT</span>':'<span class="tag pending">Đang tắt</span>'}</h2><p class="mu" style="margin-bottom:10px">Khi bật, người dùng (trừ admin) chỉ thấy màn hình bảo trì.</p><label>Nội dung thông báo bảo trì</label><textarea id="mtm" rows="2">${esc(CFG.mtmsg)}</textarea><button class="btn ${CFG.mt?"alt":""}" id="mtb">${CFG.mt?"Tắt bảo trì":"Bật bảo trì"}</button></div>
  <div class="card"><h2>Chờ duyệt tài khoản (${pr.length})</h2>${pr.map(u=>`<div class="item"><span><b>${esc(u.name)}</b><br><span class="mu">${new Date(u.created).toLocaleString("vi-VN")}</span>${dup(u)>1?`<br><span class="tag pending">${dup(u)} tk cùng máy</span>`:""}</span><span><button class="mini ok" data-ap="${u.id}">Duyệt</button> <button class="mini bad" data-rj="${u.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có.</p>'}</div>
  <div class="card"><h2>Đơn rút / đổi thẻ chờ duyệt (${wd.length})</h2>${wl||'<p class="mu">Không có.</p>'}</div>
  <div class="card"><h2>Lịch sử đơn đã xử lý (${hd.length})</h2><div class="fl" id="hf"><button data-f="all" class="on">Tất cả</button><button data-f="card">Thẻ</button><button data-f="bank">Ngân hàng</button><button data-f="rejected">Từ chối</button></div><div id="hl"></div></div>
+ <div class="card" id="wcard"></div>
  <div class="card"><h2>Cài đặt</h2>${Object.keys(SET).map(k=>`<label>${SET[k]}</label><input data-s="${k}" inputmode="numeric" value="${CFG[k]}">`).join("")}
  ${Object.keys(CT).map(k=>`<label>${CT[k]}</label><input data-t="${k}" value="${esc(CFG[k]||"")}">`).join("")}
  <label>API key sitetop</label><input id="sk" type="password" placeholder="${sc.exists()?"Đã lưu":"Dán API key"}">
@@ -495,6 +589,25 @@ async function pAdmin(m=$("#m")){
  };
  $("#hf").querySelectorAll("button").forEach(b=>b.onclick=()=>{hfl=b.dataset.f;$("#hf").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));drawH()});
  drawH();
+ let wsl=wheelCfg().map(x=>({...x})),sOn=CFG.spinOn?1:0,sCost=+CFG.spinCost||0,sLim=+CFG.spinLim||0;
+ const wc=$("#wcard");
+ const rd=()=>{sOn=num(wc.querySelector("#wo").value)?1:0;sCost=num(wc.querySelector("#wcst").value);sLim=num(wc.querySelector("#wlim").value);
+  const A=[...wc.querySelectorAll("[data-wa]")],B=[...wc.querySelectorAll("[data-ww]")];wsl=A.map((a,i)=>({a:num(a.value),w:num(B[i].value)}))};
+ const evH=()=>{const tot=wsl.reduce((a,x)=>a+x.w,0)||1,ev=Math.round(wsl.reduce((a,x)=>a+x.a*x.w,0)/tot);return`Trung bình mỗi lượt trả lại <b>${fmt(ev)}</b> / thu <b>${fmt(sCost)}</b> → admin <b>${ev>sCost?"LỖ":"lời"} ${fmt(Math.abs(sCost-ev))}</b>/lượt.`};
+ const drawW=()=>{
+  const tot=wsl.reduce((a,x)=>a+x.w,0)||1;
+  wc.innerHTML=`<h2>Vòng quay</h2><div class="row"><div><label>Bật (1) / Tắt (0)</label><input id="wo" inputmode="numeric" value="${sOn}"></div><div><label>Giá/lượt (đ)</label><input id="wcst" inputmode="numeric" value="${sCost}"></div><div><label>Lượt/ngày (0=∞)</label><input id="wlim" inputmode="numeric" value="${sLim}"></div></div>
+  <label>Các ô: tiền trúng (đ) · tỉ lệ (số lớn = dễ trúng) · %</label>
+  ${wsl.map((x,i)=>`<div class="row" style="align-items:center;margin-bottom:8px"><input data-wa inputmode="numeric" value="${x.a}" style="margin:0"><input data-ww inputmode="numeric" value="${x.w}" style="margin:0"><span class="mu" data-wp style="flex:none;width:50px">${(x.w/tot*100).toFixed(1)}%</span><button class="mini bad" data-wx="${i}" style="flex:none">Xóa</button></div>`).join("")}
+  <button class="btn alt" id="wadd" style="margin:6px 0 12px">+ Thêm ô</button>
+  <p class="note" id="wev">${evH()}</p><button class="btn" id="wsv">Lưu vòng quay</button>`;
+  wc.oninput=()=>{rd();const t=wsl.reduce((a,x)=>a+x.w,0)||1;wc.querySelector("#wev").innerHTML=evH();wc.querySelectorAll("[data-wp]").forEach((p,i)=>p.textContent=(wsl[i].w/t*100).toFixed(1)+"%")};
+  wc.querySelector("#wadd").onclick=()=>{rd();if(wsl.length>=12)return toast("Tối đa 12 ô",0);wsl.push({a:1000,w:5});drawW()};
+  wc.querySelectorAll("[data-wx]").forEach(b=>b.onclick=()=>{rd();if(wsl.length<=2)return toast("Tối thiểu 2 ô",0);wsl.splice(+b.dataset.wx,1);drawW()});
+  wc.querySelector("#wsv").onclick=async()=>{rd();if(wsl.some(x=>x.w<=0))return toast("Tỉ lệ mỗi ô phải lớn hơn 0",0);
+   try{await setDoc(doc(db,"settings","main"),{wheel:wsl,spinOn:sOn,spinCost:sCost,spinLim:sLim},{merge:true});toast("Đã lưu vòng quay");pAdmin()}catch(e){toast("Không lưu được: "+(e.code||e.message),0)}};
+ };
+ drawW();
  $("#mtb").onclick=async()=>{if(!CFG.mt&&!confirm("Bật bảo trì? Người dùng sẽ không vào được."))return;await setDoc(doc(db,"settings","main"),{mt:CFG.mt?0:1,mtmsg:$("#mtm").value.trim()},{merge:true});toast(CFG.mt?"Đã tắt bảo trì":"Đã bật bảo trì");pAdmin()};
  $("#sv").onclick=async()=>{const b=$("#sv");b.disabled=true;try{const d={ann:$("#an").value.trim()};m.querySelectorAll("input[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));m.querySelectorAll("input[data-t]").forEach(i=>d[i.dataset.t]=i.value.trim());await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu");pAdmin()}catch(e){b.disabled=false;console.error(e);toast("Không lưu được: "+(e.code||e.message),0)}};
 }
