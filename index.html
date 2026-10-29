@@ -23,138 +23,94 @@ Rule của settings/secret phải cho admin ghi (đang dùng cho API key sitetop
 <title>Nguyệt Ma Tông</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=Chakra+Petch:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0b0816;--card:#151029;--card2:#1e1838;--border:#33295a;
-  --ink:#f4efff;--text:#e9e4f7;--muted:#a9a1c8;--gold:#f0c969;
-  --grad:linear-gradient(135deg,#7c3aed,#c026d3);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:var(--bg);color:var(--text);font:400 16px/1.65 "Be Vietnam Pro",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.logo{font-family:"Chakra Petch",sans-serif}
-h1,h2,.coin,.btn,.big,.rk .n,.rk .c,.code{font-family:"Be Vietnam Pro",sans-serif}
-.wrap{max-width:520px;margin:0 auto;padding:14px 14px 90px}
-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px}
-.logo{font-weight:700;font-size:22px;letter-spacing:.5px}
-.logo span{background:#000;color:#fff;padding:0 7px;border-radius:6px;margin-left:3px}
-.coin{border:1.5px solid #000;color:#000;padding:7px 14px;border-radius:20px;font-weight:700;font-size:16px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px}
-.hero{background:#000;color:#fff;border-color:#000}
-.hero .big{font-size:36px;font-weight:700;color:#fff;margin:6px 0 10px}
-.hero .mu{color:#e0e0e0}
-.hero b{color:#fff}
-.mu{color:var(--muted);font-size:14.5px;line-height:1.6}
-h2{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:12px}
-label{display:block;font-size:14.5px;font-weight:600;color:#222;margin:0 0 6px}
-input,select,textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text);font:inherit;font-size:16px;margin-bottom:12px;transition:border .2s}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#000}
-.btn{width:100%;padding:14px;border:1.5px solid #000;border-radius:12px;background:#000;color:#fff;font-weight:600;font-size:16px;cursor:pointer;transition:transform .15s,opacity .15s}
-.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4}
-.btn.alt{background:#fff;color:#000}
+:root{--bg:#0d0b18;--card:#161326;--card2:#1d1a33;--border:#2a2547;--ink:#f3f1fc;--text:#e4e0f5;--muted:#9a94b8;--gold:#f5c56b;--acc:#8b5cf6;--acc2:#7c3aed;--r:14px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{color-scheme:dark}
+body{min-height:100vh;background:var(--bg);color:var(--text);font:400 15px/1.55 "Be Vietnam Pro",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:480px;margin:0 auto;padding:12px 14px 96px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0 14px}
+.logo{font-family:"Playfair Display",serif;font-weight:800;font-size:20px;color:var(--gold);white-space:nowrap}
+.auth{max-width:360px;margin:8vh auto 0}
+.auth h1{font-size:26px;margin-bottom:4px;color:var(--ink)}
+.auth h1.logo{font-size:28px;color:var(--gold)}
+.coin{border:1px solid #f5c56b55;background:#f5c56b14;color:var(--gold);padding:6px 12px;border-radius:999px;font-weight:700;font-size:14.5px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.hero{background:linear-gradient(135deg,#5b21b6,#7c3aed);border:0}
+.hero .big{font-size:32px;font-weight:700;color:#fff;margin:2px 0 6px;line-height:1.2}
+.hero .mu{color:#e7dcff}.hero b{color:#fff}
+.mu{color:var(--muted);font-size:13.5px;line-height:1.55}
+h2{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:10px}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 6px}
+input,select,textarea{width:100%;padding:12px 13px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:inherit;font-size:16px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
+input::placeholder,textarea::placeholder{color:#6a6490}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px #8b5cf622}
+.btn{width:100%;padding:13px;border:0;border-radius:12px;background:var(--acc2);color:#fff;font:600 15.5px "Be Vietnam Pro",sans-serif;cursor:pointer;transition:transform .12s,opacity .12s}
+.btn:active{transform:scale(.98)}.btn:disabled{opacity:.45}
+.btn.alt{background:transparent;border:1px solid var(--border);color:var(--text)}
 .row{display:flex;gap:10px}.row>*{flex:1}
-.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)}
 .item:last-child{border:0}
-.mini{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:#000;font:600 14px "Be Vietnam Pro",sans-serif;cursor:pointer;min-height:36px}
-.mini.ok{background:#000;color:#fff;border-color:#000}
-.mini.bad{background:#fff;color:#000;border-color:#000}
-.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap}
-.pending{background:#eee;color:#555}
-.approved{background:#000;color:#fff}
-.rejected{background:#fff;color:#000;border:1px solid #000}
-.note{background:var(--card2);border:1px dashed #999;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14.5px}
+.mini{padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text);font:600 13.5px "Be Vietnam Pro",sans-serif;cursor:pointer;min-height:34px}
+.mini.ok{background:var(--acc2);border-color:transparent;color:#fff}
+.mini.bad{background:transparent;color:#fda4af;border-color:#f43f5e66}
+.tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.pending{background:#2a2547;color:#c9bff5}
+.approved{background:#14532d;color:#86efac}
+.rejected{background:transparent;color:#fda4af;border:1px solid #f43f5e66}
+.note{background:var(--card2);border:1px dashed #4a4380;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px}
 .box{background:var(--card2);border-radius:12px;padding:12px;margin-bottom:12px}
-.box input{background:#fff}
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#fffffff2;backdrop-filter:blur(12px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0);z-index:10}
-nav button{flex:1;padding:13px 2px;border:0;background:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:"Be Vietnam Pro",sans-serif}
-nav button.on{color:#000;box-shadow:inset 0 2px 0 #000}
-.auth{max-width:360px;margin:10vh auto 0}
-.auth h1{font-size:26px;margin-bottom:4px}
-.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);padding:12px 18px;border-radius:12px;font-weight:600;z-index:99;max-width:90vw;border:2px solid #000;font-size:15px}
-.toast.ok{background:#000;color:#fff}
-.toast.bad{background:#fff;color:#000;box-shadow:0 4px 18px #0003}
-.rk{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
-.rk .n{width:28px;font-weight:700;font-size:16px;color:#000}
-.rk.me{background:#f0f0f0;border-radius:8px;margin:0 -8px;padding:11px 8px}
-.rk .c{margin-left:auto;font-weight:700;color:#000}
-.xp{height:8px;background:#3a3a3a;border-radius:6px;overflow:hidden;margin-top:10px}
+nav{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;display:flex;background:#0d0b18f2;backdrop-filter:blur(14px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0);z-index:10}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;border:0;background:none;color:var(--muted);font:600 11.5px "Be Vietnam Pro",sans-serif;cursor:pointer}
+nav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--gold)}
+.toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);padding:11px 18px;border-radius:12px;font-weight:600;z-index:99;max-width:90vw;font-size:14.5px;background:var(--card2);color:#fff;border:1px solid #22c55e88;box-shadow:0 6px 24px #0008}
+.toast.bad{background:#3a0f22;color:#ffd0da;border-color:#f43f5e}
+.rk{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.rk .n{width:28px;font-weight:700;color:var(--gold)}
+.rk .c{margin-left:auto;font-weight:700;color:var(--gold)}
+.rk.me{background:var(--card2);border-radius:8px;margin:0 -8px;padding:10px 8px}
+.xp{height:6px;background:#ffffff33;border-radius:6px;overflow:hidden;margin-top:10px}
 .xp b{display:block;height:100%;background:#fff;border-radius:6px;transition:width .5s}
 .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.card-opt{padding:14px 10px;border-radius:12px;border:1.5px solid var(--border);background:#fff;text-align:center;cursor:pointer;transition:all .2s;font-weight:600;font-size:15px}
-.card-opt.on{border-color:#000;background:#000;color:#fff}
+.card-opt,.denom button,.fl button,.bk{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.card-opt{padding:13px 10px;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s;font-weight:600;font-size:14.5px}
 .denom{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.denom button{flex:1 1 30%;padding:11px 6px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:#000;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
-.denom button.on{border-color:#000;background:#000;color:#fff}
+.denom button{flex:1 1 30%;padding:11px 6px;border-radius:10px;font-weight:600;font-size:14.5px;cursor:pointer;font-family:inherit}
+.card-opt.on,.denom button.on,.fl button.on,.seg button.on{background:var(--acc2);border-color:transparent;color:#fff}
 .seg{display:flex;background:var(--card2);border-radius:12px;padding:4px;margin:12px 0}
-.seg button{flex:1;padding:10px;border:0;background:none;border-radius:9px;font:600 15px "Be Vietnam Pro",sans-serif;cursor:pointer;color:var(--muted)}
-.seg button.on{background:#000;color:#fff}
-.bk{display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer}
-.bk.on{border-color:#000;background:var(--card2)}
-.bk .dot{width:16px;height:16px;border-radius:50%;border:2px solid #000;flex:none}
-.bk.on .dot{background:#000;box-shadow:inset 0 0 0 3px #fff}
-.hi{padding:12px 0;border-bottom:1px solid var(--border)}.hi:last-child{border:0}
+.seg button{flex:1;padding:9px;border:0;background:none;border-radius:9px;font:600 14px "Be Vietnam Pro",sans-serif;cursor:pointer;color:var(--muted)}
+.bk{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;margin-bottom:8px;cursor:pointer}
+.bk.on{border-color:var(--acc);background:var(--card2)}
+.bk .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--acc);flex:none}
+.bk.on .dot{background:var(--acc);box-shadow:inset 0 0 0 3px var(--bg)}
+.hi{padding:11px 0;border-bottom:1px solid var(--border)}.hi:last-child{border:0}
 .hi .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.code{background:#000;color:#fff;border-radius:10px;padding:10px 12px;margin-top:8px;font-weight:600;font-size:15px;line-height:1.9;word-break:break-all}
+.code{background:var(--bg);border:1px solid var(--border);color:var(--gold);border-radius:10px;padding:10px 12px;margin-top:8px;font-weight:600;font-size:14.5px;line-height:1.9;word-break:break-all}
 .code>div{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.code .mini{background:#fff;color:#000;border-color:#fff;padding:4px 10px}
+.code .mini{background:var(--gold);color:#1a1033;border-color:var(--gold);padding:4px 10px}
 .wr{padding:14px 0;border-bottom:1px solid var(--border)}.wr:last-child{border:0}
-.srch{position:sticky;top:0;background:#fff;padding:6px 0;z-index:5}
+.srch{position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:5}
 .fl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.fl button{padding:8px 12px;border-radius:20px;border:1px solid var(--border);background:#fff;font:600 14px "Be Vietnam Pro",sans-serif;cursor:pointer}
-.fl button.on{background:#000;color:#fff;border-color:#000}
+.fl button{padding:7px 12px;border-radius:999px;font:600 13.5px "Be Vietnam Pro",sans-serif;cursor:pointer}
 .us{padding:14px 0;border-bottom:1px solid var(--border)}.us:last-child{border:0}
-.us .nm{font-size:16.5px;font-weight:700}
+.us .nm{font-size:16px;font-weight:700}
 .us .ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
 .us .ac input{width:120px;margin:0;padding:8px 10px;font-size:15px}
-.rc{font-size:30px;font-weight:700;letter-spacing:4px;text-align:center;background:var(--card2);border-radius:12px;padding:14px;margin:10px 0 12px;font-family:"Chakra Petch",sans-serif}
+.rc{font-size:26px;font-weight:700;letter-spacing:4px;text-align:center;background:var(--card2);color:var(--gold);border-radius:12px;padding:12px;margin:10px 0 12px}
 .ctl{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.ctl a{display:inline-block;padding:10px 14px;border:1.5px solid #000;border-radius:10px;color:#000;text-decoration:none;font-weight:600;font-size:15px}
+.ctl a{display:inline-block;padding:9px 14px;border:1px solid var(--border);background:var(--card2);border-radius:10px;color:var(--text);text-decoration:none;font-weight:600;font-size:14px}
 .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
 .stat div{background:var(--card2);border-radius:12px;padding:10px 6px;text-align:center}
-.stat b{display:block;font-size:16px}
-.stat span{font-size:13px;color:var(--muted)}
-
-html{color-scheme:dark}
-body{background:radial-gradient(700px 420px at 85% -5%,#35176d 0,transparent 65%),radial-gradient(600px 380px at -10% 8%,#4a1245 0,transparent 60%),var(--bg);background-attachment:fixed}
-.logo{font-family:"Playfair Display",serif;font-weight:800;font-size:22px;letter-spacing:.3px;background:linear-gradient(90deg,#f6e3a1,#f0c969 55%,#e9a8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.auth h1.logo{font-size:30px}
-.coin{border:1.5px solid var(--gold);color:var(--gold);background:#f0c9691a}
-.card{box-shadow:0 6px 24px #0006}
-.hero{background:linear-gradient(135deg,#4c1d95,#86198f 55%,#9f1239);border-color:#a855f7}
-.hero .mu{color:#eadcff}.hero .big{color:var(--gold)}
-label{color:#cfc7ee}
-input,select,textarea{background:#110c22;border-color:var(--border);color:var(--text)}
-input::placeholder,textarea::placeholder{color:#6f6794}
-input:focus,select:focus,textarea:focus{border-color:#a855f7;box-shadow:0 0 0 3px #a855f733}
-.box input{background:#110c22}
-.btn{background:var(--grad);border:0;color:#fff;box-shadow:0 4px 16px #7c3aed55}
-.btn.alt{background:transparent;border:1.5px solid #a855f7;color:#e2ccff;box-shadow:none}
-.mini{background:#1e1838;color:var(--text);border-color:var(--border)}
-.mini.ok{background:var(--grad);border-color:transparent;color:#fff}
-.mini.bad{background:transparent;color:#fda4af;border-color:#f43f5e}
-.pending{background:#2b2350;color:#cbb8ff}
-.approved{background:#14532d;color:#86efac}
-.rejected{background:transparent;color:#fda4af;border:1px solid #f43f5e}
-.note{background:var(--card2);border-color:#6d5bb0}
-nav{background:#0f0a20f2;overflow-x:auto}
-nav button{flex:1 0 auto;min-width:68px;font-size:12.5px;padding:13px 6px}
-nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
-.toast{border:1.5px solid var(--gold)}
-.toast.ok{background:#2a1558;color:#fff}
-.toast.bad{background:#3a0f22;color:#ffd0da;border-color:#f43f5e;box-shadow:0 4px 18px #0008}
-.rk .n,.rk .c,.rc{color:var(--gold)}
-.rk.me{background:#2a1f52}
-.xp{background:#ffffff33}.xp b{background:linear-gradient(90deg,#f0c969,#f9a8d4)}
-.card-opt,.denom button,.fl button,.bk{background:#110c22;color:var(--text);border-color:var(--border)}
-.card-opt.on,.denom button.on,.fl button.on,.seg button.on{background:var(--grad);border-color:transparent;color:#fff}
-.bk.on{border-color:#a855f7;background:var(--card2)}
-.bk .dot{border-color:#a855f7}.bk.on .dot{background:#a855f7;box-shadow:inset 0 0 0 3px #110c22}
-.code{background:#0b0816;border:1px solid var(--border);color:var(--gold)}
-.code .mini{background:var(--gold);color:#1a1033;border-color:var(--gold)}
-.ctl a{border-color:#a855f7;color:#e2ccff}
-.srch{background:var(--bg)}
+.stat b{display:block;font-size:15px}
+.stat span{font-size:12.5px;color:var(--muted)}
+.qk{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.qk-i{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;text-align:left;color:var(--text);cursor:pointer;font:inherit}
+.qk-i b{display:block;font-size:15px;color:var(--ink)}
+.qk-i span{font-size:13px;color:var(--muted)}
 .wh{position:relative;width:min(300px,78vw);margin:10px auto 18px}
-.wh canvas{width:100%;display:block;border-radius:50%;box-shadow:0 0 0 5px var(--gold),0 0 38px #a855f777;transition:transform 4.6s cubic-bezier(.12,.72,.12,1)}
+.wh canvas{width:100%;display:block;border-radius:50%;box-shadow:0 0 0 4px var(--gold),0 0 30px #8b5cf655;transition:transform 4.6s cubic-bezier(.12,.72,.12,1)}
 .wh .ptr{position:absolute;left:50%;top:-12px;transform:translateX(-50%);width:0;height:0;border:13px solid transparent;border-top:24px solid var(--gold);border-bottom:0;z-index:2;filter:drop-shadow(0 2px 3px #000a)}
-.wh .hub{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:#150f2b;border:3px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font:normal 24px/1 sans-serif;z-index:2}
+.wh .hub{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:var(--card);border:3px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font:normal 24px/1 sans-serif;z-index:2}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 </style></head>
 <body><div class="wrap" id="app"><p class="mu" style="text-align:center;margin-top:30vh">Đang tải...</p></div>
@@ -306,6 +262,12 @@ function phoneView(){
   }catch(e){$("#phs").disabled=false;toast("Không lưu được: "+(e.code||e.message),0)}
  };
 }
+const IC={
+ home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg>',
+ task:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
+ link:'<svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+ doi:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/></svg>',
+ more:'<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>'};
 function shell(){
  if(isAd()&&ME.banned){ME.banned=false;updateDoc(doc(db,"users",U.uid),{banned:false})}
  if(ME.banned){$("#app").innerHTML=wrapA(`<div class="card"><h2>Tài khoản bị khóa</h2><p class="mu" style="margin-bottom:12px">${ME.sus>0?"Hệ thống phát hiện hành vi nghi gian lận / bypass link. ":""}Liên hệ admin nếu cần hỗ trợ.</p><button class="btn alt" id="lo">Thoát</button></div>`);$("#lo").onclick=()=>signOut(auth);return}
@@ -314,14 +276,14 @@ function shell(){
  if(ME.approved===false&&!isAd()){$("#app").innerHTML=wrapA('<div class="card"><h2>Chờ admin duyệt</h2><p class="mu" style="margin-bottom:12px">Tài khoản mới cần được duyệt trước khi dùng.</p><div class="row"><button class="btn" id="rf">Kiểm tra lại</button><button class="btn alt" id="lo">Thoát</button></div></div>');$("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadMe();shell()};return}
  if(CFG.mt&&!isAd()){mtScreen();return}
  if(!ME.phone&&!isAd()){phoneView();return}
- const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["link","Rút gọn"],...(CFG.spinOn||isAd()?[["spin","Vòng quay"]]:[]),["doi","Rút tiền"],["ref","Bạn bè"],["more","Thêm"]];if(isAd())t.push(["admin","Admin"]);
- $("#app").innerHTML=`<header><span class="logo">☾ Nguyệt Ma Tông</span><span><span class="coin" id="bal"></span> <button class="mini" id="lo" style="margin-left:6px">Thoát</button></span></header><main id="m"></main><nav>${t.map(x=>`<button data-t="${x[0]}">${x[1]}</button>`).join("")}</nav>`;
+ const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["link","Rút gọn"],["doi","Rút tiền"],["more","Thêm"]];
+ $("#app").innerHTML=`<header><span class="logo">☾ Nguyệt Ma Tông</span><span><span class="coin" id="bal"></span> <button class="mini" id="lo" style="margin-left:6px">Thoát</button></span></header><main id="m"></main><nav>${t.map(x=>`<button data-t="${x[0]}">${IC[x[0]]}<span>${x[1]}</span></button>`).join("")}</nav>`;
  $("#lo").onclick=()=>signOut(auth);
  document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
  go(tab);
 }
 const hdr=()=>{const b=$("#bal");if(b)b.textContent=fmt(ME.balance)};
-async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{if(!isAd()){await loadCfg();if(CFG.mt)return mtScreen()}await({home:pHome,task:pTask,link:pLink,spin:pSpin,doi:pDoi,ref:pRef,more:pMore,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
+async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t||(b.dataset.t==="more"&&["spin","ref","admin"].includes(t))));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{if(!isAd()){await loadCfg();if(CFG.mt)return mtScreen()}await({home:pHome,task:pTask,link:pLink,spin:pSpin,doi:pDoi,ref:pRef,more:pMore,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
 const today=()=>ME.dayKey===day()?ME.dayCount:0;
 
 async function pHome(m){
@@ -332,8 +294,7 @@ async function pHome(m){
  ${l>0?`<div class="xp"><b style="width:${pc}%"></b></div>`:""}</div>
  <div class="row"><button class="btn" id="g1">Làm nhiệm vụ</button><button class="btn alt" id="g2">Rút tiền</button></div>
  <p class="mu" style="text-align:center;margin:14px 0">Tổng hoàn thành: ${ME.total||0} nhiệm vụ</p>
- ${CFG.spinOn?`<div class="card"><h2>Vòng quay Nguyệt Ma</h2><p class="mu" style="margin-bottom:12px">Mỗi lượt ${fmt(CFG.spinCost)}, trúng tới ${fmt(Math.max(...wheelCfg().map(s=>s.a)))}.</p><button class="btn alt" id="g4">Quay ngay</button></div>`:""}
- <div class="card"><h2>Mời bạn bè</h2><p class="mu" style="margin-bottom:12px">Nhận +${fmt(CFG.refbonus)} cho mỗi bạn làm đủ ${RN()} nhiệm vụ.</p><button class="btn alt" id="g3">Xem mã giới thiệu</button></div>
+ <div class="qk">${CFG.spinOn?`<button class="qk-i" id="g4"><b>Vòng quay</b><span>Trúng tới ${fmt(Math.max(...wheelCfg().map(s=>s.a)))}</span></button>`:""}<button class="qk-i" id="g3"><b>Mời bạn bè</b><span>+${fmt(CFG.refbonus)} mỗi bạn</span></button></div>
  ${contactHTML()}`;
  $("#g1").onclick=()=>go("task");$("#g2").onclick=()=>go("doi");$("#g3").onclick=()=>go("ref");if($("#g4"))$("#g4").onclick=()=>go("spin");
 }
@@ -618,8 +579,10 @@ async function pRef(m){
 }
 async function pMore(m){
  const tabs=[["hist","Lịch sử"],["top","Xếp hạng"],["ct","Liên hệ"]];
- m.innerHTML=`<div class="seg" style="margin-top:0">${tabs.map(x=>`<button data-mo="${x[0]}" class="${more===x[0]?"on":""}">${x[1]}</button>`).join("")}</div><div id="mb"></div>`;
+ const menu=[...(CFG.spinOn||isAd()?[["spin","Vòng quay","Quay thưởng"]]:[]),["ref","Bạn bè","Mời bạn nhận thưởng"],...(isAd()?[["admin","Admin","Quản trị hệ thống"]]:[])].map(x=>`<button class="qk-i" data-go="${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></button>`).join("");
+ m.innerHTML=`<div class="qk">${menu}</div><div class="seg" style="margin-top:0">${tabs.map(x=>`<button data-mo="${x[0]}" class="${more===x[0]?"on":""}">${x[1]}</button>`).join("")}</div><div id="mb"></div>`;
  m.querySelectorAll("[data-mo]").forEach(b=>b.onclick=()=>{more=b.dataset.mo;pMore(m)});
+ m.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
  const mb=$("#mb");
  if(more==="top")return pTop(mb);
  if(more==="ct"){mb.innerHTML=contactHTML()||'<div class="card"><p class="mu">Admin chưa cập nhật thông tin liên hệ.</p></div>';return}
