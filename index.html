@@ -1,4 +1,24 @@
 <!DOCTYPE html>
+<!--
+FIRESTORE RULES cần thêm 1 lần (Firebase Console > Firestore > Rules), dán vào trong
+match /databases/{database}/documents { ... } và giữ nguyên rule cũ:
+
+    match /links/{id} {
+      allow get: if request.auth != null;
+      allow list: if request.auth != null && (resource.data.uid == request.auth.uid || request.auth.token.email == "admin@vl.app");
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid && request.resource.data.earned == 0 && request.resource.data.n == 0;
+      allow update: if request.auth.token.email == "admin@vl.app";
+      allow delete: if false;
+    }
+    match /credits/{id} {
+      allow read: if request.auth != null && (resource.data.uid == request.auth.uid || request.auth.token.email == "admin@vl.app");
+      allow create: if request.auth.token.email == "admin@vl.app";
+      allow update, delete: if false;
+    }
+
+Nếu rule của users đang giới hạn field được sửa thì thêm 2 field: linkDay, linkN.
+Rule của settings/secret phải cho admin ghi (đang dùng cho API key sitetop).
+-->
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0816">
 <title>Nguyệt Ma Tông</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=Chakra+Petch:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -152,8 +172,8 @@ const CARDS=["Garena","Viettel","Vinaphone","Vietnamobile"];
 const DENOMS=[10000,20000,50000,100000,200000,500000];
 const BANKS=["Vietcombank","VietinBank","BIDV","Agribank","Techcombank","MB Bank","ACB","VPBank","TPBank","Sacombank","HDBank","SHB","VIB","OCB","MSB","SeABank","Eximbank","LPBank","Nam A Bank","Bac A Bank","ABBank","VietBank"];
 const MAXBANK=3;
-const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,mf:5,ml:10,sus:3,refbonus:2000,refneed:5,spinOn:1,spinCost:500,spinLim:0,wheel:[{a:0,w:30},{a:200,w:25},{a:300,w:15},{a:500,w:12},{a:800,w:8},{a:1000,w:6},{a:2000,w:3},{a:5000,w:1}],mt:0,mtmsg:"",czalo:"",ctele:"",cfb:"",cphone:"",cnote:"",ann:""};
-const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Thời gian làm nhiệm vụ tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)",mf:"Sai key tối đa mỗi nhiệm vụ (lần)",ml:"Khóa nhập key khi sai quá nhiều (phút)",sus:"Vi phạm nhẹ (sai key, đổi thiết bị) bao nhiêu lần thì tự khóa (0 = tắt). Bypass rõ ràng luôn bị khóa ngay",refbonus:"Thưởng giới thiệu mỗi bạn (đ)",refneed:"Bạn bè cần hoàn thành (nhiệm vụ) mới có thưởng"};
+const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,mf:5,ml:10,sus:3,refbonus:2000,refneed:5,linkLim:10,spinOn:1,spinCost:500,spinLim:0,wheel:[{a:0,w:30},{a:200,w:25},{a:300,w:15},{a:500,w:12},{a:800,w:8},{a:1000,w:6},{a:2000,w:3},{a:5000,w:1}],mt:0,mtmsg:"",czalo:"",ctele:"",cfb:"",cphone:"",cnote:"",ann:""};
+const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Thời gian làm nhiệm vụ tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)",mf:"Sai key tối đa mỗi nhiệm vụ (lần)",ml:"Khóa nhập key khi sai quá nhiều (phút)",sus:"Vi phạm nhẹ (sai key, đổi thiết bị) bao nhiêu lần thì tự khóa (0 = tắt). Bypass rõ ràng luôn bị khóa ngay",refbonus:"Thưởng giới thiệu mỗi bạn (đ)",refneed:"Bạn bè cần hoàn thành (nhiệm vụ) mới có thưởng",linkLim:"Giới hạn rút gọn link mỗi ngày của mỗi người (0 = không giới hạn)"};
 const CT={cphone:"SĐT hỗ trợ",czalo:"Zalo (số điện thoại)",ctele:"Telegram (tên, không cần @)",cfb:"Facebook (dán link https://...)",cnote:"Ghi chú liên hệ (giờ làm việc...)"};
 const ST={pending:"Chờ duyệt",approved:"Đã duyệt",rejected:"Từ chối"};
 
@@ -167,6 +187,40 @@ const DEV=localStorage.dv||(localStorage.dv=rnd(16));
 const ERR={"auth/email-already-in-use":"Tên này đã có người dùng","auth/operation-not-allowed":"Firebase chưa bật Email/Password","permission-denied":"Firestore đang chặn","auth/network-request-failed":"Mất mạng","auth/weak-password":"Mật khẩu từ 6 ký tự"};
 const sha=async t=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)))].map(x=>x.toString(16).padStart(2,"0")).join("");
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+// Thông báo Telegram: token + chat id do admin nhập ở trang Admin, lưu trong settings/secret
+let TG=null;
+const tgCfg=async()=>{if(TG===null){try{const d=(await getDoc(doc(db,"settings","secret"))).data()||{};TG={t:d.tg||"",c:d.tgc||""}}catch{TG={t:"",c:""}}}return TG};
+const TT={reg:"🆕 Đăng ký tài khoản mới",wd:"💸 Yêu cầu rút tiền / đổi thẻ",lock:"🚫 Tài khoản bị khóa tự động",link:"🔗 Link rút gọn mới",acc:"✅ Duyệt tài khoản",wdone:"🧾 Xử lý đơn rút",ban:"🔒 Khóa / mở khóa tài khoản",credit:"💰 Cộng tiền từ link rút gọn",adj:"⚖️ Điều chỉnh số dư",test:"🔔 Thông báo thử"};
+const NOTIFY=async(type,text)=>{try{const g=await tgCfg();if(!g.t||!g.c)return;
+ fetch("https://api.telegram.org/bot"+g.t+"/sendMessage?"+new URLSearchParams({chat_id:g.c,text:(TT[type]||"")+"\n"+String(text).slice(0,700)+"\n"+new Date().toLocaleString("vi-VN"),disable_web_page_preview:"true"})).catch(()=>{})}catch{}};
+const BLOCKED="sitetop.net";
+const dec=x=>{try{return decodeURIComponent(x)}catch{return x}};
+function cleanUrl(x){
+ x=String(x||"").trim();
+ if(x.length>2000)return{err:"Link quá dài"};
+ if(!/^https?:\/\//i.test(x))return{err:"Link phải bắt đầu bằng http:// hoặc https://"};
+ let u;try{u=new URL(x)}catch{return{err:"Link không hợp lệ"}}
+ const h=u.hostname.toLowerCase().replace(/\.$/,"");
+ if(!h.includes("."))return{err:"Link không hợp lệ"};
+ // chặn mọi link chứa sitetop.net (kể cả bị mã hóa %xx hoặc nhét trong tham số)
+ if([x,dec(x),dec(dec(x))].join(" ").toLowerCase().includes(BLOCKED))return{err:"Không được rút gọn link sitetop.net hoặc link đã rút gọn"};
+ u.hash="";
+ return{url:u.href,norm:u.protocol+"//"+h+(u.port?":"+u.port:"")+u.pathname.replace(/\/+$/,"")+u.search}}
+async function sitetopShorten(long){
+ let url="",why="";
+ try{
+  const sk=(await getDoc(doc(db,"settings","secret"))).data()?.k;
+  if(!sk)return{url:"",why:"Admin chưa nhập API key sitetop"};
+  const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;
+  const r=await fetch(`${WORKER}?url=${encodeURIComponent(api)}`);
+  const t=await r.text();
+  if(!t||!t.trim().startsWith("{"))throw new Error("Worker lỗi: "+(t||"").slice(0,60));
+  const j=JSON.parse(t);
+  url=j.shortenedUrl||j.short_url||j.shorturl||j.shortUrl||j.url||j.link||(j.data&&(j.data.shortenedUrl||j.data.short_url||j.data.url))||"";
+  why=j.message||j.error||j.msg||"";
+ }catch(e){why=e.message||String(e)}
+ if(url===long||!/^https?:\/\//i.test(url))url="";
+ return{url,why}}
 const toast=(m,ok=1)=>{const t=document.createElement("div");t.className="toast "+(ok?"ok":"bad");t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3200)};
 const rows=q=>getDocs(q).then(s=>s.docs.map(d=>({id:d.id,...d.data()})));
 const isBank=w=>w.type==="bank"||(!w.type&&!w.card&&!!w.bank);
@@ -218,13 +272,14 @@ function loginView(){
   if(p.length<6){toast("Mật khẩu từ 6 ký tự",0);return}
   if(localStorage.reg)return toast("Thiết bị này đã đăng ký rồi",0);
   try{const s=await getDoc(doc(db,"phones",id));if(s.exists())return toast("Số điện thoại này đã được đăng ký",0)}catch{}
-  const code=($("#rf")?.value||"").trim().toUpperCase();
+  const code=($("#rf")?.value||"").trim().toUpperCase();let refName="";
   try{
    const r=await createUserWithEmailAndPassword(auth,id+"@vl.app",p);
    await setDoc(doc(db,"users",r.user.uid),{name:id,phone:id,rc:rnd(6),ref:"",balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});
    localStorage.reg=1;localStorage.removeItem("rf");
    try{await setDoc(doc(db,"phones",id),{uid:r.user.uid,email:id+"@vl.app"})}catch{}
-   if(code){try{const q=await rows(query(collection(db,"users"),where("rc","==",code))),f=q.find(x=>x.id!==r.user.uid);if(f)await updateDoc(doc(db,"users",r.user.uid),{ref:f.id});else toast("Mã giới thiệu không đúng, đã bỏ qua",0)}catch{}}
+   if(code){try{const q=await rows(query(collection(db,"users"),where("rc","==",code))),f=q.find(x=>x.id!==r.user.uid);if(f){await updateDoc(doc(db,"users",r.user.uid),{ref:f.id});refName=f.name}else toast("Mã giới thiệu không đúng, đã bỏ qua",0)}catch{}}
+   NOTIFY("reg","SĐT: "+id+(refName?"\nNgười mời: "+refName:"")+"\nĐang chờ admin duyệt");
   }catch(e){toast(ERR[e.code]==="Tên này đã có người dùng"?"Số điện thoại này đã được đăng ký":ERR[e.code]||"Lỗi: "+(e.code||e.message),0)}
  };
 }
@@ -259,14 +314,14 @@ function shell(){
  if(ME.approved===false&&!isAd()){$("#app").innerHTML=wrapA('<div class="card"><h2>Chờ admin duyệt</h2><p class="mu" style="margin-bottom:12px">Tài khoản mới cần được duyệt trước khi dùng.</p><div class="row"><button class="btn" id="rf">Kiểm tra lại</button><button class="btn alt" id="lo">Thoát</button></div></div>');$("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadMe();shell()};return}
  if(CFG.mt&&!isAd()){mtScreen();return}
  if(!ME.phone&&!isAd()){phoneView();return}
- const t=[["home","Trang chủ"],["task","Nhiệm vụ"],...(CFG.spinOn||isAd()?[["spin","Vòng quay"]]:[]),["doi","Rút tiền"],["ref","Bạn bè"],["more","Thêm"]];if(isAd())t.push(["admin","Admin"]);
+ const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["link","Rút gọn"],...(CFG.spinOn||isAd()?[["spin","Vòng quay"]]:[]),["doi","Rút tiền"],["ref","Bạn bè"],["more","Thêm"]];if(isAd())t.push(["admin","Admin"]);
  $("#app").innerHTML=`<header><span class="logo">☾ Nguyệt Ma Tông</span><span><span class="coin" id="bal"></span> <button class="mini" id="lo" style="margin-left:6px">Thoát</button></span></header><main id="m"></main><nav>${t.map(x=>`<button data-t="${x[0]}">${x[1]}</button>`).join("")}</nav>`;
  $("#lo").onclick=()=>signOut(auth);
  document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
  go(tab);
 }
 const hdr=()=>{const b=$("#bal");if(b)b.textContent=fmt(ME.balance)};
-async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{if(!isAd()){await loadCfg();if(CFG.mt)return mtScreen()}await({home:pHome,task:pTask,spin:pSpin,doi:pDoi,ref:pRef,more:pMore,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
+async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{if(!isAd()){await loadCfg();if(CFG.mt)return mtScreen()}await({home:pHome,task:pTask,link:pLink,spin:pSpin,doi:pDoi,ref:pRef,more:pMore,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
 const today=()=>ME.dayKey===day()?ME.dayCount:0;
 
 async function pHome(m){
@@ -325,7 +380,7 @@ async function flag(why,hard){
  let ban=0;
  try{await runTransaction(db,async tx=>{const r=doc(db,"users",U.uid),x=await tx.get(r),u=x.data(),n=(u.sus||0)+1,d={sus:n,susWhy:why,susAt:Date.now()};
   ban=!!hard||(CFG.sus>0&&n>=CFG.sus);if(ban)d.banned=true;tx.update(r,d)})}catch{ban=0}
- if(ban){ME.banned=true;ME.sus=(ME.sus||0)+1;if(hard)localStorage.bn=U.uid;toast("Phát hiện bypass, tài khoản đã bị khóa",0);shell()}
+ if(ban){ME.banned=true;ME.sus=(ME.sus||0)+1;if(hard)localStorage.bn=U.uid;NOTIFY("lock",(ME.name||"?")+" bị khóa tự động\nLý do: "+why);toast("Phát hiện bypass, tài khoản đã bị khóa",0);shell()}
  return ban;
 }
 async function sendKey(t){
@@ -433,13 +488,13 @@ async function pDoi(m){
     if(amt>ME.balance)return toast("Số dư không đủ",0);
     btn.disabled=true;
     await addDoc(collection(db,"withdrawals"),{uid:U.uid,uname:ME.name,type:"bank",amount:amt,bank:b.bank,bankNo:b.number,bankOwner:b.owner,status:"pending",created:Date.now()});
-    toast("Đã gửi yêu cầu rút "+fmt(amt));
+    NOTIFY("wd",ME.name+" rút ngân hàng "+fmt(amt)+"\n"+b.bank+" · "+b.number+" · "+b.owner);toast("Đã gửi yêu cầu rút "+fmt(amt));
    }else{
     if(selDenom<CFG.min)return toast("Tối thiểu "+fmt(CFG.min),0);
     if(selDenom>ME.balance)return toast("Số dư không đủ",0);
     btn.disabled=true;
     await addDoc(collection(db,"withdrawals"),{uid:U.uid,uname:ME.name,type:"card",amount:selDenom,card:selCard,status:"pending",created:Date.now()});
-    toast("Đã gửi yêu cầu "+selCard+" "+fmt(selDenom));
+    NOTIFY("wd",ME.name+" đổi thẻ "+selCard+" "+fmt(selDenom));toast("Đã gửi yêu cầu "+selCard+" "+fmt(selDenom));
    }
    go("doi");
   };
@@ -489,6 +544,62 @@ async function pSpin(m){
   hist();busy=0;b.disabled=false};
 }
 
+async function creditLink(btn,x,v){
+ btn.disabled=true;
+ try{
+  await runTransaction(db,async tx=>{
+   const lr=doc(db,"links",x.id),ur=doc(db,"users",x.uid),ls=await tx.get(lr),us=await tx.get(ur);
+   if(!ls.exists()||!us.exists())throw"Không tìm thấy link hoặc người dùng";
+   const l=ls.data(),u=us.data();
+   tx.update(ur,{balance:(u.balance||0)+v});
+   tx.update(lr,{earned:(l.earned||0)+v,n:(l.n||0)+1});
+   tx.set(doc(collection(db,"credits")),{uid:x.uid,uname:l.uname,lid:x.id,short:l.short,amount:v,created:Date.now()})});
+  toast("Đã cộng "+fmt(v)+" cho "+x.uname);
+  NOTIFY("credit","Cộng "+fmt(v)+" cho "+x.uname+"\nTừ link: "+x.short);
+ }catch(e){toast(typeof e==="string"?e:"Không cộng được: "+(e.code||e.message),0)}
+ pAdmin()}
+
+async function pLink(m){
+ await loadMe();hdr();
+ const[ls,cs]=await Promise.all([rows(query(collection(db,"links"),where("uid","==",U.uid))),rows(query(collection(db,"credits"),where("uid","==",U.uid)))]);
+ const L=ls.sort((a,b)=>b.created-a.created),C=cs.sort((a,b)=>b.created-a.created);
+ const tot=L.reduce((a,l)=>a+(l.earned||0),0),lim=+CFG.linkLim||0,used=ME.linkDay===day()?(ME.linkN||0):0;
+ const cut=x=>String(x||"").length>46?String(x).slice(0,43)+"...":String(x||"");
+ m.innerHTML=`<div class="card"><h2>Rút gọn link</h2>
+ <p class="mu" style="margin-bottom:12px">Dán link của bạn để tạo link rút gọn. Mỗi link chỉ rút gọn được <b>1 lần</b>, không nhận link sitetop.net. Khi link có thu nhập, admin sẽ cộng tiền vào ví theo từng link.${lim>0?` Hôm nay: <b>${used}/${lim}</b> lượt.`:""}</p>
+ <label>Link gốc</label><input id="lu" inputmode="url" placeholder="https://..." autocomplete="off">
+ <button class="btn" id="lb">Rút gọn link</button></div>
+ <div class="card"><h2>Link của bạn</h2><div class="stat"><div><b>${L.length}</b><span>Số link</span></div><div><b>${fmt(tot)}</b><span>Đã được cộng</span></div><div><b>${C.length}</b><span>Lần cộng</span></div></div>
+ ${L.map(l=>`<div class="hi"><div class="top"><span><b style="word-break:break-all">${esc(l.short)}</b><br><span class="mu">${esc(cut(l.orig))} · ${new Date(l.created).toLocaleDateString("vi-VN")}</span></span><span class="tag ${l.earned>0?"approved":"pending"}">${l.earned>0?"+"+fmt(l.earned):"Chưa có"}</span></div><button class="mini" data-cp="${esc(l.short)}" style="margin-top:8px">Copy link</button></div>`).join("")||'<p class="mu">Chưa có link nào.</p>'}</div>
+ <div class="card"><h2>Lịch sử cộng tiền</h2>${C.slice(0,30).map(c=>`<div class="hi"><div class="top"><span><b>+${fmt(c.amount)}</b><br><span class="mu">Cộng từ link rút gọn ${esc(cut(c.short))}<br>${new Date(c.created).toLocaleString("vi-VN")}</span></span><span class="tag approved">Đã cộng</span></div></div>`).join("")||'<p class="mu">Chưa có khoản nào được cộng.</p>'}</div>`;
+ bindCp(m);
+ $("#lb").onclick=async()=>{
+  const b=$("#lb"),v=cleanUrl($("#lu").value);
+  if(v.err)return toast(v.err,0);
+  b.disabled=true;
+  try{
+   await loadCfg();if(CFG.mt&&!isAd())return shell();
+   await loadMe();
+   const lm=+CFG.linkLim||0;
+   if(lm>0&&!isAd()&&(ME.linkDay===day()?(ME.linkN||0):0)>=lm)throw"Hôm nay đã hết lượt rút gọn link";
+   const id=await sha(v.norm);
+   if((await getDoc(doc(db,"links",id))).exists())throw"Link này đã được rút gọn rồi, không thể rút gọn lại";
+   const r=await sitetopShorten(v.url);
+   if(!r.url)throw"Không tạo được link"+(r.why?": "+r.why:"");
+   await runTransaction(db,async tx=>{
+    const lr=doc(db,"links",id),ur=doc(db,"users",U.uid),lx=await tx.get(lr),ux=await tx.get(ur);
+    if(lx.exists())throw"Link này đã được rút gọn rồi, không thể rút gọn lại";
+    const u=ux.data();if(u.banned)throw"Tài khoản đang bị khóa";
+    const d=day(),n=u.linkDay===d?(u.linkN||0):0;
+    if(lm>0&&!isAd()&&n>=lm)throw"Hôm nay đã hết lượt rút gọn link";
+    tx.set(lr,{uid:U.uid,uname:ME.name,orig:v.url,short:r.url,earned:0,n:0,created:Date.now()});
+    tx.update(ur,{linkDay:d,linkN:n+1})});
+   NOTIFY("link",ME.name+" vừa rút gọn link\n"+r.url+"\nGốc: "+v.url);
+   toast("Đã rút gọn link");go("link");
+  }catch(e){b.disabled=false;toast(typeof e==="string"?e:"Lỗi: "+(e.code||e.message),0)}
+ };
+}
+
 async function pTop(m){
  const r=await rows(query(collection(db,"users"),orderBy("total","desc"),limit(10)));
  m.innerHTML=`<div class="card"><h2>Top 10 đệ tử</h2>${r.filter(u=>u.total>0).map((u,i)=>`<div class="rk ${u.id===U.uid?"me":""}"><span class="n">${i+1}</span><span>${esc(mask(u.name))}</span><span class="c">${u.total}</span></div>`).join("")||'<p class="mu">Chưa có ai.</p>'}</div>`;
@@ -526,7 +637,7 @@ async function pMore(m){
 
 async function pAdmin(m=$("#m")){
  if(!isAd())return;await loadCfg();
- const[wd,us,rg,sc,hd]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(300))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret")),rows(query(collection(db,"withdrawals"),where("status","in",["approved","rejected"])))]);
+ const[wd,us,rg,sc,hd,lk]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(300))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret")),rows(query(collection(db,"withdrawals"),where("status","in",["approved","rejected"]))),rows(query(collection(db,"links"),orderBy("created","desc"),limit(100)))]);
  const all=[...new Map([...rg,...us].map(u=>[u.id,u])).values()],dup=u=>u.dev?all.filter(x=>x.dev===u.dev).length:1;
  const pr=rg.filter(u=>!u.banned).sort((a,b)=>a.created-b.created);
  const wl=wd.sort((a,b)=>a.created-b.created).map(w=>{const b=isBank(w);return`<div class="wr" data-t="${b?"bank":"card"}">
@@ -539,9 +650,13 @@ async function pAdmin(m=$("#m")){
  <div class="card"><h2>Đơn rút / đổi thẻ chờ duyệt (${wd.length})</h2>${wl||'<p class="mu">Không có.</p>'}</div>
  <div class="card"><h2>Lịch sử đơn đã xử lý (${hd.length})</h2><div class="fl" id="hf"><button data-f="all" class="on">Tất cả</button><button data-f="card">Thẻ</button><button data-f="bank">Ngân hàng</button><button data-f="rejected">Từ chối</button></div><div id="hl"></div></div>
  <div class="card" id="wcard"></div>
+ <div class="card"><h2>Link rút gọn của người dùng (${lk.length})</h2><p class="mu" style="margin-bottom:10px">Cộng tiền theo từng link. Người dùng sẽ thấy khoản tiền này trong lịch sử, kèm link rút gọn.</p><input id="lq" placeholder="Tìm theo tên hoặc link..." autocomplete="off" style="margin-bottom:8px"><div id="ll"></div></div>
  <div class="card"><h2>Cài đặt</h2>${Object.keys(SET).map(k=>`<label>${SET[k]}</label><input data-s="${k}" inputmode="numeric" value="${CFG[k]}">`).join("")}
  ${Object.keys(CT).map(k=>`<label>${CT[k]}</label><input data-t="${k}" value="${esc(CFG[k]||"")}">`).join("")}
- <label>API key sitetop</label><input id="sk" type="password" placeholder="${sc.exists()?"Đã lưu":"Dán API key"}">
+ <label>API key sitetop</label><input id="sk" type="password" placeholder="${sc.exists()&&sc.data().k?"Đã lưu":"Dán API key"}">
+ <label>Telegram bot token (lấy từ @BotFather)</label><input id="tgt" type="password" placeholder="${sc.exists()&&sc.data().tg?"Đã lưu":"Dán token bot"}" autocomplete="off">
+ <label>Telegram chat id của admin</label><input id="tgc" inputmode="numeric" placeholder="${sc.exists()&&sc.data().tgc?"Đã lưu":"VD: 123456789"}" autocomplete="off">
+ <button class="btn alt" id="tgb" style="margin-bottom:12px">Gửi thử Telegram (bấm Lưu trước)</button>
  <label>Thông báo</label><textarea id="an" rows="2">${esc(CFG.ann)}</textarea>
  <button class="btn" id="sv">Lưu</button></div>
  <div class="card"><h2>Người dùng (${us.length})</h2>
@@ -549,8 +664,8 @@ async function pAdmin(m=$("#m")){
  <div class="fl" id="uf"><button data-f="all" class="on">Tất cả</button><button data-f="ban">Đã khóa</button><button data-f="sus">Nghi bypass</button><button data-f="top">Nhiều xu nhất</button></div>
  <div id="ul"></div></div>`;
  bindCp(m);
- m.querySelectorAll("[data-ap]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.ap),{approved:true});toast("Đã duyệt");pAdmin()});
- m.querySelectorAll("[data-rj]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.rj),{banned:true});toast("Đã từ chối");pAdmin()});
+ m.querySelectorAll("[data-ap]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.ap),{approved:true});NOTIFY("acc","Đã duyệt tài khoản "+(all.find(u=>u.id===b.dataset.ap)?.name||""));toast("Đã duyệt");pAdmin()});
+ m.querySelectorAll("[data-rj]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.rj),{banned:true});NOTIFY("ban","Từ chối (khóa) tài khoản "+(all.find(u=>u.id===b.dataset.rj)?.name||""));toast("Đã từ chối");pAdmin()});
  m.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
   const bx=b.closest(".wr"),x={};
   if(bx.dataset.t==="card"){
@@ -569,12 +684,12 @@ async function pAdmin(m=$("#m")){
   $("#ul").innerHTML=l.map(u=>{const me=u.id===U.uid;return`<div class="us"><div class="nm">${u.banned?"🚫 ":u.approved===false?"⏳ ":""}${esc(u.name)} ${me?'<span class="tag pending">Bạn</span>':""}${(u.sus||0)>0?`<span class="tag rejected">Nghi bypass ×${u.sus}</span>`:""}</div>
    <div class="mu">${u.phone&&u.phone!==u.name?"SĐT <b>"+esc(u.phone)+"</b><br>":!u.phone?"Chưa có SĐT<br>":""}Số dư <b>${fmt(u.balance)}</b> · ${u.total||0} nhiệm vụ · ${dup(u)>1?dup(u)+" tk cùng máy · ":""}${u.banned?"Đang bị khóa":"Đang hoạt động"}${u.susWhy?`<br>Lý do nghi: ${esc(u.susWhy)}`:""}</div>
    ${me?"":`<div class="ac"><input inputmode="numeric" data-amt placeholder="Số tiền"><button class="mini ok" data-add="${u.id}">+ Cộng</button><button class="mini bad" data-sub="${u.id}">− Trừ</button><button class="mini ${u.banned?"ok":"bad"}" data-b="${u.id}" data-v="${u.banned?0:1}">${u.banned?"Mở khóa":"Khóa"}</button>${(u.sus||0)>0||u.lockUntil>Date.now()?`<button class="mini" data-clr="${u.id}">Xóa cờ</button>`:""}</div>`}</div>`}).join("")||'<p class="mu">Không tìm thấy.</p>';
-  $("#ul").querySelectorAll("[data-b]").forEach(b=>b.onclick=async()=>{const ban=b.dataset.v==="1";if(ban&&!confirm("Khóa tài khoản này?"))return;await updateDoc(doc(db,"users",b.dataset.b),ban?{banned:true}:{banned:false,sus:0,lockUntil:0});toast(ban?"Đã khóa":"Đã mở khóa");pAdmin()});
+  $("#ul").querySelectorAll("[data-b]").forEach(b=>b.onclick=async()=>{const ban=b.dataset.v==="1";if(ban&&!confirm("Khóa tài khoản này?"))return;await updateDoc(doc(db,"users",b.dataset.b),ban?{banned:true}:{banned:false,sus:0,lockUntil:0});NOTIFY("ban",(ban?"Đã khóa tài khoản ":"Đã mở khóa tài khoản ")+(us.find(u=>u.id===b.dataset.b)?.name||""));toast(ban?"Đã khóa":"Đã mở khóa");pAdmin()});
   $("#ul").querySelectorAll("[data-clr]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.clr),{sus:0,susWhy:"",lockUntil:0});toast("Đã xóa cờ");pAdmin()});
   const adj=sign=>b=>b.onclick=async()=>{
    const v=num(b.closest(".ac").querySelector("[data-amt]").value)*sign;if(!v)return toast("Nhập số tiền hợp lệ",0);
    const id=b.dataset.add||b.dataset.sub;
-   try{await runTransaction(db,async tx=>{const r=doc(db,"users",id),x=await tx.get(r);if(x.data().balance+v<0)throw 1;tx.update(r,{balance:x.data().balance+v})});toast((v>0?"Đã cộng ":"Đã trừ ")+fmt(Math.abs(v)))}catch{toast("Số dư không đủ để trừ",0)}pAdmin()};
+   try{await runTransaction(db,async tx=>{const r=doc(db,"users",id),x=await tx.get(r);if(x.data().balance+v<0)throw 1;tx.update(r,{balance:x.data().balance+v})});NOTIFY("adj",(v>0?"Cộng ":"Trừ ")+fmt(Math.abs(v))+" cho "+(us.find(u=>u.id===id)?.name||""));toast((v>0?"Đã cộng ":"Đã trừ ")+fmt(Math.abs(v)))}catch{toast("Số dư không đủ để trừ",0)}pAdmin()};
   $("#ul").querySelectorAll("[data-add]").forEach(adj(1));$("#ul").querySelectorAll("[data-sub]").forEach(adj(-1));
  };
  $("#uq").oninput=drawU;
@@ -589,6 +704,20 @@ async function pAdmin(m=$("#m")){
  };
  $("#hf").querySelectorAll("button").forEach(b=>b.onclick=()=>{hfl=b.dataset.f;$("#hf").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));drawH()});
  drawH();
+ const drawL=()=>{
+  const q=$("#lq").value.trim().toLowerCase();
+  const l=lk.filter(x=>!q||((x.uname||"")+" "+(x.orig||"")+" "+(x.short||"")).toLowerCase().includes(q));
+  $("#ll").innerHTML=l.slice(0,50).map(x=>`<div class="wr"><div style="margin-bottom:8px"><b>${esc(x.uname)}</b> <span class="tag ${x.earned>0?"approved":"pending"}">Đã cộng ${fmt(x.earned||0)}${x.n?" · "+x.n+" lần":""}</span><br><span class="mu">${new Date(x.created).toLocaleString("vi-VN")}</span></div>
+   <div class="box"><span class="mu">Link rút gọn</span><br><b style="word-break:break-all">${esc(x.short)}</b> <button class="mini" data-cp="${esc(x.short)}">Copy</button><br><span class="mu">Link gốc</span><br><span style="word-break:break-all">${esc(x.orig)}</span></div>
+   <div class="row" style="align-items:center"><input inputmode="numeric" data-la placeholder="Số tiền cộng (đ)" style="margin:0"><button class="mini ok" data-lc="${x.id}" style="flex:none">+ Cộng tiền</button></div></div>`).join("")||'<p class="mu">Chưa có link nào.</p>';
+  bindCp($("#ll"));
+  $("#ll").querySelectorAll("[data-lc]").forEach(b=>b.onclick=()=>{
+   const x=lk.find(z=>z.id===b.dataset.lc),v=num(b.closest(".wr").querySelector("[data-la]").value);
+   if(!x)return;if(!v)return toast("Nhập số tiền hợp lệ",0);
+   if(!confirm("Cộng "+fmt(v)+" cho "+x.uname+" từ link này?"))return;
+   creditLink(b,x,v)});
+ };
+ $("#lq").oninput=drawL;drawL();
  let wsl=wheelCfg().map(x=>({...x})),sOn=CFG.spinOn?1:0,sCost=+CFG.spinCost||0,sLim=+CFG.spinLim||0;
  const wc=$("#wcard");
  const rd=()=>{sOn=num(wc.querySelector("#wo").value)?1:0;sCost=num(wc.querySelector("#wcst").value);sLim=num(wc.querySelector("#wlim").value);
@@ -608,15 +737,17 @@ async function pAdmin(m=$("#m")){
    try{await setDoc(doc(db,"settings","main"),{wheel:wsl,spinOn:sOn,spinCost:sCost,spinLim:sLim},{merge:true});toast("Đã lưu vòng quay");pAdmin()}catch(e){toast("Không lưu được: "+(e.code||e.message),0)}};
  };
  drawW();
+ $("#tgb").onclick=async()=>{TG=null;const g=await tgCfg();if(!g.t||!g.c)return toast("Chưa lưu token hoặc chat id",0);NOTIFY("test","Bot hoạt động bình thường");toast("Đã gửi thử, kiểm tra Telegram")};
  $("#mtb").onclick=async()=>{if(!CFG.mt&&!confirm("Bật bảo trì? Người dùng sẽ không vào được."))return;await setDoc(doc(db,"settings","main"),{mt:CFG.mt?0:1,mtmsg:$("#mtm").value.trim()},{merge:true});toast(CFG.mt?"Đã tắt bảo trì":"Đã bật bảo trì");pAdmin()};
- $("#sv").onclick=async()=>{const b=$("#sv");b.disabled=true;try{const d={ann:$("#an").value.trim()};m.querySelectorAll("input[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));m.querySelectorAll("input[data-t]").forEach(i=>d[i.dataset.t]=i.value.trim());await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim();if(k)await setDoc(doc(db,"settings","secret"),{k});toast("Đã lưu");pAdmin()}catch(e){b.disabled=false;console.error(e);toast("Không lưu được: "+(e.code||e.message),0)}};
+ $("#sv").onclick=async()=>{const b=$("#sv");b.disabled=true;try{const d={ann:$("#an").value.trim()};m.querySelectorAll("input[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));m.querySelectorAll("input[data-t]").forEach(i=>d[i.dataset.t]=i.value.trim());await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim(),tk=$("#tgt").value.trim(),tc=$("#tgc").value.trim(),sd={};if(k)sd.k=k;if(tk)sd.tg=tk;if(tc)sd.tgc=tc;if(Object.keys(sd).length){await setDoc(doc(db,"settings","secret"),sd,{merge:true});TG=null}toast("Đã lưu");pAdmin()}catch(e){b.disabled=false;console.error(e);toast("Không lưu được: "+(e.code||e.message),0)}};
 }
 async function decide(id,ok,x={}){
+ let info=null;
  try{
   await runTransaction(db,async tx=>{
    const wr=doc(db,"withdrawals",id),w=await tx.get(wr);
    if(!w.exists()||w.data().status!=="pending")throw"Đã xử lý";
-   const d=w.data(),upd={status:ok?"approved":"rejected",done:Date.now()};
+   const d=w.data(),upd={status:ok?"approved":"rejected",done:Date.now()};info=d;
    if(ok){
     const ur=doc(db,"users",d.uid),u=await tx.get(ur);
     if(u.data().balance<d.amount)throw"Ví người dùng không đủ tiền";
@@ -626,6 +757,7 @@ async function decide(id,ok,x={}){
    }
    tx.update(wr,upd);
   });
+  if(info)NOTIFY("wdone",(ok?"Đã duyệt":"Đã từ chối")+" đơn "+(isBank(info)?"ngân hàng "+info.bank:"thẻ "+info.card)+" "+fmt(info.amount)+"\nNgười dùng: "+info.uname+(x.reason?"\nLý do: "+x.reason:""));
   toast(ok?"Đã duyệt, đã trừ tiền trong ví":"Đã từ chối");
  }catch(e){toast(typeof e==="string"?e:"Lỗi",0)}
  pAdmin();
