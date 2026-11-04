@@ -1,728 +1,102 @@
 <!DOCTYPE html>
-<!--
-FIRESTORE RULES cần thêm 1 lần (Firebase Console > Firestore > Rules), dán vào trong
-match /databases/{database}/documents { ... } và giữ nguyên rule cũ:
-
-    match /links/{id} {
-      allow get: if request.auth != null;
-      allow list: if request.auth != null && (resource.data.uid == request.auth.uid || request.auth.token.email == "admin@vl.app");
-      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid && request.resource.data.earned == 0 && request.resource.data.n == 0;
-      allow update: if request.auth.token.email == "admin@vl.app";
-      allow delete: if false;
-    }
-    match /credits/{id} {
-      allow read: if request.auth != null && (resource.data.uid == request.auth.uid || request.auth.token.email == "admin@vl.app");
-      allow create: if request.auth.token.email == "admin@vl.app";
-      allow update, delete: if false;
-    }
-
-Nếu rule của users đang giới hạn field được sửa thì thêm 2 field: linkDay, linkN.
-Rule của settings/secret phải cho admin ghi (đang dùng cho API key sitetop).
--->
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0816">
-<title>Nguyệt Ma Tông</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=Chakra+Petch:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shop Mini App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:#0d0b18;--card:#161326;--card2:#1d1a33;--border:#2a2547;--ink:#f3f1fc;--text:#e4e0f5;--muted:#9a94b8;--gold:#f5c56b;--acc:#8b5cf6;--acc2:#7c3aed;--r:14px}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{color-scheme:dark}
-body{min-height:100vh;background:var(--bg);color:var(--text);font:400 15px/1.55 "Be Vietnam Pro",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.wrap{max-width:480px;margin:0 auto;padding:12px 14px 96px}
-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0 14px}
-.logo{font-family:"Playfair Display",serif;font-weight:800;font-size:20px;color:var(--gold);white-space:nowrap}
-.auth{max-width:360px;margin:8vh auto 0}
-.auth h1{font-size:26px;margin-bottom:4px;color:var(--ink)}
-.auth h1.logo{font-size:28px;color:var(--gold)}
-.coin{border:1px solid #f5c56b55;background:#f5c56b14;color:var(--gold);padding:6px 12px;border-radius:999px;font-weight:700;font-size:14.5px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
-.hero{background:linear-gradient(135deg,#5b21b6,#7c3aed);border:0}
-.hero .big{font-size:32px;font-weight:700;color:#fff;margin:2px 0 6px;line-height:1.2}
-.hero .mu{color:#e7dcff}.hero b{color:#fff}
-.mu{color:var(--muted);font-size:13.5px;line-height:1.55}
-h2{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:10px}
-label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 6px}
-input,select,textarea{width:100%;padding:12px 13px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:inherit;font-size:16px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
-input::placeholder,textarea::placeholder{color:#6a6490}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px #8b5cf622}
-.btn{width:100%;padding:13px;border:0;border-radius:12px;background:var(--acc2);color:#fff;font:600 15.5px "Be Vietnam Pro",sans-serif;cursor:pointer;transition:transform .12s,opacity .12s}
-.btn:active{transform:scale(.98)}.btn:disabled{opacity:.45}
-.btn.alt{background:transparent;border:1px solid var(--border);color:var(--text)}
-.row{display:flex;gap:10px}.row>*{flex:1}
-.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)}
-.item:last-child{border:0}
-.mini{padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--text);font:600 13.5px "Be Vietnam Pro",sans-serif;cursor:pointer;min-height:34px}
-.mini.ok{background:var(--acc2);border-color:transparent;color:#fff}
-.mini.bad{background:transparent;color:#fda4af;border-color:#f43f5e66}
-.tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600;white-space:nowrap}
-.pending{background:#2a2547;color:#c9bff5}
-.approved{background:#14532d;color:#86efac}
-.rejected{background:transparent;color:#fda4af;border:1px solid #f43f5e66}
-.note{background:var(--card2);border:1px dashed #4a4380;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px}
-.box{background:var(--card2);border-radius:12px;padding:12px;margin-bottom:12px}
-nav{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;display:flex;background:#0d0b18f2;backdrop-filter:blur(14px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0);z-index:10}
-nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;border:0;background:none;color:var(--muted);font:600 11.5px "Be Vietnam Pro",sans-serif;cursor:pointer}
-nav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-nav button.on{color:var(--gold)}
-.toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);padding:11px 18px;border-radius:12px;font-weight:600;z-index:99;max-width:90vw;font-size:14.5px;background:var(--card2);color:#fff;border:1px solid #22c55e88;box-shadow:0 6px 24px #0008}
-.toast.bad{background:#3a0f22;color:#ffd0da;border-color:#f43f5e}
-.rk{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
-.rk .n{width:28px;font-weight:700;color:var(--gold)}
-.rk .c{margin-left:auto;font-weight:700;color:var(--gold)}
-.rk.me{background:var(--card2);border-radius:8px;margin:0 -8px;padding:10px 8px}
-.xp{height:6px;background:#ffffff33;border-radius:6px;overflow:hidden;margin-top:10px}
-.xp b{display:block;height:100%;background:#fff;border-radius:6px;transition:width .5s}
-.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.card-opt,.denom button,.fl button,.bk{background:var(--bg);color:var(--text);border:1px solid var(--border)}
-.card-opt{padding:13px 10px;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s;font-weight:600;font-size:14.5px}
-.denom{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.denom button{flex:1 1 30%;padding:11px 6px;border-radius:10px;font-weight:600;font-size:14.5px;cursor:pointer;font-family:inherit}
-.card-opt.on,.denom button.on,.fl button.on,.seg button.on{background:var(--acc2);border-color:transparent;color:#fff}
-.seg{display:flex;background:var(--card2);border-radius:12px;padding:4px;margin:12px 0}
-.seg button{flex:1;padding:9px;border:0;background:none;border-radius:9px;font:600 14px "Be Vietnam Pro",sans-serif;cursor:pointer;color:var(--muted)}
-.bk{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;margin-bottom:8px;cursor:pointer}
-.bk.on{border-color:var(--acc);background:var(--card2)}
-.bk .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--acc);flex:none}
-.bk.on .dot{background:var(--acc);box-shadow:inset 0 0 0 3px var(--bg)}
-.hi{padding:11px 0;border-bottom:1px solid var(--border)}.hi:last-child{border:0}
-.hi .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.code{background:var(--bg);border:1px solid var(--border);color:var(--gold);border-radius:10px;padding:10px 12px;margin-top:8px;font-weight:600;font-size:14.5px;line-height:1.9;word-break:break-all}
-.code>div{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.code .mini{background:var(--gold);color:#1a1033;border-color:var(--gold);padding:4px 10px}
-.wr{padding:14px 0;border-bottom:1px solid var(--border)}.wr:last-child{border:0}
-.srch{position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:5}
-.fl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.fl button{padding:7px 12px;border-radius:999px;font:600 13.5px "Be Vietnam Pro",sans-serif;cursor:pointer}
-.us{padding:14px 0;border-bottom:1px solid var(--border)}.us:last-child{border:0}
-.us .nm{font-size:16px;font-weight:700}
-.us .ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
-.us .ac input{width:120px;margin:0;padding:8px 10px;font-size:15px}
-.rc{font-size:26px;font-weight:700;letter-spacing:4px;text-align:center;background:var(--card2);color:var(--gold);border-radius:12px;padding:12px;margin:10px 0 12px}
-.ctl{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.ctl a{display:inline-block;padding:9px 14px;border:1px solid var(--border);background:var(--card2);border-radius:10px;color:var(--text);text-decoration:none;font-weight:600;font-size:14px}
-.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.stat div{background:var(--card2);border-radius:12px;padding:10px 6px;text-align:center}
-.stat b{display:block;font-size:15px}
-.stat span{font-size:12.5px;color:var(--muted)}
-.qk{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
-.qk-i{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;text-align:left;color:var(--text);cursor:pointer;font:inherit}
-.qk-i b{display:block;font-size:15px;color:var(--ink)}
-.qk-i span{font-size:13px;color:var(--muted)}
-.wh{position:relative;width:min(300px,78vw);margin:10px auto 18px}
-.wh canvas{width:100%;display:block;border-radius:50%;box-shadow:0 0 0 4px var(--gold),0 0 30px #8b5cf655;transition:transform 4.6s cubic-bezier(.12,.72,.12,1)}
-.wh .ptr{position:absolute;left:50%;top:-12px;transform:translateX(-50%);width:0;height:0;border:13px solid transparent;border-top:24px solid var(--gold);border-bottom:0;z-index:2;filter:drop-shadow(0 2px 3px #000a)}
-.wh .hub{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:var(--card);border:3px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font:normal 24px/1 sans-serif;z-index:2}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-</style></head>
-<body><div class="wrap" id="app"><p class="mu" style="text-align:center;margin-top:30vh">Đang tải...</p></div>
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,collection,query,where,orderBy,limit,getDocs,runTransaction}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+:root{--bg:var(--tg-theme-bg-color,#fff);--tx:var(--tg-theme-text-color,#111);--hint:var(--tg-theme-hint-color,#888);--btn:var(--tg-theme-button-color,#2481cc);--btx:var(--tg-theme-button-text-color,#fff);--card:var(--tg-theme-secondary-bg-color,#f1f1f4)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px system-ui,sans-serif;padding:12px 12px 80px}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.bal{background:var(--btn);color:var(--btx);padding:6px 12px;border-radius:20px;font-weight:600}
+.card{background:var(--card);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.hint{color:var(--hint);font-size:13px}
+button{background:var(--btn);color:var(--btx);border:0;border-radius:8px;padding:8px 14px;font-size:14px}
+button:disabled{opacity:.4}
+.qty{display:flex;align-items:center;gap:8px}.qty button{padding:4px 10px}
+.tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);padding-bottom:env(safe-area-inset-bottom)}
+.tabs div{flex:1;text-align:center;padding:12px 0;color:var(--hint)}.tabs .on{color:var(--btn);font-weight:600}
+code{display:block;background:var(--bg);padding:6px;border-radius:6px;margin-top:4px;word-break:break-all;font-size:13px}
+</style>
+</head>
+<body>
+<div class="head"><b id="hi">Đang tải...</b><span class="bal" id="bal">—</span></div>
+<div id="view"></div>
+<div class="tabs"><div id="t_shop" class="on">🛒 Cửa hàng</div><div id="t_orders">📜 Đơn hàng</div></div>
+<script>
+// Đổi thành địa chỉ HTTPS public của API bot (cloudflared/ngrok), không có dấu / ở cuối
+const API = "https://YOUR-TUNNEL-URL";
+const tg = Telegram.WebApp; tg.ready(); tg.expand();
+let S = null, tab = "shop", qty = {};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = n => Number(n).toLocaleString("vi-VN") + "đ";
 
-const app=initializeApp({apiKey:"AIzaSyCPoZuP5xjMQZQhHZL3FMNGyhXcbcgWfpk",authDomain:"clone-gia-re.firebaseapp.com",projectId:"clone-gia-re",storageBucket:"clone-gia-re.firebasestorage.app",messagingSenderId:"1023948939436",appId:"1:1023948939436:web:9e905a63107caefc0f3f09"});
-const auth=getAuth(app),db=getFirestore(app);
-
-const LAG="https://dangnghia080510-debug.github.io/fake-lag/";
-const WORKER="https://summer-cloud-82c1.dangnghia080510.workers.dev";
-const CARDS=["Garena","Viettel","Vinaphone","Vietnamobile"];
-const DENOMS=[10000,20000,50000,100000,200000,500000];
-const BANKS=["Vietcombank","VietinBank","BIDV","Agribank","Techcombank","MB Bank","ACB","VPBank","TPBank","Sacombank","HDBank","SHB","VIB","OCB","MSB","SeABank","Eximbank","LPBank","Nam A Bank","Bac A Bank","ABBank","VietBank"];
-const MAXBANK=3;
-const DEF={tien:250,min:10000,minb:50000,exp:20,wait:45,lim:20,cd:30,mf:5,ml:10,sus:3,refbonus:2000,refneed:5,linkLim:10,spinOn:1,spinCost:500,spinLim:0,wheel:[{a:0,w:30},{a:200,w:25},{a:300,w:15},{a:500,w:12},{a:800,w:8},{a:1000,w:6},{a:2000,w:3},{a:5000,w:1}],mt:0,mtmsg:"",czalo:"",ctele:"",cfb:"",cphone:"",cnote:"",ann:""};
-const SET={tien:"Tiền mỗi nhiệm vụ (đ)",min:"Tối thiểu đổi thẻ (đ)",minb:"Tối thiểu rút ngân hàng (đ)",exp:"Key hết hạn (phút)",wait:"Thời gian làm nhiệm vụ tối thiểu (giây)",lim:"Giới hạn nhiệm vụ/ngày (0 = không)",cd:"Nghỉ giữa 2 nhiệm vụ (giây)",mf:"Sai key tối đa mỗi nhiệm vụ (lần)",ml:"Khóa nhập key khi sai quá nhiều (phút)",sus:"Vi phạm nhẹ (sai key, đổi thiết bị) bao nhiêu lần thì tự khóa (0 = tắt). Bypass rõ ràng luôn bị khóa ngay",refbonus:"Thưởng giới thiệu mỗi bạn (đ)",refneed:"Bạn bè cần hoàn thành (nhiệm vụ) mới có thưởng",linkLim:"Giới hạn rút gọn link mỗi ngày của mỗi người (0 = không giới hạn)"};
-const CT={cphone:"SĐT hỗ trợ",czalo:"Zalo (số điện thoại)",ctele:"Telegram (tên, không cần @)",cfb:"Facebook (dán link https://...)",cnote:"Ghi chú liên hệ (giờ làm việc...)"};
-const ST={pending:"Chờ duyệt",approved:"Đã duyệt",rejected:"Từ chối"};
-
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt=n=>Number(n||0).toLocaleString("vi-VN")+"đ";
-const num=s=>parseInt(String(s).replace(/\D/g,""))||0;
-const day=()=>new Date(Date.now()+252e5).toISOString().slice(0,10);
-const rnd=n=>{const a=new Uint32Array(n);crypto.getRandomValues(a);return[...a].map(x=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[x%32]).join("")};
-const DEV=localStorage.dv||(localStorage.dv=rnd(16));
-const ERR={"auth/email-already-in-use":"Tên này đã có người dùng","auth/operation-not-allowed":"Firebase chưa bật Email/Password","permission-denied":"Firestore đang chặn","auth/network-request-failed":"Mất mạng","auth/weak-password":"Mật khẩu từ 6 ký tự"};
-const sha=async t=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)))].map(x=>x.toString(16).padStart(2,"0")).join("");
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-// Thông báo Telegram: token + chat id do admin nhập ở trang Admin, lưu trong settings/secret
-let TG=null;
-const tgCfg=async()=>{if(TG===null){try{const d=(await getDoc(doc(db,"settings","secret"))).data()||{};TG={t:d.tg||"",c:d.tgc||""}}catch{TG={t:"",c:""}}}return TG};
-const TT={reg:"🆕 Đăng ký tài khoản mới",wd:"💸 Yêu cầu rút tiền / đổi thẻ",lock:"🚫 Tài khoản bị khóa tự động",link:"🔗 Link rút gọn mới",acc:"✅ Duyệt tài khoản",wdone:"🧾 Xử lý đơn rút",ban:"🔒 Khóa / mở khóa tài khoản",credit:"💰 Cộng tiền từ link rút gọn",adj:"⚖️ Điều chỉnh số dư",test:"🔔 Thông báo thử"};
-const NOTIFY=async(type,text)=>{try{const g=await tgCfg();if(!g.t||!g.c)return;
- fetch("https://api.telegram.org/bot"+g.t+"/sendMessage?"+new URLSearchParams({chat_id:g.c,text:(TT[type]||"")+"\n"+String(text).slice(0,700)+"\n"+new Date().toLocaleString("vi-VN"),disable_web_page_preview:"true"})).catch(()=>{})}catch{}};
-const BLOCKED="sitetop.net";
-const dec=x=>{try{return decodeURIComponent(x)}catch{return x}};
-function cleanUrl(x){
- x=String(x||"").trim();
- if(x.length>2000)return{err:"Link quá dài"};
- if(!/^https?:\/\//i.test(x))return{err:"Link phải bắt đầu bằng http:// hoặc https://"};
- let u;try{u=new URL(x)}catch{return{err:"Link không hợp lệ"}}
- const h=u.hostname.toLowerCase().replace(/\.$/,"");
- if(!h.includes("."))return{err:"Link không hợp lệ"};
- // chặn mọi link chứa sitetop.net (kể cả bị mã hóa %xx hoặc nhét trong tham số)
- if([x,dec(x),dec(dec(x))].join(" ").toLowerCase().includes(BLOCKED))return{err:"Không được rút gọn link sitetop.net hoặc link đã rút gọn"};
- u.hash="";
- return{url:u.href,norm:u.protocol+"//"+h+(u.port?":"+u.port:"")+u.pathname.replace(/\/+$/,"")+u.search}}
-async function sitetopShorten(long){
- let url="",why="";
- try{
-  const sk=(await getDoc(doc(db,"settings","secret"))).data()?.k;
-  if(!sk)return{url:"",why:"Admin chưa nhập API key sitetop"};
-  const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;
-  const r=await fetch(`${WORKER}?url=${encodeURIComponent(api)}`);
-  const t=await r.text();
-  if(!t||!t.trim().startsWith("{"))throw new Error("Worker lỗi: "+(t||"").slice(0,60));
-  const j=JSON.parse(t);
-  url=j.shortenedUrl||j.short_url||j.shorturl||j.shortUrl||j.url||j.link||(j.data&&(j.data.shortenedUrl||j.data.short_url||j.data.url))||"";
-  why=j.message||j.error||j.msg||"";
- }catch(e){why=e.message||String(e)}
- if(url===long||!/^https?:\/\//i.test(url))url="";
- return{url,why}}
-const toast=(m,ok=1)=>{const t=document.createElement("div");t.className="toast "+(ok?"ok":"bad");t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3200)};
-const rows=q=>getDocs(q).then(s=>s.docs.map(d=>({id:d.id,...d.data()})));
-const isBank=w=>w.type==="bank"||(!w.type&&!w.card&&!!w.bank);
-const copyTxt=async t=>{try{await navigator.clipboard.writeText(t)}catch{const a=document.createElement("textarea");a.value=t;document.body.append(a);a.select();document.execCommand("copy");a.remove()}toast("Đã copy")};
-const bindCp=m=>m.querySelectorAll("[data-cp]").forEach(b=>b.onclick=()=>copyTxt(b.dataset.cp));
-let U=null,ME=null,CFG=DEF,tab="home",wmode="card";
-const isAd=()=>U?.email==="admin@vl.app";
-let amode="li",more="hist",hf="all";
-const RN=()=>Math.max(1,+CFG.refneed||1);
-const normPhone=x=>{x=String(x).replace(/[\s.\-]/g,"");return/^\+?84\d{9}$/.test(x)?"0"+x.replace(/^\+?84/,""):x};
-const isPhone=x=>/^0\d{9}$/.test(x);
-const mask=n=>isPhone(String(n))?String(n).slice(0,4)+"***"+String(n).slice(-3):String(n||"");
-const contactHTML=(title="Liên hệ admin")=>{
- const l=[],E=encodeURIComponent;
- if(CFG.cphone)l.push(`<a href="tel:${esc(CFG.cphone)}">Gọi ${esc(CFG.cphone)}</a>`);
- if(CFG.czalo)l.push(`<a href="https://zalo.me/${E(CFG.czalo)}" target="_blank" rel="noopener">Zalo ${esc(CFG.czalo)}</a>`);
- if(CFG.ctele)l.push(`<a href="https://t.me/${E(String(CFG.ctele).replace(/^@/,""))}" target="_blank" rel="noopener">Telegram</a>`);
- if(/^https?:\/\//i.test(CFG.cfb||""))l.push(`<a href="${esc(CFG.cfb)}" target="_blank" rel="noopener">Facebook</a>`);
- if(!l.length&&!CFG.cnote)return"";
- return`<div class="card"><h2>${title}</h2>${CFG.cnote?`<p class="mu">${esc(CFG.cnote)}</p>`:""}<div class="ctl">${l.join("")}</div></div>`};
-const histHTML=l=>l.map(w=>{const b=isBank(w);return`<div class="hi"><div class="top"><span><b>${b?"Ngân hàng "+esc(w.bank):"Thẻ "+esc(w.card||"?")}</b> · ${fmt(w.amount)}<br><span class="mu">${b?esc(w.bankNo||"")+" · ":""}${new Date(w.created).toLocaleString("vi-VN")}</span></span><span class="tag ${w.status}">${b&&w.status==="approved"?"Đã chuyển":ST[w.status]}</span></div>${w.status==="rejected"&&w.reason?`<p class="mu" style="margin-top:6px">Lý do: ${esc(w.reason)}</p>`:""}${w.status==="approved"&&w.cardCode?`<div class="code"><div><span>Mã thẻ: ${esc(w.cardCode)}</span><button class="mini" data-cp="${esc(w.cardCode)}">Copy</button></div><div><span>Seri: ${esc(w.cardSerial)}</span><button class="mini" data-cp="${esc(w.cardSerial)}">Copy</button></div></div>`:""}</div>`}).join("")||'<p class="mu">Chưa có đơn nào.</p>';
-
-async function loadCfg(){const s=await getDoc(doc(db,"settings","main"));CFG={...DEF,...(s.exists()?s.data():{})}}
-async function loadMe(){for(let i=0;i<6;i++){const s=await getDoc(doc(db,"users",U.uid));if(s.exists()){ME={id:U.uid,...s.data()};if(!ME.rc){ME.rc=rnd(6);updateDoc(doc(db,"users",U.uid),{rc:ME.rc}).catch(()=>{})}return}await sleep(400)}const rc=rnd(6);await setDoc(doc(db,"users",U.uid),{name:U.email.split("@")[0],phone:"",rc,ref:"",balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});ME={id:U.uid,...(await getDoc(doc(db,"users",U.uid))).data()}}
-
-function loginView(){
- const rf=(new URLSearchParams(location.search).get("ref")||localStorage.rf||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8);
- if(rf)localStorage.rf=rf;
- const reg=amode==="rg";
- $("#app").innerHTML=`<div class="card auth"><h1 class="logo">☾ Nguyệt Ma Tông</h1><p class="mu" style="margin-bottom:16px">Làm nhiệm vụ · Nhận tiền · Quay thưởng</p>
- <div class="seg" style="margin-top:0"><button data-am="li" class="${reg?"":"on"}">Đăng nhập</button><button data-am="rg" class="${reg?"on":""}">Đăng ký</button></div>
- <label>Số điện thoại</label><input id="u" inputmode="tel" placeholder="VD: 0912345678" autocomplete="username">
- <label>Mật khẩu</label><input id="p" type="password" placeholder="Từ 6 ký tự" autocomplete="${reg?"new-password":"current-password"}">
- ${reg?`<label>Mã giới thiệu (không bắt buộc)</label><input id="rf" placeholder="Nhập mã của người mời" value="${esc(rf)}" autocomplete="off">`:""}
- <button class="btn" id="go">${reg?"Tạo tài khoản":"Đăng nhập"}</button>
- ${reg?"":'<p class="mu" style="margin-top:12px">Tài khoản cũ: nhập tên đăng nhập cũ vào ô trên, đăng nhập xong sẽ được yêu cầu cập nhật số điện thoại.</p>'}</div>`;
- document.querySelectorAll("[data-am]").forEach(b=>b.onclick=()=>{amode=b.dataset.am;loginView()});
- $("#go").onclick=async()=>{
-  const id=normPhone($("#u").value.trim().toLowerCase()),p=$("#p").value;
-  if(!/^[a-z0-9_]{3,20}$/.test(id)){toast("Nhập số điện thoại hợp lệ",0);return}
-  if(!reg){
-   if(!p){toast("Nhập mật khẩu",0);return}
-   try{await signInWithEmailAndPassword(auth,id+"@vl.app",p)}catch{
-    let ok=0;
-    if(isPhone(id)){try{const s=await getDoc(doc(db,"phones",id)),em=s.exists()&&s.data().email;if(em&&em!==id+"@vl.app"){await signInWithEmailAndPassword(auth,em,p);ok=1}}catch{}}
-    if(!ok)toast("Sai số điện thoại hoặc mật khẩu",0)}
-   return}
-  if(!isPhone(id)){toast("Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0)",0);return}
-  if(p.length<6){toast("Mật khẩu từ 6 ký tự",0);return}
-  if(localStorage.reg)return toast("Thiết bị này đã đăng ký rồi",0);
-  try{const s=await getDoc(doc(db,"phones",id));if(s.exists())return toast("Số điện thoại này đã được đăng ký",0)}catch{}
-  const code=($("#rf")?.value||"").trim().toUpperCase();let refName="";
-  try{
-   const r=await createUserWithEmailAndPassword(auth,id+"@vl.app",p);
-   await setDoc(doc(db,"users",r.user.uid),{name:id,phone:id,rc:rnd(6),ref:"",balance:0,total:0,banned:false,approved:false,dev:DEV,created:Date.now(),dayKey:"",dayCount:0,last:0});
-   localStorage.reg=1;localStorage.removeItem("rf");
-   try{await setDoc(doc(db,"phones",id),{uid:r.user.uid,email:id+"@vl.app"})}catch{}
-   if(code){try{const q=await rows(query(collection(db,"users"),where("rc","==",code))),f=q.find(x=>x.id!==r.user.uid);if(f){await updateDoc(doc(db,"users",r.user.uid),{ref:f.id});refName=f.name}else toast("Mã giới thiệu không đúng, đã bỏ qua",0)}catch{}}
-   NOTIFY("reg","SĐT: "+id+(refName?"\nNgười mời: "+refName:"")+"\nĐang chờ admin duyệt");
-  }catch(e){toast(ERR[e.code]==="Tên này đã có người dùng"?"Số điện thoại này đã được đăng ký":ERR[e.code]||"Lỗi: "+(e.code||e.message),0)}
- };
-}
-onAuthStateChanged(auth,async u=>{U=u;if(!u){loginView();return}try{await Promise.race([Promise.all([loadCfg(),loadMe()]),new Promise((_,r)=>setTimeout(()=>r({code:"unavailable"}),10000))]);shell()}catch(e){const c=e.code||e.message||String(e);$("#app").innerHTML=`<div class="card auth"><h2>Không tải được</h2><p>Mã: <b>${esc(c)}</b></p><div class="row" style="margin-top:12px"><button class="btn" onclick="location.reload()">Thử lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`;$("#lo").onclick=()=>signOut(auth)}});
-
-const wrapA=h=>`<div class="auth">${h}${contactHTML()}</div>`;
-function mtScreen(){
- $("#app").innerHTML=wrapA(`<div class="card"><h2>Hệ thống đang bảo trì</h2><p style="margin-bottom:14px">${esc(CFG.mtmsg||"Hệ thống đang được nâng cấp, vui lòng quay lại sau.")}</p><div class="row"><button class="btn" id="rf">Thử lại</button><button class="btn alt" id="lo">Thoát</button></div></div>`);
- $("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadCfg();shell()};
-}
-function phoneView(){
- $("#app").innerHTML=wrapA(`<div class="card"><h2>Cập nhật số điện thoại</h2><p class="mu" style="margin-bottom:14px">Tài khoản <b>${esc(ME.name)}</b> cần thêm số điện thoại. Sau khi lưu, bạn có thể đăng nhập bằng số điện thoại này.</p><label>Số điện thoại</label><input id="ph" inputmode="tel" placeholder="VD: 0912345678" autocomplete="off"><div class="row"><button class="btn" id="phs">Lưu</button><button class="btn alt" id="lo">Thoát</button></div></div>`);
- $("#lo").onclick=()=>signOut(auth);
- $("#phs").onclick=async()=>{
-  const ph=normPhone($("#ph").value.trim());
-  if(!isPhone(ph))return toast("Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0)",0);
-  $("#phs").disabled=true;
-  try{
-   const s=await getDoc(doc(db,"phones",ph));
-   if(s.exists()&&s.data().uid!==U.uid){$("#phs").disabled=false;return toast("Số điện thoại này đã có người dùng",0)}
-   await setDoc(doc(db,"phones",ph),{uid:U.uid,email:U.email});
-   await updateDoc(doc(db,"users",U.uid),{phone:ph});
-   ME.phone=ph;toast("Đã lưu số điện thoại");shell();
-  }catch(e){$("#phs").disabled=false;toast("Không lưu được: "+(e.code||e.message),0)}
- };
-}
-const IC={
- home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg>',
- task:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
- link:'<svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
- doi:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/></svg>',
- more:'<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>'};
-function shell(){
- if(isAd()&&ME.banned){ME.banned=false;updateDoc(doc(db,"users",U.uid),{banned:false})}
- if(ME.banned){$("#app").innerHTML=wrapA(`<div class="card"><h2>Tài khoản bị khóa</h2><p class="mu" style="margin-bottom:12px">${ME.sus>0?"Hệ thống phát hiện hành vi nghi gian lận / bypass link. ":""}Liên hệ admin nếu cần hỗ trợ.</p><button class="btn alt" id="lo">Thoát</button></div>`);$("#lo").onclick=()=>signOut(auth);return}
- if(localStorage.bn===U.uid)localStorage.removeItem("bn");
- if(!isAd()&&localStorage.bn&&localStorage.bn!==U.uid){flag("Đăng nhập từ thiết bị từng bị khóa vì bypass",1).then(b=>{if(!b){localStorage.removeItem("bn");shell()}});return}
- if(ME.approved===false&&!isAd()){$("#app").innerHTML=wrapA('<div class="card"><h2>Chờ admin duyệt</h2><p class="mu" style="margin-bottom:12px">Tài khoản mới cần được duyệt trước khi dùng.</p><div class="row"><button class="btn" id="rf">Kiểm tra lại</button><button class="btn alt" id="lo">Thoát</button></div></div>');$("#lo").onclick=()=>signOut(auth);$("#rf").onclick=async()=>{await loadMe();shell()};return}
- if(CFG.mt&&!isAd()){mtScreen();return}
- if(!ME.phone&&!isAd()){phoneView();return}
- const t=[["home","Trang chủ"],["task","Nhiệm vụ"],["link","Rút gọn"],["doi","Rút tiền"],["more","Thêm"]];
- $("#app").innerHTML=`<header><span class="logo">☾ Nguyệt Ma Tông</span><span><span class="coin" id="bal"></span> <button class="mini" id="lo" style="margin-left:6px">Thoát</button></span></header><main id="m"></main><nav>${t.map(x=>`<button data-t="${x[0]}">${IC[x[0]]}<span>${x[1]}</span></button>`).join("")}</nav>`;
- $("#lo").onclick=()=>signOut(auth);
- document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
- go(tab);
-}
-const hdr=()=>{const b=$("#bal");if(b)b.textContent=fmt(ME.balance)};
-async function go(t){tab=t;hdr();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t||(b.dataset.t==="more"&&["spin","ref","admin"].includes(t))));const m=$("#m");m.innerHTML='<p class="mu" style="text-align:center;padding:30px">Đang tải...</p>';try{if(!isAd()){await loadCfg();if(CFG.mt)return mtScreen()}await({home:pHome,task:pTask,link:pLink,spin:pSpin,doi:pDoi,ref:pRef,more:pMore,admin:pAdmin})[t](m)}catch(e){console.error(e);m.innerHTML='<div class="card">Lỗi tải. Thử lại.</div>'}}
-const today=()=>ME.dayKey===day()?ME.dayCount:0;
-
-async function pHome(m){
- await loadMe();hdr();const c=today(),l=CFG.lim,pc=l>0?Math.min(100,c/l*100):0;
- m.innerHTML=`${CFG.ann?`<div class="card" style="border-color:#f0c969"><h2>Thông báo</h2><p>${esc(CFG.ann)}</p></div>`:""}
- <div class="card hero"><p class="mu">Xin chào, <b>${esc(ME.name)}</b></p><div class="big">${fmt(ME.balance)}</div>
- <p class="mu">Hôm nay: <b>${c}${l>0?" / "+l:""}</b> nhiệm vụ · +${fmt(CFG.tien)}/nv</p>
- ${l>0?`<div class="xp"><b style="width:${pc}%"></b></div>`:""}</div>
- <div class="row"><button class="btn" id="g1">Làm nhiệm vụ</button><button class="btn alt" id="g2">Rút tiền</button></div>
- <p class="mu" style="text-align:center;margin:14px 0">Tổng hoàn thành: ${ME.total||0} nhiệm vụ</p>
- <div class="qk">${CFG.spinOn?`<button class="qk-i" id="g4"><b>Vòng quay</b><span>Trúng tới ${fmt(Math.max(...wheelCfg().map(s=>s.a)))}</span></button>`:""}<button class="qk-i" id="g3"><b>Mời bạn bè</b><span>+${fmt(CFG.refbonus)} mỗi bạn</span></button></div>
- ${contactHTML()}`;
- $("#g1").onclick=()=>go("task");$("#g2").onclick=()=>go("doi");$("#g3").onclick=()=>go("ref");if($("#g4"))$("#g4").onclick=()=>go("spin");
+async function call(path, body) {
+  const r = await fetch(API + path, {method: "POST",
+    headers: {"Content-Type": "application/json", "X-Init-Data": tg.initData, "ngrok-skip-browser-warning": "1"},
+    body: JSON.stringify(body || {})});
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
 }
 
-async function curTask(){const r=await rows(query(collection(db,"tasks"),where("uid","==",U.uid),where("status","==","pending")));return r.filter(t=>Date.now()-t.created<CFG.exp*6e4).sort((a,b)=>b.created-a.created)[0]}
-async function pTask(m){
- await loadMe();hdr();const t=await curTask(),l=CFG.lim;
- m.innerHTML=`<div class="card"><h2>Nhiệm vụ</h2><p class="mu">Hôm nay ${today()}${l>0?"/"+l:""} · Thưởng ${fmt(CFG.tien)} · Hết hạn ${CFG.exp} phút</p>
- ${t?`<p style="margin:12px 0">1. Mở link và vượt hết bước<br>2. Copy key hiện ra<br>3. Dán key vào ô dưới</p>
- <button class="btn" style="margin-bottom:12px" id="ol">Mở link nhiệm vụ</button>
- <p class="mu" style="margin:-4px 0 12px">${t.opened?"Đã mở link lúc "+new Date(t.opened).toLocaleTimeString("vi-VN")+". Phải mở link bằng nút này rồi vượt đủ thời gian mới nhận được thưởng.":"Bạn phải bấm nút này để bắt đầu tính giờ."}</p>
- <input id="k" placeholder="Dán key vào đây" autocomplete="off"><button class="btn alt" id="sk">Nhận thưởng</button>`
- :`<button class="btn" id="nt" style="margin-top:12px">Nhận nhiệm vụ mới</button>`}</div>`;
- if(t){$("#ol").onclick=async()=>{const w=window.open(t.url,"_blank");if(w)w.opener=null;
-  if(!t.opened){const o=Date.now();for(let i=0;i<3&&!t.opened;i++){try{await updateDoc(doc(db,"tasks",t.id),{opened:o});t.opened=o}catch{await sleep(600)}}if(!t.opened){t.openFail=1;toast("Chưa ghi nhận được lượt mở, hãy bấm lại",0)}}
-  if(!w)location.href=t.url};$("#sk").onclick=()=>sendKey(t)}else $("#nt").onclick=newTask;
-}
-async function newTask(){
-  await loadCfg();if(CFG.mt&&!isAd())return shell();
-  if(CFG.lim>0&&today()>=CFG.lim)return toast(`Hôm nay đã làm đủ ${CFG.lim} nhiệm vụ`,0);
-  const left=Math.ceil((CFG.cd*1e3-(Date.now()-ME.last))/1e3);if(left>0)return toast(`Nghỉ thêm ${left}s`,0);
-  $("#nt").disabled=true;
-  const key=rnd(12);
-  const long=`${LAG}?vlpcode=${key}&vlpsid=${rnd(16)}&vlpuser=${U.uid}&vlpitem=task&vlpround=1&vlpts=${Date.now()}&vlpmin=${CFG.wait}`;
-  let url="",why="";
-  try{
-    const sk=(await getDoc(doc(db,"settings","secret"))).data()?.k;
-    if(!sk){toast("Admin chưa nhập API key sitetop",0);return go("task")}
-    const api=`https://sitetop.net/api?api=${sk}&url=${encodeURIComponent(long)}`;
-    const r=await fetch(`${WORKER}?url=${encodeURIComponent(api)}`);
-    const t=await r.text();
-    if(!t||!t.trim().startsWith("{"))throw new Error("Worker lỗi: "+(t||"").slice(0,60));
-    const j=JSON.parse(t);
-    url=j.shortenedUrl||j.short_url||j.shorturl||j.shortUrl||j.url||j.link||(j.data&&(j.data.shortenedUrl||j.data.short_url||j.data.url))||"";
-    why=j.message||j.error||j.msg||"";
-  }catch(e){why=e.message||String(e)}
-  if(!url||url===long||url.startsWith(LAG)){toast("Không tạo được link"+(why?": "+why:""),0);return go("task")}
-  await addDoc(collection(db,"tasks"),{uid:U.uid,kh:await sha(key+":"+U.uid),url,status:"pending",created:Date.now(),dev:DEV,opened:0,fails:0});
-  go("task");
-}
-async function flag(why,hard){
- // hard = bằng chứng bypass rõ ràng -> khóa ngay. Vi phạm nhẹ thì cộng dồn tới ngưỡng CFG.sus
- if(isAd())return 0;
- let ban=0;
- try{await runTransaction(db,async tx=>{const r=doc(db,"users",U.uid),x=await tx.get(r),u=x.data(),n=(u.sus||0)+1,d={sus:n,susWhy:why,susAt:Date.now()};
-  ban=!!hard||(CFG.sus>0&&n>=CFG.sus);if(ban)d.banned=true;tx.update(r,d)})}catch{ban=0}
- if(ban){ME.banned=true;ME.sus=(ME.sus||0)+1;if(hard)localStorage.bn=U.uid;NOTIFY("lock",(ME.name||"?")+" bị khóa tự động\nLý do: "+why);toast("Phát hiện bypass, tài khoản đã bị khóa",0);shell()}
- return ban;
-}
-async function sendKey(t){
- await loadMe();await loadCfg();if(CFG.mt&&!isAd())return shell();
- if((ME.lockUntil||0)>Date.now())return toast(`Đang bị khóa nhập key ${Math.ceil((ME.lockUntil-Date.now())/6e4)} phút`,0);
- const k=$("#k").value.trim().toUpperCase();
- if(!k)return toast("Dán key vào ô trước",0);
- if(t.dev&&t.dev!==DEV){if(await flag("Nhập key từ thiết bị khác"))return;return toast("Nhiệm vụ này phải làm trên thiết bị đã nhận",0)}
- const good=await sha(k+":"+U.uid)===t.kh;
- if(!t.opened){if(good&&!t.openFail){await flag("Có key đúng nhưng chưa từng bấm Mở link (nghi bypass)",1);return}return toast("Hãy bấm nút Mở link nhiệm vụ trước",0)}
- const used=Date.now()-t.opened;
- if(used<CFG.wait*1e3){
-  const left=Math.ceil((CFG.wait*1e3-used)/1e3);
-  // gửi key đúng nhưng quá nhanh = dấu hiệu bypass
-  if(good){await flag("Có key đúng nhưng chưa đủ "+CFG.wait+"s (nhanh "+Math.round(used/1e3)+"s)",1);return}
-  return toast(`Chưa đủ thời gian vượt link, chờ thêm ${left}s`,0)}
- if(!good){
-  let n=(t.fails||0)+1,lock=0;
-  try{await updateDoc(doc(db,"tasks",t.id),{fails:n,status:n>=CFG.mf?"failed":"pending"})}catch{}
-  if(n>=CFG.mf){lock=Date.now()+CFG.ml*6e4;if(await flag("Sai key "+n+" lần"))return;try{await updateDoc(doc(db,"users",U.uid),{lockUntil:lock})}catch{}
-   toast(`Sai quá ${CFG.mf} lần, nhiệm vụ bị hủy và khóa nhập key ${CFG.ml} phút`,0);return go("task")}
-  t.fails=n;return toast(`Key sai (còn ${CFG.mf-n} lần)`,0)}
- try{await runTransaction(db,async tx=>{const tr=doc(db,"tasks",t.id),ur=doc(db,"users",U.uid),[ts,us]=[await tx.get(tr),await tx.get(ur)];
-  const td=ts.data();if(td.status!=="pending"||!td.opened||Date.now()-td.opened<CFG.wait*1e3)throw 1;
-  const u=us.data(),d=day();
-  if(u.banned)throw 1;
-  if(CFG.lim>0&&(u.dayKey===d?u.dayCount:0)>=CFG.lim)throw 2;
-  if(Date.now()-(u.last||0)<CFG.cd*1e3*0.5)throw 3;
-  const nt=(u.total||0)+1,due=!!u.ref&&!u.refPaid&&nt>=RN();
-  const rs=due?await tx.get(doc(db,"users",u.ref)):null;
-  const upd={balance:u.balance+CFG.tien,total:nt,dayKey:d,dayCount:(u.dayKey===d?u.dayCount:0)+1,last:Date.now()};
-  if(due){
-   const rd=rs.exists()?rs.data():null,ok=!!rd&&!rd.banned&&CFG.refbonus>0&&(!u.dev||rd.dev!==u.dev);
-   upd.refPaid=true;upd.refVoid=!ok;
-   if(ok)tx.update(rs.ref,{balance:(rd.balance||0)+CFG.refbonus,refEarn:(rd.refEarn||0)+CFG.refbonus});
+async function load() {
+  try {
+    S = await call("/api/me");
+    document.getElementById("hi").textContent = "Chào " + S.user.name;
+    document.getElementById("bal").textContent = money(S.balance);
+    render();
+  } catch (e) {
+    document.getElementById("view").innerHTML = '<div class="card">❌ ' + esc(e.message) + '</div>';
   }
-  tx.update(tr,{status:"done",done:Date.now()});
-  tx.update(ur,upd)})}
- catch(e){return toast(e===2?"Đã đủ nhiệm vụ hôm nay":e===3?"Làm quá nhanh, thử lại sau":"Nhiệm vụ không hợp lệ hoặc đã dùng",0)}
- toast("+"+fmt(CFG.tien));go("task");
 }
 
-// ====== RÚT TIỀN: ĐỔI THẺ CÀO + NGÂN HÀNG ======
-async function pDoi(m){
- await loadMe();hdr();
- const[ws,bk0]=await Promise.all([
-  rows(query(collection(db,"withdrawals"),where("uid","==",U.uid))),
-  rows(query(collection(db,"banks"),where("uid","==",U.uid)))]);
- const wds=ws.sort((a,b)=>b.created-a.created).slice(0,20),pend=wds.some(w=>w.status==="pending");
- const bk=bk0.sort((a,b)=>a.created-b.created);
- let selCard=CARDS[0],selDenom=DENOMS[0],selBank=bk[0]?.id||"",showAdd=!bk.length;
-
- const cardForm=()=>pend?"":`
-  <label>Loại thẻ</label>
-  <div class="card-grid">${CARDS.map(c=>`<div class="card-opt ${c===selCard?"on":""}" data-c="${c}">${c}</div>`).join("")}</div>
-  <label>Mệnh giá</label>
-  <div class="denom">${DENOMS.map(d=>`<button class="${d===selDenom?"on":""}" data-d="${d}">${fmt(d)}</button>`).join("")}</div>
-  <button class="btn" id="wd">Gửi yêu cầu đổi thẻ</button>
-  <p class="mu" style="margin-top:10px">Admin duyệt xong, mã thẻ và seri sẽ hiện ở Lịch sử bên dưới, tiền tự trừ khỏi ví.</p>`;
-
- const bankForm=()=>`
-  <label>Tài khoản nhận tiền</label>
-  ${bk.map(b=>`<div class="bk ${b.id===selBank?"on":""}" data-bk="${b.id}"><span class="dot"></span><span style="flex:1;min-width:0"><b>${esc(b.bank)}</b> · ${esc(b.number)}<br><span class="mu">${esc(b.owner)}</span></span><button class="mini bad" data-del="${b.id}">Xóa</button></div>`).join("")}
-  ${showAdd?`<div class="box">
-    <label>Ngân hàng</label><input id="bn" list="bl" placeholder="VD: Vietcombank" autocomplete="off"><datalist id="bl">${BANKS.map(x=>`<option value="${x}">`).join("")}</datalist>
-    <label>Số tài khoản</label><input id="bs" inputmode="numeric" placeholder="Số tài khoản" autocomplete="off">
-    <label>Tên chủ tài khoản</label><input id="bo" placeholder="NGUYEN VAN A" autocomplete="off">
-    <div class="row"><button class="btn" id="bsv">Lưu tài khoản</button>${bk.length?'<button class="btn alt" id="bcn">Hủy</button>':""}</div></div>`
-   :(bk.length<MAXBANK?'<button class="btn alt" id="badd" style="margin-bottom:12px">+ Thêm tài khoản</button>':"")}
-  ${pend||!bk.length?"":`<label>Số tiền muốn rút</label><input id="am" inputmode="numeric" placeholder="Tối thiểu ${fmt(CFG.minb)}"><button class="btn" id="wd">Gửi yêu cầu rút tiền</button>
-  <p class="mu" style="margin-top:10px">Admin chuyển khoản và duyệt xong, tiền tự trừ khỏi ví.</p>`}`;
-
- const hist=()=>histHTML(wds.slice(0,5));
-
- const draw=()=>{
-  const bm=wmode==="bank";
-  m.innerHTML=`<div class="card"><h2>Rút tiền</h2>
-  <p class="mu">Số dư ${fmt(ME.balance)} · Tối thiểu ${fmt(bm?CFG.minb:CFG.min)}</p>
-  <div class="seg"><button data-md="card" class="${bm?"":"on"}">Đổi thẻ cào</button><button data-md="bank" class="${bm?"on":""}">Rút ngân hàng</button></div>
-  ${pend?'<p class="note">Đang có đơn chờ duyệt. Admin duyệt xong tiền mới tự trừ khỏi ví.</p>':""}
-  ${bm?bankForm():cardForm()}</div>
-  <div class="card"><h2>Lịch sử gần đây</h2>${hist()}${wds.length>5?'<button class="btn alt" id="hall" style="margin-top:12px">Xem tất cả lịch sử</button>':""}</div>`;
-  bindCp(m);
-  if($("#hall"))$("#hall").onclick=()=>{more="hist";go("more")};
-  m.querySelectorAll("[data-md]").forEach(b=>b.onclick=()=>{wmode=b.dataset.md;draw()});
-  m.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{selCard=b.dataset.c;m.querySelectorAll("[data-c]").forEach(x=>x.classList.toggle("on",x.dataset.c===selCard))});
-  m.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{selDenom=+b.dataset.d;m.querySelectorAll("[data-d]").forEach(x=>x.classList.toggle("on",+x.dataset.d===selDenom))});
-  m.querySelectorAll("[data-bk]").forEach(b=>b.onclick=e=>{if(e.target.closest("[data-del]"))return;selBank=b.dataset.bk;m.querySelectorAll("[data-bk]").forEach(x=>x.classList.toggle("on",x.dataset.bk===selBank))});
-  m.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(!confirm("Xóa tài khoản này?"))return;try{await deleteDoc(doc(db,"banks",b.dataset.del));toast("Đã xóa")}catch{toast("Không xóa được",0)}go("doi")});
-  if($("#badd"))$("#badd").onclick=()=>{showAdd=true;draw()};
-  if($("#bcn"))$("#bcn").onclick=()=>{showAdd=false;draw()};
-  if($("#bsv"))$("#bsv").onclick=async()=>{
-   const bank=$("#bn").value.trim(),number=$("#bs").value.replace(/\s/g,""),owner=$("#bo").value.trim().toUpperCase();
-   if(!bank||!/^\d{6,20}$/.test(number)||owner.length<3)return toast("Nhập đủ ngân hàng, số tài khoản (6-20 số) và tên chủ tài khoản",0);
-   if(bk.length>=MAXBANK)return toast("Tối đa "+MAXBANK+" tài khoản",0);
-   try{await addDoc(collection(db,"banks"),{uid:U.uid,bank,number,owner,created:Date.now()});toast("Đã lưu tài khoản")}catch{toast("Không lưu được",0)}
-   go("doi")};
-  if($("#wd"))$("#wd").onclick=async e=>{
-   const btn=e.currentTarget;
-   await loadCfg();if(CFG.mt&&!isAd())return shell();
-   if(wmode==="bank"){
-    const b=bk.find(x=>x.id===selBank);if(!b)return toast("Chọn tài khoản ngân hàng",0);
-    const amt=num($("#am").value);
-    if(amt<CFG.minb)return toast("Tối thiểu "+fmt(CFG.minb),0);
-    if(amt>ME.balance)return toast("Số dư không đủ",0);
-    btn.disabled=true;
-    await addDoc(collection(db,"withdrawals"),{uid:U.uid,uname:ME.name,type:"bank",amount:amt,bank:b.bank,bankNo:b.number,bankOwner:b.owner,status:"pending",created:Date.now()});
-    NOTIFY("wd",ME.name+" rút ngân hàng "+fmt(amt)+"\n"+b.bank+" · "+b.number+" · "+b.owner);toast("Đã gửi yêu cầu rút "+fmt(amt));
-   }else{
-    if(selDenom<CFG.min)return toast("Tối thiểu "+fmt(CFG.min),0);
-    if(selDenom>ME.balance)return toast("Số dư không đủ",0);
-    btn.disabled=true;
-    await addDoc(collection(db,"withdrawals"),{uid:U.uid,uname:ME.name,type:"card",amount:selDenom,card:selCard,status:"pending",created:Date.now()});
-    NOTIFY("wd",ME.name+" đổi thẻ "+selCard+" "+fmt(selDenom));toast("Đã gửi yêu cầu "+selCard+" "+fmt(selDenom));
-   }
-   go("doi");
-  };
- };
- draw();
-}
-
-const wheelCfg=()=>{const w=Array.isArray(CFG.wheel)?CFG.wheel.filter(s=>s&&+s.w>0&&+s.a>=0).map(s=>({a:+s.a,w:+s.w})):[];return w.length>=2?w.slice(0,12):DEF.wheel};
-const kfmt=n=>n>=1e6?+(n/1e6).toFixed(1)+"M":n>=1e3?+(n/1e3).toFixed(1)+"K":n>0?n+"đ":"Trượt";
-const pick=ws=>{const t=ws.reduce((a,b)=>a+b,0),a=new Uint32Array(1);crypto.getRandomValues(a);let r=a[0]/4294967296*t;for(let i=0;i<ws.length;i++){if((r-=ws[i])<0)return i}return ws.length-1};
-async function pSpin(m){
- await loadMe();hdr();
- if(!CFG.spinOn&&!isAd()){m.innerHTML='<div class="card"><h2>Vòng quay</h2><p class="mu">Vòng quay đang tạm tắt.</p></div>';return}
- const W=wheelCfg(),N=W.length,cost=+CFG.spinCost||0,lim=+CFG.spinLim||0,sig=JSON.stringify([W,cost,lim]);
- const used=()=>ME.spinDay===day()?(ME.spinN||0):0;
- m.innerHTML=`<div class="card" style="text-align:center"><h2>Vòng quay Nguyệt Ma</h2><p class="mu">Mỗi lượt <b>${fmt(cost)}</b>${lim>0?` · Hôm nay <b id="sl"></b>/${lim} lượt`:""}</p>
- <div class="wh"><i class="ptr"></i><canvas id="wc" width="640" height="640"></canvas><i class="hub">☾</i></div>
- <button class="btn" id="sp">Quay · ${fmt(cost)}</button></div>
- <div class="card"><h2>Các ô thưởng</h2><div class="chips">${[...new Set(W.map(s=>s.a))].sort((a,b)=>a-b).map(a=>`<span class="tag pending">${a?fmt(a):"Trượt"}</span>`).join("")}</div></div>
- <div class="card"><h2>Lịch sử quay</h2><div id="sh"><p class="mu">Đang tải...</p></div></div>`;
- const cv=$("#wc"),g=cv.getContext("2d"),R=320,st=2*Math.PI/N,P=["#4c1d95","#be185d","#6d28d9","#9d174d","#5b21b6","#a21caf"];
- W.forEach((x,i)=>{const a0=-Math.PI/2+i*st;g.beginPath();g.moveTo(R,R);g.arc(R,R,R-6,a0,a0+st);g.closePath();g.fillStyle=x.a===0?"#1f1a33":P[i%P.length];g.fill();g.strokeStyle="#f0c969";g.lineWidth=3;g.stroke();
-  g.save();g.translate(R,R);g.rotate(a0+st/2);g.textAlign="right";g.textBaseline="middle";g.fillStyle="#fff7e0";g.font="700 34px 'Be Vietnam Pro',sans-serif";g.fillText(kfmt(x.a),R-30,0);g.restore()});
- const sl=()=>{if($("#sl"))$("#sl").textContent=used()};sl();
- const hist=async()=>{let l=[];try{l=(await rows(query(collection(db,"spins"),where("uid","==",U.uid)))).sort((a,b)=>b.t-a.t).slice(0,10)}catch{}
-  if($("#sh"))$("#sh").innerHTML=l.map(x=>`<div class="item"><span class="mu">${new Date(x.t).toLocaleString("vi-VN")}</span><b>${x.a?"+"+fmt(x.a):"Trượt"}</b></div>`).join("")||'<p class="mu">Chưa có lượt quay nào.</p>'};
- hist();
- let rot=0,busy=0;
- $("#sp").onclick=async()=>{
-  if(busy)return;busy=1;const b=$("#sp");b.disabled=true;
-  await loadCfg();
-  if(JSON.stringify([wheelCfg(),+CFG.spinCost||0,+CFG.spinLim||0])!==sig){busy=0;toast("Vòng quay vừa được cập nhật",0);return pSpin(m)}
-  if(!CFG.spinOn&&!isAd()){busy=0;return pSpin(m)}
-  const idx=pick(W.map(x=>x.w));
-  try{await runTransaction(db,async tx=>{const r=doc(db,"users",U.uid),x=await tx.get(r),u=x.data(),d=day(),n=u.spinDay===d?(u.spinN||0):0;
-   if(u.banned)throw"Tài khoản đang bị khóa";
-   if(lim>0&&n>=lim)throw"Hôm nay đã hết lượt quay";
-   if((u.balance||0)<cost)throw"Số dư không đủ";
-   tx.update(r,{balance:u.balance-cost+W[idx].a,spinDay:d,spinN:n+1})})}
-  catch(e){busy=0;b.disabled=false;return toast(typeof e==="string"?e:"Không quay được: "+(e.code||e.message),0)}
-  rot=360*(Math.floor(rot/360)+6)-(idx+.5+(Math.random()-.5)*.7)*(360/N);
-  cv.style.transform=`rotate(${rot}deg)`;
-  await sleep(4700);
-  await loadMe();hdr();sl();
-  const a=W[idx].a;toast(a?"Trúng "+fmt(a)+"!":"Trượt rồi, chúc may mắn lần sau",a>=cost);
-  try{await addDoc(collection(db,"spins"),{uid:U.uid,a,cost,t:Date.now()})}catch{}
-  hist();busy=0;b.disabled=false};
-}
-
-async function creditLink(btn,x,v){
- btn.disabled=true;
- try{
-  await runTransaction(db,async tx=>{
-   const lr=doc(db,"links",x.id),ur=doc(db,"users",x.uid),ls=await tx.get(lr),us=await tx.get(ur);
-   if(!ls.exists()||!us.exists())throw"Không tìm thấy link hoặc người dùng";
-   const l=ls.data(),u=us.data();
-   tx.update(ur,{balance:(u.balance||0)+v});
-   tx.update(lr,{earned:(l.earned||0)+v,n:(l.n||0)+1});
-   tx.set(doc(collection(db,"credits")),{uid:x.uid,uname:l.uname,lid:x.id,short:l.short,amount:v,created:Date.now()})});
-  toast("Đã cộng "+fmt(v)+" cho "+x.uname);
-  NOTIFY("credit","Cộng "+fmt(v)+" cho "+x.uname+"\nTừ link: "+x.short);
- }catch(e){toast(typeof e==="string"?e:"Không cộng được: "+(e.code||e.message),0)}
- pAdmin()}
-
-async function pLink(m){
- await loadMe();hdr();
- const[ls,cs]=await Promise.all([rows(query(collection(db,"links"),where("uid","==",U.uid))),rows(query(collection(db,"credits"),where("uid","==",U.uid)))]);
- const L=ls.sort((a,b)=>b.created-a.created),C=cs.sort((a,b)=>b.created-a.created);
- const tot=L.reduce((a,l)=>a+(l.earned||0),0),lim=+CFG.linkLim||0,used=ME.linkDay===day()?(ME.linkN||0):0;
- const cut=x=>String(x||"").length>46?String(x).slice(0,43)+"...":String(x||"");
- m.innerHTML=`<div class="card"><h2>Rút gọn link</h2>
- <p class="mu" style="margin-bottom:12px">Dán link của bạn để tạo link rút gọn. Mỗi link chỉ rút gọn được <b>1 lần</b>, không nhận link sitetop.net. Khi link có thu nhập, admin sẽ cộng tiền vào ví theo từng link.${lim>0?` Hôm nay: <b>${used}/${lim}</b> lượt.`:""}</p>
- <label>Link gốc</label><input id="lu" inputmode="url" placeholder="https://..." autocomplete="off">
- <button class="btn" id="lb">Rút gọn link</button></div>
- <div class="card"><h2>Link của bạn</h2><div class="stat"><div><b>${L.length}</b><span>Số link</span></div><div><b>${fmt(tot)}</b><span>Đã được cộng</span></div><div><b>${C.length}</b><span>Lần cộng</span></div></div>
- ${L.map(l=>`<div class="hi"><div class="top"><span><b style="word-break:break-all">${esc(l.short)}</b><br><span class="mu">${esc(cut(l.orig))} · ${new Date(l.created).toLocaleDateString("vi-VN")}</span></span><span class="tag ${l.earned>0?"approved":"pending"}">${l.earned>0?"+"+fmt(l.earned):"Chưa có"}</span></div><button class="mini" data-cp="${esc(l.short)}" style="margin-top:8px">Copy link</button></div>`).join("")||'<p class="mu">Chưa có link nào.</p>'}</div>
- <div class="card"><h2>Lịch sử cộng tiền</h2>${C.slice(0,30).map(c=>`<div class="hi"><div class="top"><span><b>+${fmt(c.amount)}</b><br><span class="mu">Cộng từ link rút gọn ${esc(cut(c.short))}<br>${new Date(c.created).toLocaleString("vi-VN")}</span></span><span class="tag approved">Đã cộng</span></div></div>`).join("")||'<p class="mu">Chưa có khoản nào được cộng.</p>'}</div>`;
- bindCp(m);
- $("#lb").onclick=async()=>{
-  const b=$("#lb"),v=cleanUrl($("#lu").value);
-  if(v.err)return toast(v.err,0);
-  b.disabled=true;
-  try{
-   await loadCfg();if(CFG.mt&&!isAd())return shell();
-   await loadMe();
-   const lm=+CFG.linkLim||0;
-   if(lm>0&&!isAd()&&(ME.linkDay===day()?(ME.linkN||0):0)>=lm)throw"Hôm nay đã hết lượt rút gọn link";
-   const id=await sha(v.norm);
-   if((await getDoc(doc(db,"links",id))).exists())throw"Link này đã được rút gọn rồi, không thể rút gọn lại";
-   const r=await sitetopShorten(v.url);
-   if(!r.url)throw"Không tạo được link"+(r.why?": "+r.why:"");
-   await runTransaction(db,async tx=>{
-    const lr=doc(db,"links",id),ur=doc(db,"users",U.uid),lx=await tx.get(lr),ux=await tx.get(ur);
-    if(lx.exists())throw"Link này đã được rút gọn rồi, không thể rút gọn lại";
-    const u=ux.data();if(u.banned)throw"Tài khoản đang bị khóa";
-    const d=day(),n=u.linkDay===d?(u.linkN||0):0;
-    if(lm>0&&!isAd()&&n>=lm)throw"Hôm nay đã hết lượt rút gọn link";
-    tx.set(lr,{uid:U.uid,uname:ME.name,orig:v.url,short:r.url,earned:0,n:0,created:Date.now()});
-    tx.update(ur,{linkDay:d,linkN:n+1})});
-   NOTIFY("link",ME.name+" vừa rút gọn link\n"+r.url+"\nGốc: "+v.url);
-   toast("Đã rút gọn link");go("link");
-  }catch(e){b.disabled=false;toast(typeof e==="string"?e:"Lỗi: "+(e.code||e.message),0)}
- };
-}
-
-async function pTop(m){
- const r=await rows(query(collection(db,"users"),orderBy("total","desc"),limit(10)));
- m.innerHTML=`<div class="card"><h2>Top 10 đệ tử</h2>${r.filter(u=>u.total>0).map((u,i)=>`<div class="rk ${u.id===U.uid?"me":""}"><span class="n">${i+1}</span><span>${esc(mask(u.name))}</span><span class="c">${u.total}</span></div>`).join("")||'<p class="mu">Chưa có ai.</p>'}</div>`;
-}
-
-async function pRef(m){
- await loadMe();hdr();
- const fr=(await rows(query(collection(db,"users"),where("ref","==",U.uid)))).sort((a,b)=>b.created-a.created);
- const link=location.origin+location.pathname+"?ref="+(ME.rc||""),paid=fr.filter(f=>f.refPaid&&!f.refVoid).length;
- m.innerHTML=`<div class="card"><h2>Giới thiệu bạn bè</h2><p class="mu">Bạn bè đăng ký bằng mã của bạn và hoàn thành <b>${RN()}</b> nhiệm vụ, bạn nhận <b>+${fmt(CFG.refbonus)}</b> cho mỗi người.</p>
- <div class="rc">${esc(ME.rc||"...")}</div>
- <div class="row"><button class="btn" data-cp="${esc(ME.rc||"")}">Copy mã</button><button class="btn alt" data-cp="${esc(link)}">Copy link</button></div></div>
- <div class="card"><h2>Bạn bè đã mời</h2><div class="stat"><div><b>${fr.length}</b><span>Đã mời</span></div><div><b>${paid}</b><span>Có thưởng</span></div><div><b>${fmt(ME.refEarn||0)}</b><span>Tiền thưởng</span></div></div>
- ${fr.map(f=>`<div class="item"><span><b>${esc(mask(f.name))}</b><br><span class="mu">${new Date(f.created).toLocaleDateString("vi-VN")} · ${Math.min(f.total||0,RN())}/${RN()} nhiệm vụ</span></span><span class="tag ${f.refPaid&&!f.refVoid?"approved":"pending"}">${f.refVoid?"Không hợp lệ":f.refPaid?"Đã thưởng":"Đang làm"}</span></div>`).join("")||'<p class="mu">Chưa có bạn bè nào.</p>'}</div>`;
- bindCp(m);
-}
-async function pMore(m){
- const tabs=[["hist","Lịch sử"],["top","Xếp hạng"],["ct","Liên hệ"]];
- const menu=[...(CFG.spinOn||isAd()?[["spin","Vòng quay","Quay thưởng"]]:[]),["ref","Bạn bè","Mời bạn nhận thưởng"],...(isAd()?[["admin","Admin","Quản trị hệ thống"]]:[])].map(x=>`<button class="qk-i" data-go="${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></button>`).join("");
- m.innerHTML=`<div class="qk">${menu}</div><div class="seg" style="margin-top:0">${tabs.map(x=>`<button data-mo="${x[0]}" class="${more===x[0]?"on":""}">${x[1]}</button>`).join("")}</div><div id="mb"></div>`;
- m.querySelectorAll("[data-mo]").forEach(b=>b.onclick=()=>{more=b.dataset.mo;pMore(m)});
- m.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
- const mb=$("#mb");
- if(more==="top")return pTop(mb);
- if(more==="ct"){mb.innerHTML=contactHTML()||'<div class="card"><p class="mu">Admin chưa cập nhật thông tin liên hệ.</p></div>';return}
- mb.innerHTML='<p class="mu" style="text-align:center;padding:20px">Đang tải...</p>';
- const ws=(await rows(query(collection(db,"withdrawals"),where("uid","==",U.uid)))).sort((a,b)=>b.created-a.created);
- const ok=ws.filter(w=>w.status==="approved"),sum=t=>ok.filter(w=>t==="bank"?isBank(w):!isBank(w)).reduce((a,w)=>a+w.amount,0);
- const draw=()=>{
-  let l=ws;if(hf==="card")l=l.filter(w=>!isBank(w));else if(hf==="bank")l=l.filter(isBank);else if(hf==="pending"||hf==="rejected")l=l.filter(w=>w.status===hf);
-  mb.innerHTML=`<div class="card"><h2>Tổng quan</h2><div class="stat"><div><b>${fmt(sum("card"))}</b><span>Đã đổi thẻ</span></div><div><b>${fmt(sum("bank"))}</b><span>Đã rút ngân hàng</span></div><div><b>${ws.filter(w=>w.status==="pending").length}</b><span>Đang chờ</span></div></div></div>
-  <div class="card"><h2>Lịch sử rút tiền / đổi thẻ</h2><div class="fl">${[["all","Tất cả"],["card","Thẻ cào"],["bank","Ngân hàng"],["pending","Chờ duyệt"],["rejected","Từ chối"]].map(x=>`<button data-f="${x[0]}" class="${hf===x[0]?"on":""}">${x[1]}</button>`).join("")}</div>${histHTML(l)}</div>`;
-  bindCp(mb);mb.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{hf=b.dataset.f;draw()});
- };
- draw();
-}
-
-async function pAdmin(m=$("#m")){
- if(!isAd())return;await loadCfg();
- const[wd,us,rg,sc,hd,lk]=await Promise.all([rows(query(collection(db,"withdrawals"),where("status","==","pending"))),rows(query(collection(db,"users"),orderBy("created","desc"),limit(300))),rows(query(collection(db,"users"),where("approved","==",false))),getDoc(doc(db,"settings","secret")),rows(query(collection(db,"withdrawals"),where("status","in",["approved","rejected"]))),rows(query(collection(db,"links"),orderBy("created","desc"),limit(100)))]);
- const all=[...new Map([...rg,...us].map(u=>[u.id,u])).values()],dup=u=>u.dev?all.filter(x=>x.dev===u.dev).length:1;
- const pr=rg.filter(u=>!u.banned).sort((a,b)=>a.created-b.created);
- const wl=wd.sort((a,b)=>a.created-b.created).map(w=>{const b=isBank(w);return`<div class="wr" data-t="${b?"bank":"card"}">
-  <div style="margin-bottom:10px"><b>${esc(w.uname)}</b> · ${fmt(w.amount)} <span class="tag pending">${b?"Ngân hàng":"Thẻ "+esc(w.card||"?")}</span><br><span class="mu">${new Date(w.created).toLocaleString("vi-VN")}</span></div>
-  ${b?`<div class="box"><span class="mu">Chuyển khoản tới</span><br><b>${esc(w.bank)}</b><br>STK: <b>${esc(w.bankNo)}</b> <button class="mini" data-cp="${esc(w.bankNo)}">Copy</button><br>Chủ TK: <b>${esc(w.bankOwner)}</b><br><span class="mu">Chuyển xong mới bấm Duyệt, ví sẽ tự trừ ${fmt(w.amount)}.</span></div>`
-  :`<input data-cc placeholder="Mã thẻ" autocomplete="off"><input data-cs placeholder="Số seri" autocomplete="off">`}
-  <div class="row"><button class="mini ok" data-ok="${w.id}">Duyệt</button><button class="mini bad" data-no="${w.id}">Từ chối</button></div></div>`}).join("");
- m.innerHTML=`<div class="card" style="${CFG.mt?"border:2px solid #f0c969":""}"><h2>Bảo trì ${CFG.mt?'<span class="tag approved">ĐANG BẬT</span>':'<span class="tag pending">Đang tắt</span>'}</h2><p class="mu" style="margin-bottom:10px">Khi bật, người dùng (trừ admin) chỉ thấy màn hình bảo trì.</p><label>Nội dung thông báo bảo trì</label><textarea id="mtm" rows="2">${esc(CFG.mtmsg)}</textarea><button class="btn ${CFG.mt?"alt":""}" id="mtb">${CFG.mt?"Tắt bảo trì":"Bật bảo trì"}</button></div>
- <div class="card"><h2>Chờ duyệt tài khoản (${pr.length})</h2>${pr.map(u=>`<div class="item"><span><b>${esc(u.name)}</b><br><span class="mu">${new Date(u.created).toLocaleString("vi-VN")}</span>${dup(u)>1?`<br><span class="tag pending">${dup(u)} tk cùng máy</span>`:""}</span><span><button class="mini ok" data-ap="${u.id}">Duyệt</button> <button class="mini bad" data-rj="${u.id}">Từ chối</button></span></div>`).join("")||'<p class="mu">Không có.</p>'}</div>
- <div class="card"><h2>Đơn rút / đổi thẻ chờ duyệt (${wd.length})</h2>${wl||'<p class="mu">Không có.</p>'}</div>
- <div class="card"><h2>Lịch sử đơn đã xử lý (${hd.length})</h2><div class="fl" id="hf"><button data-f="all" class="on">Tất cả</button><button data-f="card">Thẻ</button><button data-f="bank">Ngân hàng</button><button data-f="rejected">Từ chối</button></div><div id="hl"></div></div>
- <div class="card" id="wcard"></div>
- <div class="card"><h2>Link rút gọn của người dùng (${lk.length})</h2><p class="mu" style="margin-bottom:10px">Cộng tiền theo từng link. Người dùng sẽ thấy khoản tiền này trong lịch sử, kèm link rút gọn.</p><input id="lq" placeholder="Tìm theo tên hoặc link..." autocomplete="off" style="margin-bottom:8px"><div id="ll"></div></div>
- <div class="card"><h2>Cài đặt</h2>${Object.keys(SET).map(k=>`<label>${SET[k]}</label><input data-s="${k}" inputmode="numeric" value="${CFG[k]}">`).join("")}
- ${Object.keys(CT).map(k=>`<label>${CT[k]}</label><input data-t="${k}" value="${esc(CFG[k]||"")}">`).join("")}
- <label>API key sitetop</label><input id="sk" type="password" placeholder="${sc.exists()&&sc.data().k?"Đã lưu":"Dán API key"}">
- <label>Telegram bot token (lấy từ @BotFather)</label><input id="tgt" type="password" placeholder="${sc.exists()&&sc.data().tg?"Đã lưu":"Dán token bot"}" autocomplete="off">
- <label>Telegram chat id của admin</label><input id="tgc" inputmode="numeric" placeholder="${sc.exists()&&sc.data().tgc?"Đã lưu":"VD: 123456789"}" autocomplete="off">
- <button class="btn alt" id="tgb" style="margin-bottom:12px">Gửi thử Telegram (bấm Lưu trước)</button>
- <label>Thông báo</label><textarea id="an" rows="2">${esc(CFG.ann)}</textarea>
- <button class="btn" id="sv">Lưu</button></div>
- <div class="card"><h2>Người dùng (${us.length})</h2>
- <div class="srch"><input id="uq" placeholder="Tìm theo tên người dùng..." autocomplete="off" style="margin-bottom:8px"></div>
- <div class="fl" id="uf"><button data-f="all" class="on">Tất cả</button><button data-f="ban">Đã khóa</button><button data-f="sus">Nghi bypass</button><button data-f="top">Nhiều xu nhất</button></div>
- <div id="ul"></div></div>`;
- bindCp(m);
- m.querySelectorAll("[data-ap]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.ap),{approved:true});NOTIFY("acc","Đã duyệt tài khoản "+(all.find(u=>u.id===b.dataset.ap)?.name||""));toast("Đã duyệt");pAdmin()});
- m.querySelectorAll("[data-rj]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.rj),{banned:true});NOTIFY("ban","Từ chối (khóa) tài khoản "+(all.find(u=>u.id===b.dataset.rj)?.name||""));toast("Đã từ chối");pAdmin()});
- m.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
-  const bx=b.closest(".wr"),x={};
-  if(bx.dataset.t==="card"){
-   x.code=bx.querySelector("[data-cc]").value.trim();x.serial=bx.querySelector("[data-cs]").value.trim();
-   if(!x.code||!x.serial)return toast("Nhập mã thẻ và số seri trước khi duyệt",0);
+function render() {
+  const v = document.getElementById("view");
+  document.getElementById("t_shop").className = tab === "shop" ? "on" : "";
+  document.getElementById("t_orders").className = tab === "orders" ? "on" : "";
+  if (tab === "shop") {
+    if (S.maint) v.innerHTML = '<div class="card">🔧 Hệ thống đang bảo trì, quay lại sau nhé.</div>';
+    else if (!S.products.length) v.innerHTML = '<div class="card hint">Chưa có sản phẩm.</div>';
+    else v.innerHTML = S.products.map(p => {
+      const q = qty[p.id] || 1;
+      return '<div class="card"><div class="row"><b>' + esc(p.name) + '</b><b>' + money(p.price) + '</b></div>' +
+        '<div class="hint">' + (p.stock > 0 ? 'Còn ' + p.stock : 'Hết hàng') + '</div>' +
+        '<div class="row" style="margin-top:8px"><div class="qty"><button onclick="chg(' + p.id + ',-1)">−</button><span>' + q +
+        '</span><button onclick="chg(' + p.id + ',1)">+</button></div>' +
+        '<button ' + (p.stock > 0 ? '' : 'disabled') + ' onclick="buy(' + p.id + ')">Mua ' + money(p.price * q) + '</button></div></div>';
+    }).join("");
+  } else {
+    v.innerHTML = S.orders.length ? S.orders.map(o =>
+      '<div class="card"><div class="row"><b>' + esc(o.name) + ' x' + o.qty + '</b><span>' + money(o.total) + '</span></div>' +
+      '<div class="hint">' + esc(o.at) + '</div>' +
+      String(o.keys || "").split("\n").filter(Boolean).map(k => '<code>' + esc(k) + '</code>').join("") + '</div>'
+    ).join("") : '<div class="card hint">Chưa có đơn nào.</div>';
   }
-  b.disabled=true;decide(b.dataset.ok,1,x)});
- m.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const r=prompt("Lý do từ chối (có thể bỏ trống):");if(r===null)return;b.disabled=true;decide(b.dataset.no,0,{reason:r.trim()})});
- let uf="all";
- const drawU=()=>{
-  const q=$("#uq").value.trim().toLowerCase();
-  let l=us.filter(u=>!q||((u.name||"")+" "+(u.phone||"")).toLowerCase().includes(q));
-  if(uf==="ban")l=l.filter(u=>u.banned);
-  if(uf==="sus")l=l.filter(u=>(u.sus||0)>0);
-  if(uf==="top")l=[...l].sort((a,b)=>(b.balance||0)-(a.balance||0));
-  $("#ul").innerHTML=l.map(u=>{const me=u.id===U.uid;return`<div class="us"><div class="nm">${u.banned?"🚫 ":u.approved===false?"⏳ ":""}${esc(u.name)} ${me?'<span class="tag pending">Bạn</span>':""}${(u.sus||0)>0?`<span class="tag rejected">Nghi bypass ×${u.sus}</span>`:""}</div>
-   <div class="mu">${u.phone&&u.phone!==u.name?"SĐT <b>"+esc(u.phone)+"</b><br>":!u.phone?"Chưa có SĐT<br>":""}Số dư <b>${fmt(u.balance)}</b> · ${u.total||0} nhiệm vụ · ${dup(u)>1?dup(u)+" tk cùng máy · ":""}${u.banned?"Đang bị khóa":"Đang hoạt động"}${u.susWhy?`<br>Lý do nghi: ${esc(u.susWhy)}`:""}</div>
-   ${me?"":`<div class="ac"><input inputmode="numeric" data-amt placeholder="Số tiền"><button class="mini ok" data-add="${u.id}">+ Cộng</button><button class="mini bad" data-sub="${u.id}">− Trừ</button><button class="mini ${u.banned?"ok":"bad"}" data-b="${u.id}" data-v="${u.banned?0:1}">${u.banned?"Mở khóa":"Khóa"}</button>${(u.sus||0)>0||u.lockUntil>Date.now()?`<button class="mini" data-clr="${u.id}">Xóa cờ</button>`:""}</div>`}</div>`}).join("")||'<p class="mu">Không tìm thấy.</p>';
-  $("#ul").querySelectorAll("[data-b]").forEach(b=>b.onclick=async()=>{const ban=b.dataset.v==="1";if(ban&&!confirm("Khóa tài khoản này?"))return;await updateDoc(doc(db,"users",b.dataset.b),ban?{banned:true}:{banned:false,sus:0,lockUntil:0});NOTIFY("ban",(ban?"Đã khóa tài khoản ":"Đã mở khóa tài khoản ")+(us.find(u=>u.id===b.dataset.b)?.name||""));toast(ban?"Đã khóa":"Đã mở khóa");pAdmin()});
-  $("#ul").querySelectorAll("[data-clr]").forEach(b=>b.onclick=async()=>{await updateDoc(doc(db,"users",b.dataset.clr),{sus:0,susWhy:"",lockUntil:0});toast("Đã xóa cờ");pAdmin()});
-  const adj=sign=>b=>b.onclick=async()=>{
-   const v=num(b.closest(".ac").querySelector("[data-amt]").value)*sign;if(!v)return toast("Nhập số tiền hợp lệ",0);
-   const id=b.dataset.add||b.dataset.sub;
-   try{await runTransaction(db,async tx=>{const r=doc(db,"users",id),x=await tx.get(r);if(x.data().balance+v<0)throw 1;tx.update(r,{balance:x.data().balance+v})});NOTIFY("adj",(v>0?"Cộng ":"Trừ ")+fmt(Math.abs(v))+" cho "+(us.find(u=>u.id===id)?.name||""));toast((v>0?"Đã cộng ":"Đã trừ ")+fmt(Math.abs(v)))}catch{toast("Số dư không đủ để trừ",0)}pAdmin()};
-  $("#ul").querySelectorAll("[data-add]").forEach(adj(1));$("#ul").querySelectorAll("[data-sub]").forEach(adj(-1));
- };
- $("#uq").oninput=drawU;
- $("#uf").querySelectorAll("button").forEach(b=>b.onclick=()=>{uf=b.dataset.f;$("#uf").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));drawU()});
- drawU();
- let hfl="all";
- const hs=[...hd].sort((a,b)=>(b.done||b.created)-(a.done||a.created));
- const hsum=t=>hd.filter(w=>w.status==="approved"&&(t==="bank"?isBank(w):!isBank(w))).reduce((a,w)=>a+w.amount,0);
- const drawH=()=>{
-  let l=hs;if(hfl==="card")l=l.filter(w=>!isBank(w));else if(hfl==="bank")l=l.filter(isBank);else if(hfl==="rejected")l=l.filter(w=>w.status==="rejected");
-  $("#hl").innerHTML=`<p class="mu" style="margin-bottom:8px">Đã chi: thẻ <b>${fmt(hsum("card"))}</b> · ngân hàng <b>${fmt(hsum("bank"))}</b></p>`+(l.slice(0,50).map(w=>{const b=isBank(w);return`<div class="hi"><div class="top"><span><b>${esc(w.uname)}</b> · ${fmt(w.amount)}<br><span class="mu">${b?"Ngân hàng "+esc(w.bank||""):"Thẻ "+esc(w.card||"?")} · ${new Date(w.done||w.created).toLocaleString("vi-VN")}</span></span><span class="tag ${w.status}">${ST[w.status]}</span></div>${w.reason?`<p class="mu" style="margin-top:6px">Lý do: ${esc(w.reason)}</p>`:""}</div>`}).join("")||'<p class="mu">Không có.</p>');
- };
- $("#hf").querySelectorAll("button").forEach(b=>b.onclick=()=>{hfl=b.dataset.f;$("#hf").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));drawH()});
- drawH();
- const drawL=()=>{
-  const q=$("#lq").value.trim().toLowerCase();
-  const l=lk.filter(x=>!q||((x.uname||"")+" "+(x.orig||"")+" "+(x.short||"")).toLowerCase().includes(q));
-  $("#ll").innerHTML=l.slice(0,50).map(x=>`<div class="wr"><div style="margin-bottom:8px"><b>${esc(x.uname)}</b> <span class="tag ${x.earned>0?"approved":"pending"}">Đã cộng ${fmt(x.earned||0)}${x.n?" · "+x.n+" lần":""}</span><br><span class="mu">${new Date(x.created).toLocaleString("vi-VN")}</span></div>
-   <div class="box"><span class="mu">Link rút gọn</span><br><b style="word-break:break-all">${esc(x.short)}</b> <button class="mini" data-cp="${esc(x.short)}">Copy</button><br><span class="mu">Link gốc</span><br><span style="word-break:break-all">${esc(x.orig)}</span></div>
-   <div class="row" style="align-items:center"><input inputmode="numeric" data-la placeholder="Số tiền cộng (đ)" style="margin:0"><button class="mini ok" data-lc="${x.id}" style="flex:none">+ Cộng tiền</button></div></div>`).join("")||'<p class="mu">Chưa có link nào.</p>';
-  bindCp($("#ll"));
-  $("#ll").querySelectorAll("[data-lc]").forEach(b=>b.onclick=()=>{
-   const x=lk.find(z=>z.id===b.dataset.lc),v=num(b.closest(".wr").querySelector("[data-la]").value);
-   if(!x)return;if(!v)return toast("Nhập số tiền hợp lệ",0);
-   if(!confirm("Cộng "+fmt(v)+" cho "+x.uname+" từ link này?"))return;
-   creditLink(b,x,v)});
- };
- $("#lq").oninput=drawL;drawL();
- let wsl=wheelCfg().map(x=>({...x})),sOn=CFG.spinOn?1:0,sCost=+CFG.spinCost||0,sLim=+CFG.spinLim||0;
- const wc=$("#wcard");
- const rd=()=>{sOn=num(wc.querySelector("#wo").value)?1:0;sCost=num(wc.querySelector("#wcst").value);sLim=num(wc.querySelector("#wlim").value);
-  const A=[...wc.querySelectorAll("[data-wa]")],B=[...wc.querySelectorAll("[data-ww]")];wsl=A.map((a,i)=>({a:num(a.value),w:num(B[i].value)}))};
- const evH=()=>{const tot=wsl.reduce((a,x)=>a+x.w,0)||1,ev=Math.round(wsl.reduce((a,x)=>a+x.a*x.w,0)/tot);return`Trung bình mỗi lượt trả lại <b>${fmt(ev)}</b> / thu <b>${fmt(sCost)}</b> → admin <b>${ev>sCost?"LỖ":"lời"} ${fmt(Math.abs(sCost-ev))}</b>/lượt.`};
- const drawW=()=>{
-  const tot=wsl.reduce((a,x)=>a+x.w,0)||1;
-  wc.innerHTML=`<h2>Vòng quay</h2><div class="row"><div><label>Bật (1) / Tắt (0)</label><input id="wo" inputmode="numeric" value="${sOn}"></div><div><label>Giá/lượt (đ)</label><input id="wcst" inputmode="numeric" value="${sCost}"></div><div><label>Lượt/ngày (0=∞)</label><input id="wlim" inputmode="numeric" value="${sLim}"></div></div>
-  <label>Các ô: tiền trúng (đ) · tỉ lệ (số lớn = dễ trúng) · %</label>
-  ${wsl.map((x,i)=>`<div class="row" style="align-items:center;margin-bottom:8px"><input data-wa inputmode="numeric" value="${x.a}" style="margin:0"><input data-ww inputmode="numeric" value="${x.w}" style="margin:0"><span class="mu" data-wp style="flex:none;width:50px">${(x.w/tot*100).toFixed(1)}%</span><button class="mini bad" data-wx="${i}" style="flex:none">Xóa</button></div>`).join("")}
-  <button class="btn alt" id="wadd" style="margin:6px 0 12px">+ Thêm ô</button>
-  <p class="note" id="wev">${evH()}</p><button class="btn" id="wsv">Lưu vòng quay</button>`;
-  wc.oninput=()=>{rd();const t=wsl.reduce((a,x)=>a+x.w,0)||1;wc.querySelector("#wev").innerHTML=evH();wc.querySelectorAll("[data-wp]").forEach((p,i)=>p.textContent=(wsl[i].w/t*100).toFixed(1)+"%")};
-  wc.querySelector("#wadd").onclick=()=>{rd();if(wsl.length>=12)return toast("Tối đa 12 ô",0);wsl.push({a:1000,w:5});drawW()};
-  wc.querySelectorAll("[data-wx]").forEach(b=>b.onclick=()=>{rd();if(wsl.length<=2)return toast("Tối thiểu 2 ô",0);wsl.splice(+b.dataset.wx,1);drawW()});
-  wc.querySelector("#wsv").onclick=async()=>{rd();if(wsl.some(x=>x.w<=0))return toast("Tỉ lệ mỗi ô phải lớn hơn 0",0);
-   try{await setDoc(doc(db,"settings","main"),{wheel:wsl,spinOn:sOn,spinCost:sCost,spinLim:sLim},{merge:true});toast("Đã lưu vòng quay");pAdmin()}catch(e){toast("Không lưu được: "+(e.code||e.message),0)}};
- };
- drawW();
- $("#tgb").onclick=async()=>{TG=null;const g=await tgCfg();if(!g.t||!g.c)return toast("Chưa lưu token hoặc chat id",0);NOTIFY("test","Bot hoạt động bình thường");toast("Đã gửi thử, kiểm tra Telegram")};
- $("#mtb").onclick=async()=>{if(!CFG.mt&&!confirm("Bật bảo trì? Người dùng sẽ không vào được."))return;await setDoc(doc(db,"settings","main"),{mt:CFG.mt?0:1,mtmsg:$("#mtm").value.trim()},{merge:true});toast(CFG.mt?"Đã tắt bảo trì":"Đã bật bảo trì");pAdmin()};
- $("#sv").onclick=async()=>{const b=$("#sv");b.disabled=true;try{const d={ann:$("#an").value.trim()};m.querySelectorAll("input[data-s]").forEach(i=>d[i.dataset.s]=num(i.value));m.querySelectorAll("input[data-t]").forEach(i=>d[i.dataset.t]=i.value.trim());await setDoc(doc(db,"settings","main"),d,{merge:true});const k=$("#sk").value.trim(),tk=$("#tgt").value.trim(),tc=$("#tgc").value.trim(),sd={};if(k)sd.k=k;if(tk)sd.tg=tk;if(tc)sd.tgc=tc;if(Object.keys(sd).length){await setDoc(doc(db,"settings","secret"),sd,{merge:true});TG=null}toast("Đã lưu");pAdmin()}catch(e){b.disabled=false;console.error(e);toast("Không lưu được: "+(e.code||e.message),0)}};
 }
-async function decide(id,ok,x={}){
- let info=null;
- try{
-  await runTransaction(db,async tx=>{
-   const wr=doc(db,"withdrawals",id),w=await tx.get(wr);
-   if(!w.exists()||w.data().status!=="pending")throw"Đã xử lý";
-   const d=w.data(),upd={status:ok?"approved":"rejected",done:Date.now()};info=d;
-   if(ok){
-    const ur=doc(db,"users",d.uid),u=await tx.get(ur);
-    if(u.data().balance<d.amount)throw"Ví người dùng không đủ tiền";
-    tx.update(ur,{balance:u.data().balance-d.amount});
-    if(x.code){upd.cardCode=x.code;upd.cardSerial=x.serial}
-   }else if(x.reason){upd.reason=x.reason;
-   }
-   tx.update(wr,upd);
+
+function chg(id, d) {
+  const p = S.products.find(x => x.id === id);
+  qty[id] = Math.max(1, Math.min(p.stock, (qty[id] || 1) + d));
+  render();
+}
+
+function buy(id) {
+  const p = S.products.find(x => x.id === id), q = qty[id] || 1;
+  tg.showConfirm("Mua " + p.name + " x" + q + " = " + money(p.price * q) + "?", async ok => {
+    if (!ok) return;
+    try {
+      const r = await call("/api/buy", {pid: id, qty: q, price: p.price});
+      if (r.ok) { tg.HapticFeedback.notificationOccurred("success"); qty[id] = 1; tab = "orders"; await load(); }
+      else tg.showAlert(r.need ? "Không đủ số dư, cần " + money(r.need) : (r.msg || "Mua thất bại"));
+    } catch (e) { tg.showAlert(e.message); }
   });
-  if(info)NOTIFY("wdone",(ok?"Đã duyệt":"Đã từ chối")+" đơn "+(isBank(info)?"ngân hàng "+info.bank:"thẻ "+info.card)+" "+fmt(info.amount)+"\nNgười dùng: "+info.uname+(x.reason?"\nLý do: "+x.reason:""));
-  toast(ok?"Đã duyệt, đã trừ tiền trong ví":"Đã từ chối");
- }catch(e){toast(typeof e==="string"?e:"Lỗi",0)}
- pAdmin();
 }
-</script></body></html>
+
+document.getElementById("t_shop").onclick = () => { tab = "shop"; render(); };
+document.getElementById("t_orders").onclick = () => { tab = "orders"; render(); };
+load();
+</script>
+</body>
+</html>
