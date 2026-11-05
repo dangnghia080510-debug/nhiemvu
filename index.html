@@ -44,7 +44,7 @@ async function init(){
  else{const s=localStorage.getItem('uid');if(s)await load(s)}
  }catch(e){hd();tabs();return showErr(e)}
  hd();tabs();go('shop')}
-async function load(id,extra){const r=db.collection('users').doc(id);let d=await r.get();
+async function load(id,extra){const r=db.collection('shop_users').doc(id);let d=await r.get();
  if(!d.exists){await r.set({balance:0,created:FV.serverTimestamp(),...(extra||{})});d=await r.get()}
  U={id,...d.data()};r.onSnapshot(s=>{if(s.exists){U={id,...s.data()};hd()}})}
 function hd(){$('#hd').innerHTML=U?`<span class="mu">${E(U.name||U.id)}</span> · <b style="color:var(--ok)">${F(U.balance)}</b> ${tg?'':'<button class="g" onclick="out()">Thoát</button>'}`:`<button onclick="auth()">Đăng nhập</button>`}
@@ -53,7 +53,7 @@ function out(){localStorage.removeItem('uid');U=null;hd();tabs();go('shop')}
 function auth(){modal(`<h3>Đăng nhập / Đăng ký</h3><input id="u" placeholder="Tên đăng nhập"><input id="p" type="password" placeholder="Mật khẩu (≥6 ký tự)"><button style="width:100%" onclick="sub()">Vào</button><p id="e" style="color:var(--no)"></p>`)}
 async function sub(){const u=$('#u').value.trim().toLowerCase(),p=$('#p').value;
  if(!/^[a-z0-9_]{3,20}$/.test(u)||p.length<6)return $('#e').textContent='Tên 3-20 ký tự a-z0-9_, mật khẩu ≥ 6 ký tự';
- const id='u_'+u,h=await sha(p),r=db.collection('users').doc(id),d=await r.get();
+ const id='u_'+u,h=await sha(p),r=db.collection('shop_users').doc(id),d=await r.get();
  if(d.exists){if(d.data().pw!==h)return $('#e').textContent='Sai mật khẩu'}else await r.set({balance:0,pw:h,name:u,created:FV.serverTimestamp()});
  localStorage.setItem('uid',id);await load(id);closeM();hd();tabs();go(TAB)}
 async function go(t){try{await go0(t)}catch(e){showErr(e)}}
@@ -64,11 +64,11 @@ function showErr(e){const m=String(e&&e.message||e),c=e&&e.code||'';let h='';
  else h='Lỗi không rõ.';
  $('#v').innerHTML='<div class="c"><b style="color:var(--no)">Không tải được dữ liệu</b><p>'+h+'</p><pre>'+E(c+' '+m)+'</pre></div>'}
 async function go0(t){TAB=t;const v=$('#v');
- if(t=='shop'){v.innerHTML='Đang tải...';const s=await db.collection('products').where('active','==',true).get();
+ if(t=='shop'){v.innerHTML='Đang tải...';const s=await db.collection('shop_products').where('active','==',true).get();
   P=s.docs.map(d=>({id:d.id,...d.data()}));
   v.innerHTML=`<input id="q" placeholder="Tìm sản phẩm..." oninput="draw()"><div class="grid" id="g"></div>`;draw()}
  else if(!U)auth();
- else if(t=='orders'){const s=await db.collection('orders').where('uid','==',U.id).get();
+ else if(t=='orders'){const s=await db.collection('shop_orders').where('uid','==',U.id).get();
   const o=s.docs.map(d=>d.data()).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
   v.innerHTML=o.map(x=>`<div class="c"><b>${E(x.name)}</b> x${x.qty} · ${F(x.total)}<div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''}</div><pre>${E((x.keys||[]).join('\n'))}</pre></div>`).join('')||'<p class="mu">Chưa có đơn nào.</p>'}
  else if(t=='topup'){v.innerHTML=`<div class="c"><h3>Nạp tiền (VietQR)</h3><input id="a" type="number" placeholder="Số tiền, tối thiểu 10000"><button onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>`}
@@ -79,24 +79,24 @@ function draw(){const q=($('#q').value||'').toLowerCase();
 function bm(id){if(!U)return auth();const p=P.find(x=>x.id==id);modal(`<h3>${E(p.name)}</h3><p class="pr">${F(p.price)}</p><input id="n" type="number" min="1" value="1"><div class="r"><button onclick="buy('${id}')">Xác nhận mua</button><button class="g" onclick="closeM()">Hủy</button></div><p id="e" style="color:var(--no)"></p>`)}
 async function buy(id){const qty=Math.max(1,Math.min(100,+$('#n').value||1));let got=[];
  try{await db.runTransaction(async t=>{
-  const pr=db.collection('products').doc(id),ur=db.collection('users').doc(U.id);
+  const pr=db.collection('shop_products').doc(id),ur=db.collection('shop_users').doc(U.id);
   const [p,u]=await Promise.all([t.get(pr),t.get(ur)]);
   if(!p.exists||!p.data().active)throw'Sản phẩm không còn bán';
   const keys=p.data().keys||[];if(keys.length<qty)throw'Không đủ hàng';
   const total=p.data().price*qty;if((u.data().balance||0)<total)throw'Không đủ số dư, hãy nạp thêm';
   got=keys.slice(0,qty);
   t.update(pr,{keys:keys.slice(qty)});t.update(ur,{balance:FV.increment(-total)});
-  t.set(db.collection('orders').doc(),{uid:U.id,name:p.data().name,qty,total,keys:got,ts:FV.serverTimestamp()})});
+  t.set(db.collection('shop_orders').doc(),{uid:U.id,name:p.data().name,qty,total,keys:got,ts:FV.serverTimestamp()})});
   modal(`<h3>✅ Mua thành công</h3><pre>${E(got.join('\n'))}</pre><button onclick="closeM()">Đóng</button>`);go('shop')
  }catch(e){$('#e').textContent=typeof e=='string'?e:'Lỗi, thử lại'}}
 async function tp(){const a=+$('#a').value;if(a<10000)return alert('Nạp tối thiểu 10.000đ');
- const b=(await db.collection('settings').doc('bank').get()).data();if(!b)return alert('Admin chưa cài tài khoản ngân hàng');
- const r=await db.collection('topups').add({uid:U.id,name:U.name||U.id,amount:a,status:'pending',ts:FV.serverTimestamp()});
+ const b=(await db.collection('shop_settings').doc('bank').get()).data();if(!b)return alert('Admin chưa cài tài khoản ngân hàng');
+ const r=await db.collection('shop_topups').add({uid:U.id,name:U.name||U.id,amount:a,status:'pending',ts:FV.serverTimestamp()});
  const note='NAP'+r.id.slice(0,6).toUpperCase();await r.update({note});
  $('#qr').innerHTML=`<img class="qr" src="https://img.vietqr.io/image/${b.bank}-${b.acc}-compact2.png?amount=${a}&addInfo=${note}&accountName=${encodeURIComponent(b.owner)}"><p>Số tiền: <b>${F(a)}</b><br>Nội dung CK: <b>${note}</b><br>${E(b.bank)} - ${E(b.acc)} - ${E(b.owner)}</p><p class="mu">Chuyển đúng nội dung, admin duyệt xong tiền sẽ vào ví.</p>`}
 // ================= ADMIN =================
 async function adm(){const v=$('#v');
- const [tp,ps,bk]=await Promise.all([db.collection('topups').where('status','==','pending').get(),db.collection('products').get(),db.collection('settings').doc('bank').get()]);
+ const [tp,ps,bk]=await Promise.all([db.collection('shop_topups').where('status','==','pending').get(),db.collection('shop_products').get(),db.collection('shop_settings').doc('bank').get()]);
  const b=bk.data()||{};
  v.innerHTML=`<div class="c"><h3>Đơn nạp chờ duyệt</h3>${tp.docs.map(d=>{const x=d.data();return `<div class="r" style="margin:6px 0"><span>${E(x.name)} · ${F(x.amount)} · ${E(x.note||'')}</span><button class="ok" onclick="ap('${d.id}')">Duyệt</button><button class="no" onclick="ap('${d.id}',1)">Từ chối</button></div>`}).join('')||'<p class="mu">Không có đơn.</p>'}</div>
  <div class="c"><h3>Thêm sản phẩm</h3><input id="pn" placeholder="Tên"><input id="pp" type="number" placeholder="Giá"><input id="pd" placeholder="Mô tả"><textarea id="pk" rows="4" placeholder="Key/nội dung, mỗi dòng 1 cái"></textarea><button onclick="addP()">Thêm</button></div>
@@ -104,13 +104,13 @@ async function adm(){const v=$('#v');
  <div class="c"><h3>Tài khoản ngân hàng nhận tiền</h3><input id="bb" placeholder="Mã NH (MB, VCB, ACB...)" value="${E(b.bank||'')}"><input id="ba" placeholder="Số tài khoản" value="${E(b.acc||'')}"><input id="bo" placeholder="Chủ tài khoản" value="${E(b.owner||'')}"><button onclick="saveB()">Lưu</button></div>`}
 const lines=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
 async function addP(){const n=$('#pn').value.trim(),p=+$('#pp').value;if(!n||!(p>0))return alert('Nhập tên và giá');
- await db.collection('products').add({name:n,price:p,desc:$('#pd').value,keys:lines($('#pk').value),active:true});adm()}
-async function addK(id){const k=lines($('#k_'+id).value);if(!k.length)return;await db.collection('products').doc(id).update({keys:FV.arrayUnion(...k)});adm()}
-async function tgl(id,a){await db.collection('products').doc(id).update({active:a});adm()}
-async function delP(id){if(confirm('Xóa sản phẩm này?')){await db.collection('products').doc(id).delete();adm()}}
-async function saveB(){await db.collection('settings').doc('bank').set({bank:$('#bb').value.trim(),acc:$('#ba').value.trim(),owner:$('#bo').value.trim()});alert('Đã lưu')}
-async function ap(id,rej){try{await db.runTransaction(async t=>{const r=db.collection('topups').doc(id),d=await t.get(r);
+ await db.collection('shop_products').add({name:n,price:p,desc:$('#pd').value,keys:lines($('#pk').value),active:true});adm()}
+async function addK(id){const k=lines($('#k_'+id).value);if(!k.length)return;await db.collection('shop_products').doc(id).update({keys:FV.arrayUnion(...k)});adm()}
+async function tgl(id,a){await db.collection('shop_products').doc(id).update({active:a});adm()}
+async function delP(id){if(confirm('Xóa sản phẩm này?')){await db.collection('shop_products').doc(id).delete();adm()}}
+async function saveB(){await db.collection('shop_settings').doc('bank').set({bank:$('#bb').value.trim(),acc:$('#ba').value.trim(),owner:$('#bo').value.trim()});alert('Đã lưu')}
+async function ap(id,rej){try{await db.runTransaction(async t=>{const r=db.collection('shop_topups').doc(id),d=await t.get(r);
  if(!d.exists||d.data().status!=='pending')throw'Đơn đã xử lý';
- if(rej)t.update(r,{status:'rejected'});else{t.update(r,{status:'approved'});t.update(db.collection('users').doc(d.data().uid),{balance:FV.increment(d.data().amount)})}})}catch(e){alert(e)}adm()}
+ if(rej)t.update(r,{status:'rejected'});else{t.update(r,{status:'approved'});t.update(db.collection('shop_users').doc(d.data().uid),{balance:FV.increment(d.data().amount)})}})}catch(e){alert(e)}adm()}
 init();
 </script></body></html>
