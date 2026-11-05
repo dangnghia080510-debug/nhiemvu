@@ -1,83 +1,218 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0816">
 <title>Shop Key</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
-:root{--bg:#100e1c;--sf:#1a1730;--ln:#2e2852;--tx:#f2effa;--mu:#9a94b8;--ac:#f5b942;--ok:#4ade9b;--no:#ff6b7a}
+:root{
+ --bg:#0a0816;--bg2:#100c24;--sf:#161132;--sf2:#1d1741;--ln:#32296b;
+ --tx:#f1eeff;--mu:#9c95c9;
+ --cy:#22e3ff;--mg:#ff3dcb;--vi:#8b5cff;--gd:#ffc83d;--ok:#35f0a0;--no:#ff5470;
+ --hd:"Chakra Petch","Be Vietnam Pro",system-ui,sans-serif;
+ --bd:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ --cut:12px;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--ln);position:sticky;top:0;z-index:5}
-.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px}
-.brand svg{width:24px;height:24px;color:var(--ac)}
-.wal{display:flex;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--ln);border-radius:999px;padding:5px 5px 5px 13px}
-.wal small{color:var(--mu);font-size:12px}.wal b{color:var(--ac);font-variant-numeric:tabular-nums}
-.wal button{padding:5px 11px;font-size:12px;border-radius:999px}
-.w{max-width:620px;margin:auto;padding:14px 14px 100px}
-h3{margin:0 0 10px;font-size:18px}
-button{font:inherit;font-weight:700;background:var(--ac);color:#1b1304;border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
-button:active{transform:scale(.97)}
-button.g{background:transparent;color:var(--tx);border:1px solid var(--ln)}
-button.ok{background:var(--ok);color:#06251a}button.no{background:var(--no);color:#2a0509}
-button:disabled{opacity:.45;cursor:not-allowed}
-:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid var(--ln);background:var(--sf);color:var(--tx);margin:5px 0;font:inherit}
-input:focus,textarea:focus{outline:none;border-color:var(--ac)}
-.c{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px;margin-bottom:12px}
+html{scroll-padding-top:70px}
+body{margin:0;color:var(--tx);font:15px/1.5 var(--bd);min-height:100vh;
+ background:
+  radial-gradient(900px 420px at 85% -80px,#4a1d9c55,transparent 70%),
+  radial-gradient(700px 380px at -10% 20%,#0e6a8a40,transparent 70%),
+  var(--bg);
+ background-attachment:fixed}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+ background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);
+ background-size:36px 36px;-webkit-mask-image:linear-gradient(#000,transparent 70%);mask-image:linear-gradient(#000,transparent 70%)}
+header,.w,nav{position:relative;z-index:1}
+
+/* ===== header ===== */
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+ background:#0a0816d9;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--ln);position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font:700 20px/1 var(--hd);letter-spacing:.5px}
+.brand .lg{width:34px;height:34px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cy),var(--vi) 55%,var(--mg));
+ clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);color:#0a0816}
+.brand .lg svg{width:18px;height:18px}
+.brand span i{font-style:normal;color:var(--cy);text-shadow:0 0 14px #22e3ff88}
+.wal{display:flex;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--ln);padding:4px 6px 4px 8px;
+ clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));border-radius:0}
+.coin{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b8,var(--gd) 55%,#c98a00);display:grid;place-items:center;font:700 12px var(--hd);color:#5a3a00;flex:none}
+.wal b{font:700 15px var(--hd);color:var(--gd);font-variant-numeric:tabular-nums;padding-right:6px}
+.wal button{padding:4px 10px;font-size:12px}
+
+.w{max-width:640px;margin:auto;padding:14px 14px calc(96px + env(safe-area-inset-bottom))}
+h3{margin:0 0 10px;font:700 18px/1.2 var(--hd);letter-spacing:.3px}
+h2{margin:0;font:700 22px/1.15 var(--hd)}
+
+/* ===== buttons / inputs ===== */
+button{font:700 14px/1 var(--hd);letter-spacing:.4px;background:linear-gradient(135deg,var(--cy),var(--vi));color:#06051a;border:0;padding:11px 16px;cursor:pointer;
+ clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));transition:filter .15s,transform .1s}
+button:hover{filter:brightness(1.12)}
+button:active{transform:scale(.96)}
+button.g{background:var(--sf2);color:var(--tx);box-shadow:inset 0 0 0 1px var(--ln)}
+button.ok{background:linear-gradient(135deg,#35f0a0,#16b57a);color:#04281a}
+button.no{background:linear-gradient(135deg,#ff5470,#d12a58);color:#2b030d}
+button.gold{background:linear-gradient(135deg,#ffe27a,var(--gd) 50%,#ff9d2e);color:#3a2300}
+button.sm{padding:8px 11px;font-size:12px}
+button:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.6)}
+:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+input,textarea{width:100%;padding:12px 13px;border:1px solid var(--ln);background:var(--bg2);color:var(--tx);margin:5px 0;font:inherit;border-radius:4px}
+input:focus,textarea:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 3px #22e3ff22}
+input::placeholder,textarea::placeholder{color:#6f68a3}
+label.lb{display:block;font:600 12px var(--hd);color:var(--mu);margin-top:8px;letter-spacing:.4px}
+
+/* ===== panels ===== */
+.c{background:linear-gradient(180deg,var(--sf),#120e2b);border:1px solid var(--ln);padding:16px;margin-bottom:12px;position:relative;
+ clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.c.in{background:var(--bg2)}
 .mu{color:var(--mu);font-size:13px}
-.list{background:var(--sf);border:1px solid var(--ln);border-radius:16px;overflow:hidden;margin-top:10px}
-.pd{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 16px}
-.pd+.pd{border-top:1px solid var(--ln)}
-.pi{display:flex;flex-direction:column;gap:3px;min-width:0}.pi b{font-size:16px}
-.pa{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:none}
-.pr{font-weight:800;font-size:17px;font-variant-numeric:tabular-nums;color:var(--ac)}
-.st{font-size:12px;color:var(--ok)}.st.low{color:var(--ac)}.st.out{color:var(--no)}
-.empty{text-align:center;color:var(--mu);padding:36px 12px}
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--sf);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom);z-index:6}
-nav button{flex:1;background:none;color:var(--mu);border-radius:0;padding:10px 4px 9px;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px}
-nav button i{font-style:normal;font-size:20px}nav button.on{color:var(--ac)}
-.chips{display:flex;gap:8px;margin:8px 0 12px}.chips button{flex:1;padding:8px 0;font-size:13px}
-.m{position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;z-index:9}
-.m>div{background:var(--sf);border:1px solid var(--ln);border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:520px;max-height:88vh;overflow:auto;animation:up .2s ease-out}
-@keyframes up{from{transform:translateY(40px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.m>div{animation:none}}
-pre{background:var(--bg);border:1px dashed var(--ln);color:var(--ac);padding:10px;border-radius:10px;white-space:pre-wrap;word-break:break-all;user-select:all;font:13px ui-monospace,Menlo,monospace;margin:8px 0}
 .r{display:flex;gap:8px;align-items:center}.r>*{flex:1}
-img.qr{display:block;width:100%;max-width:260px;margin:12px auto;border-radius:12px;background:#fff;padding:8px}
+.r.fit>*{flex:none}
+.sp{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.empty{text-align:center;color:var(--mu);padding:40px 12px}
+.empty b{display:block;font:700 17px var(--hd);color:var(--tx);margin-bottom:4px}
+
+/* ===== search + shop grid ===== */
+.search{position:relative;margin-bottom:14px}
+.search input{padding-left:40px;margin:0;background:var(--sf)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--mu)}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:2px 2px 14px}
+.hero .mu{margin-top:3px}
+.cnt{font:700 12px var(--hd);color:var(--cy);border:1px solid #22e3ff55;padding:4px 9px;background:#22e3ff12;white-space:nowrap}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:520px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{background:linear-gradient(160deg,var(--ln),#1d1741 40%,var(--vi));padding:1px;
+ clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));transition:transform .15s}
+.card:hover{transform:translateY(-3px)}
+.card.free{background:linear-gradient(160deg,var(--ok),#1d1741 45%,var(--cy))}
+.card.out{background:var(--ln);opacity:.6}
+.card .in{background:var(--sf);height:100%;display:flex;flex-direction:column;
+ clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+.im{position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#2a1a6e,#0e3b5c);overflow:hidden;flex:none}
+.im .ph{position:absolute;inset:0;display:grid;place-items:center;color:#ffffff44}
+.im .ph svg{width:44%;height:44%}
+.im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.im:after{content:"";position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(transparent,var(--sf))}
+.tag{position:absolute;left:8px;top:8px;z-index:2;font:700 11px var(--hd);padding:3px 8px;background:#0a0816cc;color:var(--ok);border:1px solid #35f0a055}
+.tag.low{color:var(--gd);border-color:#ffc83d55}.tag.out{color:var(--no);border-color:#ff547055}
+.bd{padding:2px 11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.nm{font:700 15px/1.25 var(--hd);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ds{font-size:12px;color:var(--mu);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}
+.ft{margin-top:auto;padding-top:8px;display:flex;flex-direction:column;gap:8px}
+.pr{font:700 18px var(--hd);color:var(--gd);font-variant-numeric:tabular-nums}
+.pr.free{color:var(--ok);text-shadow:0 0 14px #35f0a066}
+.ft button{width:100%}
+
+/* ===== orders ===== */
+.od .t{font:700 16px var(--hd)}
+pre{background:#07050f;border:1px dashed #22e3ff55;color:var(--cy);padding:11px;white-space:pre-wrap;word-break:break-all;user-select:all;font:13px ui-monospace,Menlo,monospace;margin:10px 0;border-radius:4px}
+
+/* ===== nav ===== */
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#0d0a20ee;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom);z-index:6}
+nav button{flex:1;background:none;color:var(--mu);clip-path:none;padding:9px 4px 8px;font:600 11px var(--hd);display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+nav button svg{width:22px;height:22px}
+nav button.on{color:var(--cy)}
+nav button.on:before{content:"";position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--cy);box-shadow:0 0 12px var(--cy)}
+nav button:hover{filter:none}
+
+/* ===== segmented (admin) ===== */
+.seg{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{flex:none;background:var(--sf);color:var(--mu);box-shadow:inset 0 0 0 1px var(--ln);padding:9px 14px;font-size:13px}
+.seg button.on{background:linear-gradient(135deg,var(--cy),var(--vi));color:#06051a;box-shadow:none}
+
+/* ===== admin rows ===== */
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat .c{margin:0;padding:12px 14px}
+.stat b{display:block;font:700 22px var(--hd);color:var(--cy)}
+.stat .gdv{color:var(--gd)}
+.row{display:flex;gap:11px;align-items:center;padding:11px 0}
+.row+.row{border-top:1px solid var(--ln)}
+.av{width:42px;height:42px;flex:none;display:grid;place-items:center;font:700 17px var(--hd);color:#06051a;background:linear-gradient(135deg,var(--cy),var(--mg));clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.row .inf{min-width:0;flex:1}
+.row .inf b{display:block;font:700 15px var(--hd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.idc{display:inline-flex;align-items:center;gap:5px;font:12px ui-monospace,Menlo,monospace;color:var(--cy);background:#22e3ff14;border:1px solid #22e3ff40;padding:2px 7px;margin-top:3px;cursor:pointer;border-radius:3px}
+.thumb{width:48px;height:48px;flex:none;background:linear-gradient(135deg,#2a1a6e,#0e3b5c);position:relative;overflow:hidden;border-radius:4px}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pill{display:inline-block;font:700 11px var(--hd);padding:2px 7px;border:1px solid var(--ln);color:var(--mu);margin-left:4px}
+.pill.on{color:var(--ok);border-color:#35f0a055}.pill.off{color:var(--no);border-color:#ff547055}
+
+/* ===== modal ===== */
+.m{position:fixed;inset:0;background:#02010acc;backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:9}
+.m>div{background:linear-gradient(180deg,var(--sf2),var(--sf));border:1px solid var(--ln);border-bottom:0;border-top:2px solid var(--cy);
+ padding:20px 18px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:520px;max-height:90vh;overflow:auto;animation:up .2s ease-out;box-shadow:0 -10px 40px #22e3ff22}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.m>div{animation:none}.card{transition:none}}
+.mimg{aspect-ratio:16/9;margin:-4px 0 12px;position:relative;overflow:hidden;background:linear-gradient(135deg,#2a1a6e,#0e3b5c);border-radius:4px}
+.mimg .ph{position:absolute;inset:0;display:grid;place-items:center;color:#ffffff44}.mimg .ph svg{width:20%;height:20%}
+.mimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.qty{display:flex;align-items:center;gap:8px;margin:10px 0}
+.qty button{width:44px;padding:11px 0}
+.qty input{text-align:center;margin:0;font:700 17px var(--hd)}
+.tot{display:flex;justify-content:space-between;align-items:center;margin:10px 0 14px;font:600 14px var(--hd);color:var(--mu)}
+.tot b{font-size:20px;color:var(--gd)}.tot b.free{color:var(--ok)}
+.err{color:var(--no);margin:8px 0 0;font-size:13px}
+img.qr{display:block;width:100%;max-width:260px;margin:12px auto;background:#fff;padding:8px;border-radius:6px}
+.up{display:flex;gap:10px;align-items:center;margin:6px 0}
+.up .thumb{width:72px;height:72px}
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--sf2);border:1px solid var(--cy);color:var(--tx);padding:9px 16px;font:600 13px var(--hd);z-index:20;box-shadow:0 0 24px #22e3ff44;display:none}
 </style></head><body>
-<header><div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></svg>Shop Key</div><div id="hd"></div></header>
+<header>
+ <div class="brand"><div class="lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></svg></div><span>SHOP<i>KEY</i></span></div>
+ <div id="hd"></div>
+</header>
 <div class="w"><div id="v"></div></div><nav id="tb"></nav>
 <div class="m" id="m"><div id="mc"></div></div>
+<div class="toast" id="ts"></div>
 <script>
-// ====== CẤU HÌNH: dán firebaseConfig của mày vào đây ======
+// ====== CẤU HÌNH ======
 const firebaseConfig={apiKey:"AIzaSyCPoZuP5xjMQZQhHZL3FMNGyhXcbcgWfpk",authDomain:"clone-gia-re.firebaseapp.com",projectId:"clone-gia-re",storageBucket:"clone-gia-re.firebasestorage.app",messagingSenderId:"1023948939436",appId:"1:1023948939436:web:dc1965cf4416ade10f3f09"};
 const ADMINS=["8618983578"];          // Telegram ID admin
-// ===========================================================
+// =======================
 firebase.initializeApp(firebaseConfig);const db=firebase.firestore(),FV=firebase.firestore.FieldValue;
-const tg=window.Telegram&&Telegram.WebApp;if(tg){tg.ready();tg.expand()}
-const $=s=>document.querySelector(s),F=n=>Number(n||0).toLocaleString('vi-VN')+'đ',E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let U=null,P=[],TAB='shop';
+const tg=window.Telegram&&Telegram.WebApp;
+if(tg){try{tg.ready();tg.expand();tg.setHeaderColor('#0a0816');tg.setBackgroundColor('#0a0816')}catch(e){}}
+const $=s=>document.querySelector(s),
+ F=n=>Number(n||0).toLocaleString('vi-VN')+'đ',
+ PR=n=>Number(n)>0?F(n):'Miễn phí',
+ E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let U=null,P=[],TAB='shop',AT='tp',AP=[],USERS=[],IMG='';
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 const isAdmin=()=>U&&ADMINS.includes(U.tgid||'');
+const IC={
+ shop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
+ orders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 8-9-5-9 5v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>',
+ topup:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>',
+ admin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+ search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+ key:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></svg>'
+};
+const ph=`<div class="ph">${IC.key}</div>`;
+const imgBox=(src,cls,extra)=>`<div class="${cls}">${ph}${src?`<img src="${E(src)}" alt="" loading="lazy" onerror="this.remove()">`:''}${extra||''}</div>`;
+function toast(t){const e=$('#ts');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',1800)}
 function modal(h){$('#mc').innerHTML=h;$('#m').style.display='flex'}function closeM(){$('#m').style.display='none'}
 $('#m').onclick=e=>{if(e.target.id=='m')closeM()};
 async function init(){
  if(!firebaseConfig.projectId){hd();tabs();return showErr('thiếu config')}
  try{
  const t=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
- if(t){await load('tg_'+t.id,{name:t.first_name||t.username||'User',tgid:String(t.id)})}
+ if(t){await load('tg_'+t.id,{name:t.first_name||t.username||'User',tgid:String(t.id),username:t.username||''})}
  else{const s=localStorage.getItem('uid');if(s)await load(s)}
  }catch(e){hd();tabs();return showErr(e)}
  hd();tabs();go('shop')}
 async function load(id,extra){const r=db.collection('shop_users').doc(id);let d=await r.get();
  if(!d.exists){await r.set({balance:0,created:FV.serverTimestamp(),...(extra||{})});d=await r.get()}
+ else if(extra&&(d.data().username===undefined)){await r.update({username:extra.username||''});d=await r.get()}
  U={id,...d.data()};r.onSnapshot(s=>{if(s.exists){U={id,...s.data()};hd()}})}
-function hd(){$('#hd').innerHTML=U?`<div class="wal"><small>Ví</small><b>${F(U.balance)}</b>${tg?'':'<button class="g" onclick="out()">Thoát</button>'}</div>`:`<button onclick="auth()">Đăng nhập</button>`}
-function tabs(){const T=[['shop','🛍️','Cửa hàng'],['orders','📦','Đơn của tôi'],['topup','💳','Nạp tiền']];if(isAdmin())T.push(['admin','⚙️','Admin']);
- $('#tb').innerHTML=T.map(x=>`<button class="${TAB==x[0]?'on':''}" onclick="go('${x[0]}')"><i>${x[1]}</i>${x[2]}</button>`).join('')}
+function hd(){$('#hd').innerHTML=U?`<div class="wal"><div class="coin">$</div><b>${F(U.balance)}</b>${tg?'':'<button class="g sm" onclick="out()">Thoát</button>'}</div>`:`<button onclick="auth()">Đăng nhập</button>`}
+function tabs(){const T=[['shop','Cửa hàng'],['orders','Đơn hàng'],['topup','Nạp tiền']];if(isAdmin())T.push(['admin','Admin']);
+ $('#tb').innerHTML=T.map(x=>`<button class="${TAB==x[0]?'on':''}" onclick="go('${x[0]}')">${IC[x[0]]}${x[1]}</button>`).join('')}
 function out(){localStorage.removeItem('uid');U=null;hd();tabs();go('shop')}
-function auth(){modal(`<h3>Đăng nhập / Đăng ký</h3><input id="u" placeholder="Tên đăng nhập"><input id="p" type="password" placeholder="Mật khẩu (≥6 ký tự)"><button style="width:100%" onclick="sub()">Vào</button><p id="e" style="color:var(--no)"></p>`)}
+function auth(){modal(`<h3>Đăng nhập / Đăng ký</h3><input id="u" placeholder="Tên đăng nhập"><input id="p" type="password" placeholder="Mật khẩu (≥6 ký tự)"><button style="width:100%;margin-top:6px" onclick="sub()">Vào game</button><p id="e" class="err"></p>`)}
 async function sub(){const u=$('#u').value.trim().toLowerCase(),p=$('#p').value;
  if(!/^[a-z0-9_]{3,20}$/.test(u)||p.length<6)return $('#e').textContent='Tên 3-20 ký tự a-z0-9_, mật khẩu ≥ 6 ký tự';
  const id='u_'+u,h=await sha(p),r=db.collection('shop_users').doc(id),d=await r.get();
@@ -91,54 +226,97 @@ function showErr(e){const m=String(e&&e.message||e),c=e&&e.code||'';let h='';
  else h='Lỗi không rõ.';
  $('#v').innerHTML='<div class="c"><b style="color:var(--no)">Không tải được dữ liệu</b><p>'+h+'</p><pre>'+E(c+' '+m)+'</pre></div>'}
 async function go0(t){TAB=t;const v=$('#v');
- if(t=='shop'){v.innerHTML='Đang tải...';const s=await db.collection('shop_products').where('active','==',true).get();
+ if(t=='shop'){v.innerHTML='<div class="empty">Đang tải kho hàng...</div>';const s=await db.collection('shop_products').where('active','==',true).get();
   P=s.docs.map(d=>({id:d.id,...d.data()}));
-  v.innerHTML=`<input id="q" placeholder="Tìm sản phẩm..." oninput="draw()"><div class="list" id="g"></div>`;draw()}
+  v.innerHTML=`<div class="hero"><div><h2>Cửa hàng</h2><div class="mu">Chọn vật phẩm, mua là nhận key ngay.</div></div><span class="cnt" id="cn"></span></div><div class="search">${IC.search}<input id="q" placeholder="Tìm sản phẩm..." oninput="draw()"></div><div class="grid" id="g"></div>`;draw()}
  else if(!U)auth();
  else if(t=='orders'){const s=await db.collection('shop_orders').where('uid','==',U.id).get();
   const o=s.docs.map(d=>d.data()).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
-  v.innerHTML=o.map(x=>`<div class="c"><div class="r" style="align-items:flex-start"><div><b>${E(x.name)}</b> ×${x.qty}<div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''}</div></div><b class="pr" style="flex:none;text-align:right">${F(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="g" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty">Bạn chưa mua gì.<br>Chọn một sản phẩm ở tab Cửa hàng.</div>'}
- else if(t=='topup'){v.innerHTML=`<div class="c"><h3>Nạp tiền</h3><div class="mu">Chọn hoặc nhập số tiền, quét mã QR để chuyển khoản.</div><div class="chips">${[20000,50000,100000,200000].map(n=>`<button class="g" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 10.000đ)"><button style="width:100%;margin-top:6px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>`}
+  v.innerHTML=`<div class="hero"><div><h2>Đơn hàng</h2><div class="mu">Key bạn đã mua nằm ở đây.</div></div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''}</div></div><b class="pr ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="g sm" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào tab Cửa hàng chọn món đầu tiên.</div>')}
+ else if(t=='topup'){v.innerHTML=`<div class="hero"><div><h2>Nạp tiền</h2><div class="mu">Chuyển khoản qua mã QR, admin duyệt là có tiền.</div></div></div>
+  <div class="c"><div class="mu">ID của bạn</div><div class="idc" style="font-size:14px;margin:4px 0 0" onclick="cpt('${E(U.tgid||U.id)}')">${E(U.tgid||U.id)} ⧉</div></div>
+  <div class="c"><h3>Chọn số tiền</h3><div class="r" style="margin-bottom:8px">${[20000,50000,100000,200000].map(n=>`<button class="g sm" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 10.000đ)"><button style="width:100%;margin-top:6px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>`}
  else if(t=='admin'&&isAdmin())adm()}
 function draw(){const q=($('#q').value||'').toLowerCase();
- $('#g').innerHTML=P.filter(p=>(p.name||'').toLowerCase().includes(q)).map(p=>{const n=(p.keys||[]).length,c=n==0?'out':n<=5?'low':'';
- return `<div class="pd"><div class="pi"><b>${E(p.name)}</b>${p.desc?`<span class="mu">${E(p.desc)}</span>`:''}<span class="st ${c}">${n?'Còn '+n:'Hết hàng'}</span></div><div class="pa"><div class="pr">${F(p.price)}</div><button ${n?'':'disabled'} onclick="bm('${p.id}')">Mua</button></div></div>`}).join('')||'<div class="empty">Chưa có sản phẩm nào.<br>Quay lại sau nhé.</div>'}
+ const L=P.filter(p=>(p.name||'').toLowerCase().includes(q));$('#cn').textContent=L.length+' món';
+ $('#g').innerHTML=L.map(p=>{const n=(p.keys||[]).length,c=n==0?'out':n<=5?'low':'',fr=!(p.price>0);
+ return `<div class="card ${fr?'free':''} ${n?'':'out'}"><div class="in">${imgBox(p.img,'im',`<span class="tag ${c}">${n?'Còn '+n:'Hết hàng'}</span>`)}<div class="bd"><div class="nm">${E(p.name)}</div><div class="ds">${E(p.desc||'')}</div><div class="ft"><div class="pr ${fr?'free':''}">${PR(p.price)}</div><button class="${fr?'ok':''}" ${n?'':'disabled'} onclick="bm('${p.id}')">${n?(fr?'Nhận miễn phí':'Mua'):'Hết hàng'}</button></div></div></div></div>`}).join('')||'<div class="empty" style="grid-column:1/-1"><b>Chưa có sản phẩm nào</b>Quay lại sau nhé.</div>'}
 function cp(b){navigator.clipboard.writeText((b.closest('.c,.m>div').querySelector('pre')).innerText).then(()=>{b.textContent='Đã sao chép';setTimeout(()=>b.textContent='Sao chép',1500)})}
-function bm(id){if(!U)return auth();const p=P.find(x=>x.id==id);modal(`<h3>${E(p.name)}</h3><p class="pr">${F(p.price)}</p><input id="n" type="number" min="1" value="1"><div class="r"><button onclick="buy('${id}')">Xác nhận mua</button><button class="g" onclick="closeM()">Hủy</button></div><p id="e" style="color:var(--no)"></p>`)}
+function cpt(t){navigator.clipboard.writeText(t).then(()=>toast('Đã sao chép: '+t))}
+function bm(id){if(!U)return auth();const p=P.find(x=>x.id==id),fr=!(p.price>0),mx=Math.min(100,(p.keys||[]).length);
+ window._p=p;
+ modal(`${imgBox(p.img,'mimg')}<h3>${E(p.name)}</h3>${p.desc?`<p class="mu" style="margin:-4px 0 8px">${E(p.desc)}</p>`:''}<div class="pr ${fr?'free':''}">${PR(p.price)}</div>
+ <div class="qty"><button class="g" onclick="qd(-1,${mx})">−</button><input id="n" type="number" min="1" max="${mx}" value="1" oninput="qd(0,${mx})"><button class="g" onclick="qd(1,${mx})">+</button></div>
+ <div class="tot"><span>Tổng cộng</span><b id="tt" class="${fr?'free':''}">${PR(p.price)}</b></div>
+ <div class="r"><button class="${fr?'ok':''}" onclick="buy('${id}')">${fr?'Nhận ngay':'Xác nhận mua'}</button><button class="g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`)}
+function qd(d,mx){const i=$('#n');let v=Math.max(1,Math.min(mx||100,(+i.value||1)+d));i.value=v;const p=window._p;$('#tt').textContent=PR(p.price*v)}
 async function buy(id){const qty=Math.max(1,Math.min(100,+$('#n').value||1));let got=[];
  try{await db.runTransaction(async t=>{
   const pr=db.collection('shop_products').doc(id),ur=db.collection('shop_users').doc(U.id);
   const [p,u]=await Promise.all([t.get(pr),t.get(ur)]);
   if(!p.exists||!p.data().active)throw'Sản phẩm không còn bán';
   const keys=p.data().keys||[];if(keys.length<qty)throw'Không đủ hàng';
-  const total=p.data().price*qty;if((u.data().balance||0)<total)throw'Không đủ số dư, hãy nạp thêm';
+  const total=(p.data().price||0)*qty;if((u.data().balance||0)<total)throw'Không đủ số dư, hãy nạp thêm';
   got=keys.slice(0,qty);
-  t.update(pr,{keys:keys.slice(qty)});t.update(ur,{balance:FV.increment(-total)});
+  t.update(pr,{keys:keys.slice(qty)});if(total>0)t.update(ur,{balance:FV.increment(-total)});
   t.set(db.collection('shop_orders').doc(),{uid:U.id,name:p.data().name,qty,total,keys:got,ts:FV.serverTimestamp()})});
-  modal(`<h3>✅ Mua thành công</h3><pre>${E(got.join('\n'))}</pre><div class="r"><button class="g" onclick="cp(this)">Sao chép</button><button onclick="closeM()">Đóng</button></div>`);go('shop')
+  modal(`<h3>✅ Thành công</h3><p class="mu">Key của bạn:</p><pre>${E(got.join('\n'))}</pre><div class="r"><button class="g" onclick="cp(this)">Sao chép</button><button onclick="closeM()">Đóng</button></div>`);go('shop')
  }catch(e){$('#e').textContent=typeof e=='string'?e:'Lỗi, thử lại'}}
 async function tp(){const a=+$('#a').value;if(a<10000)return alert('Nạp tối thiểu 10.000đ');
  const b=(await db.collection('shop_settings').doc('bank').get()).data();if(!b)return alert('Admin chưa cài tài khoản ngân hàng');
  const r=await db.collection('shop_topups').add({uid:U.id,name:U.name||U.id,amount:a,status:'pending',ts:FV.serverTimestamp()});
  const note='NAP'+r.id.slice(0,6).toUpperCase();await r.update({note});
  $('#qr').innerHTML=`<img class="qr" onerror="this.outerHTML='<p style=color:var(--no)>Không tạo được ảnh QR (mã ngân hàng sai?). Hãy chuyển khoản thủ công theo thông tin bên dưới.</p>'" src="https://img.vietqr.io/image/${E(b.bank)}-${E(b.acc)}-compact2.png?amount=${a}&addInfo=${note}&accountName=${encodeURIComponent(b.owner)}"><p>Số tiền: <b>${F(a)}</b><br>Nội dung CK: <b>${note}</b><br>${E(b.bank)} - ${E(b.acc)} - ${E(b.owner)}</p><p class="mu">Chuyển đúng nội dung, admin duyệt xong tiền sẽ vào ví.</p>`}
+
 // ================= ADMIN =================
-async function adm(){const v=$('#v');
- const [tp,ps,bk]=await Promise.all([db.collection('shop_topups').where('status','==','pending').get(),db.collection('shop_products').get(),db.collection('shop_settings').doc('bank').get()]);
- const b=bk.data()||{};
- v.innerHTML=`<div class="c"><h3>Đơn nạp chờ duyệt</h3>${tp.docs.map(d=>{const x=d.data();return `<div class="r" style="margin:6px 0"><span>${E(x.name)} · ${F(x.amount)} · ${E(x.note||'')}</span><button class="ok" onclick="ap('${d.id}')">Duyệt</button><button class="no" onclick="ap('${d.id}',1)">Từ chối</button></div>`}).join('')||'<p class="mu">Không có đơn.</p>'}</div>
- <div class="c"><h3>Thêm sản phẩm</h3><input id="pn" placeholder="Tên"><input id="pp" type="number" placeholder="Giá"><input id="pd" placeholder="Mô tả"><textarea id="pk" rows="4" placeholder="Key/nội dung, mỗi dòng 1 cái"></textarea><button onclick="addP()">Thêm</button></div>
- <div class="c"><h3>Sản phẩm</h3>${ps.docs.map(d=>{const x=d.data();return `<div class="c" style="background:var(--bg)"><b>${E(x.name)}</b> · ${F(x.price)} · còn ${(x.keys||[]).length} ${x.active?'':'(tắt)'}<textarea id="k_${d.id}" rows="2" placeholder="Nhập thêm key, mỗi dòng 1 cái"></textarea><div class="r"><button onclick="addK('${d.id}')">Nhập kho</button><button class="g" onclick="tgl('${d.id}',${!x.active})">${x.active?'Tắt':'Bật'}</button><button class="no" onclick="delP('${d.id}')">Xóa</button></div></div>`}).join('')}</div>
- <div class="c"><h3>Tài khoản ngân hàng nhận tiền</h3><input id="bb" placeholder="Mã NH: MB, VCB, ACB, TCB... (hoặc BIN 970422)" value="${E(b.bank||'')}"><input id="ba" placeholder="Số tài khoản" value="${E(b.acc||'')}"><input id="bo" placeholder="Chủ tài khoản" value="${E(b.owner||'')}"><button onclick="saveB()">Lưu</button></div>`}
+async function adm(t){if(t)AT=t;const v=$('#v');
+ const S=[['tp','Nạp tiền'],['pr','Sản phẩm'],['us','Người dùng'],['bk','Ngân hàng']];
+ const seg=`<div class="seg">${S.map(x=>`<button class="${AT==x[0]?'on':''}" onclick="adm('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
+ v.innerHTML=seg+'<div class="empty">Đang tải...</div>';
+ if(AT=='tp'){const s=await db.collection('shop_topups').where('status','==','pending').get();
+  v.innerHTML=seg+`<div class="c"><h3>Đơn nạp chờ duyệt</h3>${s.docs.map(d=>{const x=d.data();return `<div class="row"><div class="inf"><b>${E(x.name)}</b><span class="mu">${F(x.amount)} · ${E(x.note||'')}</span><br><span class="idc" onclick="cpt('${E(x.uid)}')">${E(x.uid)}</span></div><div class="r fit"><button class="ok sm" onclick="ap('${d.id}')">Duyệt</button><button class="no sm" onclick="ap('${d.id}',1)">Từ chối</button></div></div>`}).join('')||'<p class="mu">Không có đơn nào đang chờ.</p>'}</div>`}
+ else if(AT=='pr'){const s=await db.collection('shop_products').get();AP=s.docs.map(d=>({id:d.id,...d.data()}));
+  v.innerHTML=seg+`<button style="width:100%;margin-bottom:12px" onclick="pe()">+ Thêm sản phẩm</button><div class="c" style="padding-top:6px;padding-bottom:6px">${AP.map(x=>`<div class="row"><div class="thumb">${ph.replace('class="ph"','class="ph" style="transform:scale(.6)"')}${x.img?`<img src="${E(x.img)}" alt="" onerror="this.remove()">`:''}</div><div class="inf"><b>${E(x.name)}</b><span class="mu">${PR(x.price)} · còn ${(x.keys||[]).length}</span><span class="pill ${x.active?'on':'off'}">${x.active?'Đang bán':'Đã tắt'}</span></div><div style="display:flex;flex-direction:column;gap:6px"><button class="sm" onclick="pe('${x.id}')">Sửa</button><button class="g sm" onclick="tgl('${x.id}',${!x.active})">${x.active?'Tắt':'Bật'}</button></div></div>`).join('')||'<p class="mu">Chưa có sản phẩm.</p>'}</div>`}
+ else if(AT=='us'){const s=await db.collection('shop_users').get();
+  USERS=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.created?.seconds||0)-(a.created?.seconds||0));
+  const tot=USERS.reduce((a,u)=>a+(u.balance||0),0),tgn=USERS.filter(u=>u.tgid).length;
+  v.innerHTML=seg+`<div class="stat"><div class="c"><span class="mu">Tổng người dùng</span><b>${USERS.length}</b><span class="mu">${tgn} từ Telegram</span></div><div class="c"><span class="mu">Tổng số dư</span><b class="gdv">${F(tot)}</b></div></div><div class="search"><input id="uq" placeholder="Tìm theo tên, ID, @username..." oninput="ul()">${IC.search}</div><div class="c" style="padding-top:6px;padding-bottom:6px" id="ul"></div>`;ul()}
+ else if(AT=='bk'){const b=(await db.collection('shop_settings').doc('bank').get()).data()||{};
+  v.innerHTML=seg+`<div class="c"><h3>Tài khoản ngân hàng nhận tiền</h3><input id="bb" placeholder="Mã NH: MB, VCB, ACB, TCB... (hoặc BIN 970422)" value="${E(b.bank||'')}"><input id="ba" placeholder="Số tài khoản" value="${E(b.acc||'')}"><input id="bo" placeholder="Chủ tài khoản" value="${E(b.owner||'')}"><button style="width:100%;margin-top:6px" onclick="saveB()">Lưu</button></div>`}}
+function ul(){const q=($('#uq').value||'').toLowerCase().trim();
+ const L=USERS.filter(u=>!q||[u.name,u.id,u.tgid,u.username].some(x=>String(x||'').toLowerCase().includes(q)));
+ $('#ul').innerHTML=L.map(u=>{const nm=u.name||u.id;
+  return `<div class="row"><div class="av">${E(nm.trim().charAt(0).toUpperCase()||'?')}</div><div class="inf"><b>${E(nm)}${u.username?` <span class="mu" style="font-weight:400">@${E(u.username)}</span>`:''}</b><span class="idc" onclick="cpt('${E(u.tgid||u.id)}')">${u.tgid?'ID '+E(u.tgid):E(u.id)} ⧉</span><div class="mu" style="font-size:12px;margin-top:2px">${u.tgid?'Telegram':'Web'}${u.created?' · '+new Date(u.created.seconds*1000).toLocaleDateString('vi-VN'):''}</div></div><div style="text-align:right;flex:none"><div class="pr" style="font-size:15px">${F(u.balance)}</div><button class="g sm" style="margin-top:6px" onclick="adj('${u.id}')">± Tiền</button></div></div>`}).join('')||'<p class="mu">Không tìm thấy ai.</p>'}
+async function adj(id){const u=USERS.find(x=>x.id==id);const s=prompt('Cộng/trừ tiền cho '+(u.name||id)+'\nNhập số tiền (số âm để trừ):','0');if(s===null)return;const n=parseInt(s,10);if(!n)return;
+ await db.collection('shop_users').doc(id).update({balance:FV.increment(n)});toast('Đã cập nhật số dư');adm()}
 const lines=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
-async function addP(){const n=$('#pn').value.trim(),p=+$('#pp').value;if(!n||!(p>0))return alert('Nhập tên và giá');
- await db.collection('shop_products').add({name:n,price:p,desc:$('#pd').value,keys:lines($('#pk').value),active:true});adm()}
-async function addK(id){const k=lines($('#k_'+id).value);if(!k.length)return;await db.collection('shop_products').doc(id).update({keys:FV.arrayUnion(...k)});adm()}
-async function tgl(id,a){await db.collection('shop_products').doc(id).update({active:a});adm()}
-async function delP(id){if(confirm('Xóa sản phẩm này?')){await db.collection('shop_products').doc(id).delete();adm()}}
-async function saveB(){await db.collection('shop_settings').doc('bank').set({bank:$('#bb').value.trim(),acc:$('#ba').value.trim(),owner:$('#bo').value.trim()});alert('Đã lưu')}
+// ---- thêm / sửa sản phẩm (có ảnh) ----
+function pe(id){const x=id?AP.find(p=>p.id==id):{};IMG=x.img||'';
+ modal(`<h3>${id?'Sửa sản phẩm':'Thêm sản phẩm'}</h3>
+ <label class="lb">Tên</label><input id="pn" value="${E(x.name||'')}" placeholder="Tên sản phẩm">
+ <label class="lb">Giá (nhập 0 = Miễn phí)</label><input id="pp" type="number" min="0" value="${x.price??''}" placeholder="Ví dụ 50000, hoặc 0">
+ <label class="lb">Mô tả</label><input id="pd" value="${E(x.desc||'')}" placeholder="Mô tả ngắn">
+ <label class="lb">Ảnh sản phẩm</label>
+ <div class="up"><div class="thumb" id="pv"></div><div style="flex:1"><input id="pu" placeholder="Dán link ảnh (https://...)" value="${E(x.img&&!x.img.startsWith('data:')?x.img:'')}" oninput="IMG=this.value.trim();pvw()"><button class="g sm" onclick="$('#pf').click()">Tải ảnh từ máy</button><input id="pf" type="file" accept="image/*" hidden onchange="fimg(this)"></div></div>
+ <label class="lb">${id?'Nhập thêm key (mỗi dòng 1 cái)':'Key / nội dung (mỗi dòng 1 cái)'}</label><textarea id="pk" rows="4" placeholder="KEY-AAAA&#10;KEY-BBBB"></textarea>
+ <div class="r" style="margin-top:8px"><button onclick="saveP('${id||''}')">Lưu</button>${id?`<button class="no" onclick="delP('${id}')">Xóa</button>`:''}<button class="g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`);pvw()}
+function pvw(){const e=$('#pv');if(!e)return;e.innerHTML=ph.replace('class="ph"','class="ph" style="transform:scale(.6)"')+(IMG?`<img src="${E(IMG)}" alt="" onerror="this.remove()">`:'')}
+function fimg(inp){const f=inp.files[0];if(!f)return;const fr=new FileReader();
+ fr.onload=()=>{const im=new Image();im.onload=()=>{const M=640,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement('canvas');
+  c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  IMG=c.toDataURL('image/jpeg',.78);$('#pu').value='';pvw();toast('Đã nạp ảnh ('+Math.round(IMG.length/1024)+' KB)')};im.src=fr.result};fr.readAsDataURL(f)}
+async function saveP(id){const n=$('#pn').value.trim(),ps=$('#pp').value.trim(),p=+ps;
+ if(!n||ps===''||isNaN(p)||p<0)return $('#e').textContent='Nhập tên và giá (giá 0 = miễn phí)';
+ if(IMG.length>900000)return $('#e').textContent='Ảnh quá nặng, chọn ảnh nhỏ hơn';
+ const k=lines($('#pk').value),d={name:n,price:p,desc:$('#pd').value.trim(),img:IMG||''};
+ try{if(id){if(k.length)d.keys=FV.arrayUnion(...k);await db.collection('shop_products').doc(id).update(d)}
+ else await db.collection('shop_products').add({...d,keys:k,active:true});
+ closeM();toast('Đã lưu sản phẩm');adm('pr')}catch(e){$('#e').textContent='Lỗi lưu: '+(e.message||e)}}
+async function tgl(id,a){await db.collection('shop_products').doc(id).update({active:a});adm('pr')}
+async function delP(id){if(confirm('Xóa sản phẩm này?')){await db.collection('shop_products').doc(id).delete();closeM();adm('pr')}}
+async function saveB(){await db.collection('shop_settings').doc('bank').set({bank:$('#bb').value.trim(),acc:$('#ba').value.trim(),owner:$('#bo').value.trim()});toast('Đã lưu')}
 async function ap(id,rej){try{await db.runTransaction(async t=>{const r=db.collection('shop_topups').doc(id),d=await t.get(r);
  if(!d.exists||d.data().status!=='pending')throw'Đơn đã xử lý';
- if(rej)t.update(r,{status:'rejected'});else{t.update(r,{status:'approved'});t.update(db.collection('shop_users').doc(d.data().uid),{balance:FV.increment(d.data().amount)})}})}catch(e){alert(e)}adm()}
+ if(rej)t.update(r,{status:'rejected'});else{t.update(r,{status:'approved'});t.update(db.collection('shop_users').doc(d.data().uid),{balance:FV.increment(d.data().amount)})}})}catch(e){alert(e)}adm('tp')}
 init();
 </script></body></html>
