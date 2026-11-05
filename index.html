@@ -361,7 +361,7 @@ async function directCatalog(){if(_dc&&_dc.t>Date.now()){SERR=_dc.e||'';return _
   if(cs.ok===false||cs.success===false||!Array.isArray(cl))throw new Error(cs.msg||cs.message||'phản hồi lạ: '+JSON.stringify(cs).slice(0,100));
   const rs=await Promise.all(cl.map(c=>jf(s1u({action:'products',category:c.code})).catch(()=>null)));
   cl.forEach((c,i)=>{const r=rs[i];if(!r||r.ok===false)return;const pl=r.data||r.products;if(!Array.isArray(pl))return;
-   const items=pl.map(p=>({code:p.code,name:p.name||p.code,price:mkp(+(p.price_vnd||p.price||0)),stock:+p.stock||0}));if(items.length)out.push({key:'1:'+c.code,source:'1',name:c.name||c.code,items})});
+   const items=pl.map(p=>({code:p.code,name:p.name||p.code,base:+(p.price_vnd||p.price||0),price:mkp(+(p.price_vnd||p.price||0)),stock:+p.stock||0}));if(items.length)out.push({key:'1:'+c.code,source:'1',name:c.name||c.code,items})});
   if(!out.some(o=>o.source=='1'))throw new Error('API trả về 0 sản phẩm')};
  const t2=async()=>{if(!SELLER2.token)return;const r=await jf(SELLER2.base+'?action=products',{headers:s2h()});if(!(r.ok||r.success))throw new Error('Seller 2: '+(r.message||r.msg||'lỗi'));
   const cats={};for(const p of r.data||[]){const cat=p.category||p.category_name||'Khác',pid=p.id||p.product_id,code='h2:'+pid;
@@ -384,7 +384,7 @@ async function loadSeller(){SC=[];SM={};SERR='';if(!SELLER_API&&!DIRECT)return;
   m.docs.forEach(d=>SM[d.id]=d.data());SC=r}catch(e){SERR=String(e&&e.message||e)}}
 function sellerCards(){return SC.map((c,i)=>{const m=SM[mid(c.key)]||{};
  return {id:'S'+i,seller:true,key:c.key,name:m.name||c.name,platform:m.platform||'Key',img:m.img||'',desc:m.desc||'',
-  plans:c.items.map(x=>({id:x.code,label:x.name,price:x.price,old:0,n:x.stock,keys:[]}))}})}
+  plans:c.items.map(x=>({id:x.code,label:x.name,price:(m.prices&&+m.prices[x.code]>0)?+m.prices[x.code]:x.price,old:0,n:x.stock,keys:[]}))}})}
 async function botBal(){const e=$('#bb2');if(!e)return;
  if(!SELLER_API){e.remove();return}
  if(!initData()){e.textContent='Hàng này chỉ mua được khi mở shop từ trong Telegram.';return}
@@ -446,9 +446,11 @@ async function adm(t){if(t)AT=t;const v=$('#v');
   v.innerHTML=seg+`<div class="c"><h3>Tài khoản ngân hàng nhận tiền</h3><input id="bb" placeholder="Mã NH: MB, VCB, ACB, TCB... (hoặc BIN 970422)" value="${E(b.bank||'')}"><input id="ba" placeholder="Số tài khoản" value="${E(b.acc||'')}"><input id="bo" placeholder="Chủ tài khoản" value="${E(b.owner||'')}"><button class="bt gd" style="margin-top:8px" onclick="saveB()">Lưu</button></div>`}}
 function ul(){const q=($('#uq').value||'').toLowerCase().trim();
  const L=USERS.filter(u=>!q||[u.name,u.id,u.tgid,u.username].some(x=>String(x||'').toLowerCase().includes(q)));
- $('#ul').innerHTML=L.map(u=>`<div class="row">${avatar(u,'sm')}<div class="inf"><b>${E(u.name||u.id)}${u.username?` <span class="mu">@${E(u.username)}</span>`:''}</b><span class="idc" onclick="cpt('${E(u.tgid||u.id)}')">${u.tgid?'ID '+E(u.tgid):E(u.id)} ⧉</span><div class="mu" style="font-size:12px;margin-top:2px">${u.tgid?'Telegram':'Web'}${u.created?' · '+new Date(u.created.seconds*1000).toLocaleDateString('vi-VN'):''}</div></div><div style="text-align:right;flex:none"><div class="pz" style="font-size:15px">${F(u.balance)}</div><button class="bt g s" style="margin-top:6px" onclick="adj('${u.id}')">± Tiền</button></div></div>`).join('')||'<p class="mu">Không tìm thấy ai.</p>'}
+ $('#ul').innerHTML=L.map(u=>`<div class="row">${avatar(u,'sm')}<div class="inf"><b>${E(u.name||u.id)}${u.username?` <span class="mu">@${E(u.username)}</span>`:''}</b><span class="idc" onclick="cpt('${E(u.tgid||u.id)}')">${u.tgid?'ID '+E(u.tgid):E(u.id)} ⧉</span><div class="mu" style="font-size:12px;margin-top:2px">${u.tgid?'Telegram':'Web'}${u.created?' · '+new Date(u.created.seconds*1000).toLocaleDateString('vi-VN'):''}</div></div><div style="text-align:right;flex:none"><div class="pz" style="font-size:15px">${F(u.balance)}</div><button class="bt g s" style="margin-top:6px" onclick="adj('${u.id}')">± Tiền</button> <button class="bt g s" style="margin-top:6px;color:#ff6b6b" onclick="rst('${u.id}')">Reset 0đ</button></div></div>`).join('')||'<p class="mu">Không tìm thấy ai.</p>'}
 async function adj(id){const u=USERS.find(x=>x.id==id);const s=prompt('Cộng/trừ tiền cho '+(u.name||id)+'\nNhập số tiền (số âm để trừ):','0');if(s===null)return;const n=parseInt(s,10);if(!n)return;
  await db.collection('shop_users').doc(id).update({balance:FV.increment(n)});toast('Đã cập nhật số dư');adm()}
+async function rst(id){const u=USERS.find(x=>x.id==id);if(!u)return;if(!confirm('Reset số dư của '+(u.name||id)+' (đang '+F(u.balance)+') về 0đ?'))return;
+ try{await db.collection('shop_users').doc(id).update({balance:0});toast('Đã reset về 0đ');adm()}catch(e){toast('Lỗi: '+(e.message||e))}}
 // ---- thêm / sửa sản phẩm: ảnh + nhiều gói ----
 function pe(id){const x=id?AP.find(p=>p.id==id):{};IMG=x.img||'';
  PL=id?norm(x).map(p=>({id:p.id,label:p.legacy?'':p.label,price:String(p.price),old:p.old?String(p.old):'',keys:p.keys,add:''})):[{id:uid(),label:'',price:'',old:'',keys:[],add:''}];
@@ -490,9 +492,10 @@ function se(i){const c=SC[i],m=SM[mid(c.key)]||{};IMG=m.img||'';
  <label class="lb">Mô tả</label><input id="sd" value="${E(m.desc||'')}" placeholder="Mô tả ngắn">
  <label class="lb">Ảnh / icon</label>
  <div class="up"><div id="pv"></div><div style="flex:1"><input id="pu" placeholder="Dán link ảnh (https://...)" value="${E(m.img&&!m.img.startsWith('data:')?m.img:'')}" oninput="IMG=this.value.trim();pvw()"><button class="bt g s" onclick="$('#pf').click()">Tải ảnh từ máy</button><input id="pf" type="file" accept="image/*" hidden onchange="fimg(this)"></div></div>
+ <label class="lb">Giá bán riêng (để trống = giá gốc + ${MARKUP}%)</label>${c.items.map(x=>`<div class="row" style="padding:6px 0"><div class="inf"><b>${E(x.name)}</b><span class="mu">Gốc: ${F(x.base||0)} · Mặc định: ${F(x.price)}</span></div><input class="pp" data-c="${E(x.code)}" type="number" inputmode="numeric" min="0" style="width:110px" placeholder="${x.price}" value="${(m.prices&&+m.prices[x.code]>0)?+m.prices[x.code]:''}"></div>`).join('')}
  <div class="r" style="margin-top:14px"><button class="bt gd" onclick="sv(${i})">Lưu</button><button class="bt g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`);pvw()}
-async function sv(i){const c=SC[i];if(IMG.length>900000)return $('#e').textContent='Ảnh quá nặng, chọn ảnh nhỏ hơn';
- try{await db.collection('shop_seller_meta').doc(mid(c.key)).set({name:$('#sn').value.trim(),platform:$('#st').value.trim(),desc:$('#sd').value.trim(),img:IMG||''});closeM();toast('Đã lưu');adm('sl')}
+async function sv(i){const c=SC[i];const PR={};document.querySelectorAll('.pp').forEach(e=>{const v=Math.round(+e.value);if(v>0)PR[e.dataset.c]=v});if(IMG.length>900000)return $('#e').textContent='Ảnh quá nặng, chọn ảnh nhỏ hơn';
+ try{await db.collection('shop_seller_meta').doc(mid(c.key)).set({name:$('#sn').value.trim(),platform:$('#st').value.trim(),desc:$('#sd').value.trim(),img:IMG||'',prices:PR});closeM();toast('Đã lưu');adm('sl')}
  catch(e){$('#e').textContent='Lỗi lưu: '+(e.message||e)}}
 async function tgl(id,a){await db.collection('shop_products').doc(id).update({active:a});adm('pr')}
 async function delP(id){if(confirm('Xóa sản phẩm này?')){await db.collection('shop_products').doc(id).delete();closeM();adm('pr')}}
