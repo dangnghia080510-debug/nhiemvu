@@ -1,7 +1,7 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#060d20">
-<title>Shop Key</title>
+<title>Shop NOX MOD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -288,8 +288,8 @@ async function go0(t){const v=$('#v');
  else if(!U)auth();
  else if(t=='orders'){const s=await db.collection('shop_orders').where('uid','==',U.id).get();
   const o=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
-  v.innerHTML=`<div class="hero"><h2>Đơn Hàng</h2><div class="mu">Key bạn đã mua nằm ở đây.</div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)}${x.plan?` · ${E(x.plan)}`:''} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''} · #${x.id.slice(0,8)}</div></div><b class="pz ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="bt g s" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào Mua Key chọn món đầu tiên.</div>')}
- else if(t=='topup'){v.innerHTML=`<div class="hero"><h2>Nạp Tiền</h2><div class="mu">Chuyển khoản qua mã QR, admin duyệt là có tiền.</div></div>
+  v.innerHTML=`<div class="hero"><h2>Đơn Hàng</h2><div class="mu">Sản phẩm bạn đã mua nằm ở đây.</div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)}${x.plan?` · ${E(x.plan)}`:''} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''} · #${x.id.slice(0,8)}</div></div><b class="pz ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="bt g s" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào Mua Key chọn món đầu tiên.</div>')}
+ else if(t=='topup'){v.innerHTML=`<div class="hero"><h2>Nạp Tiền</h2><div class="mu">Chuyển khoản qua mã QR, bot duyệt tự động là có tiền.</div></div>
   <div class="c"><div class="mu">ID của bạn</div><span class="idc" style="font-size:14px;margin-top:5px" onclick="cpt('${E(U.tgid||U.id)}')">${E(U.tgid||U.id)} ⧉</span></div>
   <div class="c"><h3>Chọn số tiền</h3><div class="r" style="margin-bottom:8px">${[20000,50000,100000,200000].map(n=>`<button class="bt g s" style="flex:1;padding:10px 0" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 10.000đ)"><button class="bt gd" style="margin-top:8px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>
   <div class="c"><h3>Nhập mã giảm giá / Giftcode</h3><input id="gc" placeholder="Nhập mã..."><button class="bt g" style="margin-top:8px" onclick="redeemCode()">Áp dụng</button><p id="gce" class="err"></p></div>`}
@@ -320,7 +320,7 @@ function sh(){const {p,pid}=SEL,L=norm(p).filter(x=>sk(x)>0||x.id==pid),pl=L.fin
  <div class="r"><button class="bt ${fr?'ok':'gd'}" onclick="buy()">${fr?'Nhận ngay':'Xác nhận mua'}</button><button class="bt g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`)}
 function qd(d){const L=norm(SEL.p),pl=L.find(x=>x.id==SEL.pid),mx=Math.max(1,Math.min(100,sk(pl))),i=$('#n');
  const v=Math.max(1,Math.min(mx,(+i.value||1)+d));i.value=v;SEL.q=v;$('#tt').textContent=PR(pl.price*v)}
-async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').textContent='Tài khoản bị khóa';
+async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').textContent='Tài khoản của bạn đã bị khóa';
  if(SEL.p.ext)return SRC_API?buyS():buyD();
  const id=SEL.p.id,pid=SEL.pid,qty=Math.max(1,Math.min(100,+$('#n').value||1));let got=[];
  try{await db.runTransaction(async t=>{
