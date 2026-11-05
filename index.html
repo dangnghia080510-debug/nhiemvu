@@ -180,8 +180,8 @@ img.qr{display:block;width:100%;max-width:260px;margin:12px auto;background:#fff
 // ====== CẤU HÌNH ======
 const firebaseConfig={apiKey:"AIzaSyCPoZuP5xjMQZQhHZL3FMNGyhXcbcgWfpk",authDomain:"clone-gia-re.firebaseapp.com",projectId:"clone-gia-re",storageBucket:"clone-gia-re.firebasestorage.app",messagingSenderId:"1023948939436",appId:"1:1023948939436:web:dc1965cf4416ade10f3f09"};
 const ADMINS=["8618983578"];          // Telegram ID admin
-// ===== SELLER 1: gọi qua Cloudflare Worker (key thật nằm trong Worker, không nằm trong file) =====
-const SELLER1={base:"https://DAN-URL-WORKER-VAO-DAY.workers.dev/",key:"x"}; // key that nam trong Worker (secret KEY), "x" chi de bat Seller 1
+// ===== SELLER 1: gọi qua Cloudflare Worker =====
+const SELLER1={base:"https://seller1.dangnghia080510.workers.dev/",key:"x"}; // key that nam trong Worker
 const SELLER2={base:"",token:""}; // da tat Seller 2
 const MARKUP=36;                 // % lãi cộng lên giá gốc seller
 // (Tuỳ chọn) nếu muốn gọi qua bot.py thay vì trực tiếp: điền URL HTTPS vào đây, token sẽ không cần nằm trong file nữa.
@@ -437,7 +437,7 @@ async function adm(t){if(t)AT=t;const v=$('#v');
   v.innerHTML=seg+`<button class="bt gd" style="margin-bottom:12px" onclick="pe()">+ Thêm sản phẩm</button><div class="c" style="padding-top:6px;padding-bottom:6px">${AP.map(x=>{const pl=norm(x);return `<div class="row">${imgBox(x.img,'ico')}<div class="inf"><b>${E(x.name)}</b><span class="mu">${pl[0].legacy?'1 gói':pl.length+' gói'} · từ ${PR(minPlan(x).price)} · còn ${stock(x)}</span><br><span class="pill ${x.active?'on':'off'}">${x.active?'Đang bán':'Đã tắt'}</span></div><div style="display:flex;flex-direction:column;gap:6px"><button class="bt s" onclick="pe('${x.id}')">Sửa</button><button class="bt g s" onclick="tgl('${x.id}',${!x.active})">${x.active?'Tắt':'Bật'}</button></div></div>`}).join('')||'<p class="mu">Chưa có sản phẩm.</p>'}</div>`}
  else if(AT=='sl'){await loadSeller();
   v.innerHTML=seg+(!SELLER_API&&!DIRECT?'<div class="c"><h3>Chưa cấu hình seller</h3><p class="mu">Điền SELLER1 ở đầu file index.html.</p></div>'
-   :`<p class="mu" style="margin:0 2px 10px">Hàng lấy từ Seller 1 + 2 qua bot. Giá và tồn kho tự cập nhật; ở đây chỉ chỉnh ảnh/tên/nhãn hiển thị.</p><div class="c" style="padding-top:6px;padding-bottom:6px">${SC.map((c,i)=>{const m=SM[mid(c.key)]||{};return `<div class="row">${imgBox(m.img,'ico')}<div class="inf"><b>${E(m.name||c.name)}</b><span class="mu">${c.items.length} gói · ${c.items.reduce((a,x)=>a+x.stock,0)} key</span></div><button class="bt s" onclick="se(${i})">Sửa</button></div>`}).join('')||'<p class="mu">Không lấy được hàng Seller.</p>'+(SERR?`<pre>${E(SERR)}</pre><p class="mu">Nếu lỗi là Failed to fetch / CORS: seller chặn trình duyệt gọi trực tiếp, lúc đó phải đi qua bot (điền SELLER_API).</p>`:'')}</div>`)}
+   :`<p class="mu" style="margin:0 2px 10px">Hàng lấy từ Seller 1. Giá và tồn kho tự cập nhật; ở đây chỉ chỉnh ảnh/tên/nhãn hiển thị.</p><div class="c" style="padding-top:6px;padding-bottom:6px">${SC.map((c,i)=>{const m=SM[mid(c.key)]||{};return `<div class="row">${imgBox(m.img,'ico')}<div class="inf"><b>${E(m.name||c.name)}</b><span class="mu">${c.items.length} gói · ${c.items.reduce((a,x)=>a+x.stock,0)} key</span></div><button class="bt s" onclick="se(${i})">Sửa</button></div>`}).join('')||'<p class="mu">Không lấy được hàng Seller.</p>'+(SERR?`<pre>${E(SERR)}</pre><p class="mu">Nếu lỗi là Failed to fetch / CORS: seller chặn trình duyệt gọi trực tiếp, lúc đó phải đi qua bot (điền SELLER_API).</p>`:'')}</div>`)}
  else if(AT=='us'){const s=await db.collection('shop_users').get();
   USERS=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.created?.seconds||0)-(a.created?.seconds||0));
   const tot=USERS.reduce((a,u)=>a+(u.balance||0),0),tgn=USERS.filter(u=>u.tgid).length;
