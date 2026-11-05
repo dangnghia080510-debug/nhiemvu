@@ -1,170 +1,178 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0a0816">
+<meta name="theme-color" content="#060d20">
 <title>Shop Key</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 :root{
- --bg:#0a0816;--bg2:#100c24;--sf:#161132;--sf2:#1d1741;--ln:#32296b;
- --tx:#f1eeff;--mu:#9c95c9;
- --cy:#22e3ff;--mg:#ff3dcb;--vi:#8b5cff;--gd:#ffc83d;--ok:#35f0a0;--no:#ff5470;
- --hd:"Chakra Petch","Be Vietnam Pro",system-ui,sans-serif;
- --bd:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
- --cut:12px;
+ --bg:#050b1d;--sf:#0c1730;--sf2:#122246;--ln:#1f3b7a;--ln2:#2b3b5f;
+ --tx:#f4f7ff;--mu:#8da2c9;--bl:#3fc8ff;--bl2:#1f77d0;--gd:#ffc83d;--gd2:#e0a200;--ok:#38e8a0;--no:#ff5470;--or:#ff6a3c;
+ --f:"Nunito","Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-padding-top:70px}
-body{margin:0;color:var(--tx);font:15px/1.5 var(--bd);min-height:100vh;
+body{margin:0;color:var(--tx);font:600 15px/1.45 var(--f);min-height:100vh;
  background:
-  radial-gradient(900px 420px at 85% -80px,#4a1d9c55,transparent 70%),
-  radial-gradient(700px 380px at -10% 20%,#0e6a8a40,transparent 70%),
-  var(--bg);
+  radial-gradient(1px 1px at 20px 30px,#fffc,transparent),
+  radial-gradient(1.5px 1.5px at 90px 90px,#9fd8ffcc,transparent),
+  radial-gradient(1px 1px at 150px 150px,#fff9,transparent),
+  radial-gradient(1px 1px at 40px 170px,#fff8,transparent),
+  radial-gradient(700px 420px at 50% -60px,#3a7bff40,transparent 70%),
+  radial-gradient(500px 500px at 110% 60%,#1d4bb040,transparent 70%),
+  linear-gradient(180deg,#07112b,#040a1a 60%,#030814);
+ background-size:200px 200px,200px 200px,200px 200px,200px 200px,100% 100%,100% 100%,100% 100%;
  background-attachment:fixed}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
- background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);
- background-size:36px 36px;-webkit-mask-image:linear-gradient(#000,transparent 70%);mask-image:linear-gradient(#000,transparent 70%)}
-header,.w,nav{position:relative;z-index:1}
+button{font:inherit;border:0;background:none;color:inherit;cursor:pointer;padding:0}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
+h2{margin:0;font:900 24px/1.1 var(--f)}
+h3{margin:0 0 10px;font:900 19px/1.2 var(--f)}
+.mu{color:var(--mu);font-size:13px;font-weight:600}
+.err{color:var(--no);margin:8px 0 0;font-size:13px;font-weight:700}
 
 /* ===== header ===== */
-header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
- background:#0a0816d9;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--ln);position:sticky;top:0;z-index:5}
-.brand{display:flex;align-items:center;gap:10px;font:700 20px/1 var(--hd);letter-spacing:.5px}
-.brand .lg{width:34px;height:34px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cy),var(--vi) 55%,var(--mg));
- clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);color:#0a0816}
-.brand .lg svg{width:18px;height:18px}
-.brand span i{font-style:normal;color:var(--cy);text-shadow:0 0 14px #22e3ff88}
-.wal{display:flex;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--ln);padding:4px 6px 4px 8px;
- clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));border-radius:0}
-.coin{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b8,var(--gd) 55%,#c98a00);display:grid;place-items:center;font:700 12px var(--hd);color:#5a3a00;flex:none}
-.wal b{font:700 15px var(--hd);color:var(--gd);font-variant-numeric:tabular-nums;padding-right:6px}
-.wal button{padding:4px 10px;font-size:12px}
+header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;
+ padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(180deg,#1a1408f2,#0b0f1fee);
+ border-bottom:1px solid #6b4e10;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.who{display:flex;align-items:center;gap:11px;min-width:0}
+.ava{position:relative;flex:none;width:46px;height:46px;border-radius:50%;overflow:hidden;display:grid;place-items:center;
+ background:linear-gradient(135deg,#3a7bff,#b24bff);font:900 19px var(--f);color:#fff}
+.ava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ava.ring{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--gd),0 0 16px #ffc83d66}
+.ava.lg{width:84px;height:84px;font-size:34px}
+.ava.sm{width:40px;height:40px;font-size:16px}
+.who .nm{display:flex;align-items:center;gap:7px;min-width:0}
+.who b{font:900 18px/1.1 var(--f);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.uid{font:600 12px ui-monospace,Menlo,Consolas,monospace;color:#b7a98a;display:block;margin-top:2px}
+.rl{font:900 10px var(--f);letter-spacing:.5px;padding:2px 7px;border-radius:999px;color:var(--bl);background:#0e2b55;border:1px solid #2a64b5;flex:none}
+.rl.ad{color:#3a2300;background:linear-gradient(135deg,#ffe27a,var(--gd));border-color:#ffe27a}
+.hr{display:flex;align-items:center;gap:8px;flex:none}
+.bal{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1.5px solid #8a6414;background:#2a1f08aa;color:var(--gd);font:900 16px var(--f);font-variant-numeric:tabular-nums}
+.bal i{font-style:normal;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b8,var(--gd) 55%,#c98a00);display:grid;place-items:center;font:900 11px var(--f);color:#5a3a00}
+.menu{width:44px;height:44px;border-radius:14px;border:1.5px solid #8a6414;background:#2a1f08aa;color:var(--gd);display:grid;place-items:center}
+.menu svg{width:22px;height:22px}
+.login{padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#ffe27a,var(--gd));color:#3a2300;font:900 14px var(--f)}
 
-.w{max-width:640px;margin:auto;padding:14px 14px calc(96px + env(safe-area-inset-bottom))}
-h3{margin:0 0 10px;font:700 18px/1.2 var(--hd);letter-spacing:.3px}
-h2{margin:0;font:700 22px/1.15 var(--hd)}
+.w{max-width:640px;margin:auto;padding:14px 14px calc(100px + env(safe-area-inset-bottom))}
 
-/* ===== buttons / inputs ===== */
-button{font:700 14px/1 var(--hd);letter-spacing:.4px;background:linear-gradient(135deg,var(--cy),var(--vi));color:#06051a;border:0;padding:11px 16px;cursor:pointer;
- clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));transition:filter .15s,transform .1s}
-button:hover{filter:brightness(1.12)}
-button:active{transform:scale(.96)}
-button.g{background:var(--sf2);color:var(--tx);box-shadow:inset 0 0 0 1px var(--ln)}
-button.ok{background:linear-gradient(135deg,#35f0a0,#16b57a);color:#04281a}
-button.no{background:linear-gradient(135deg,#ff5470,#d12a58);color:#2b030d}
-button.gold{background:linear-gradient(135deg,#ffe27a,var(--gd) 50%,#ff9d2e);color:#3a2300}
-button.sm{padding:8px 11px;font-size:12px}
-button:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.6)}
-:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
-input,textarea{width:100%;padding:12px 13px;border:1px solid var(--ln);background:var(--bg2);color:var(--tx);margin:5px 0;font:inherit;border-radius:4px}
-input:focus,textarea:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 3px #22e3ff22}
-input::placeholder,textarea::placeholder{color:#6f68a3}
-label.lb{display:block;font:600 12px var(--hd);color:var(--mu);margin-top:8px;letter-spacing:.4px}
+/* ===== search / chips ===== */
+.hero{margin:2px 2px 12px}
+.search{position:relative;margin-bottom:10px}
+.search input{width:100%;padding:13px 14px 13px 44px;border-radius:16px;border:1px solid var(--ln);background:#0a1530cc;color:var(--tx);font:700 15px var(--f);margin:0}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:19px;height:19px;color:var(--mu)}
+input,textarea{width:100%;padding:12px 13px;border-radius:12px;border:1px solid var(--ln);background:#091328;color:var(--tx);margin:5px 0;font:600 15px var(--f)}
+input:focus,textarea:focus{outline:none;border-color:var(--bl);box-shadow:0 0 0 3px #3fc8ff22}
+input::placeholder,textarea::placeholder{color:#5a6c94}
+.fl{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none}.fl::-webkit-scrollbar{display:none}
+.fl button{flex:none;padding:8px 14px;border-radius:999px;border:1px solid var(--ln2);background:#0b1633cc;color:var(--mu);font:800 13px var(--f)}
+.fl button.on{background:#0f2f5c;border-color:var(--bl2);color:var(--bl)}
+
+/* ===== product cards ===== */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.card{display:flex;flex-direction:column;gap:11px;padding:13px;border-radius:22px;border:1px solid var(--ln);
+ background:linear-gradient(180deg,#0e1d3ccc,#09122bee);box-shadow:0 10px 30px #0007,inset 0 1px 0 #ffffff10;cursor:pointer}
+.card.out{opacity:.6}
+.top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.plat{display:inline-flex;align-items:center;gap:5px;min-width:0;font:900 10.5px var(--f);color:var(--bl);background:#143a6a66;border:1px solid #2a5fa8;border-radius:10px;padding:5px 7px}
+.plat span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plat svg{width:13px;height:13px;flex:none}
+.disc{flex:none;font:900 12px var(--f);color:#fff;background:linear-gradient(135deg,#ff4d3c,#ff8a3c);border-radius:10px;padding:4px 8px}
+.mid{display:flex;gap:10px;align-items:center}
+.ico{position:relative;width:48px;height:48px;flex:none;border-radius:14px;border:1px solid #2a4f8f;background:linear-gradient(135deg,#16306a,#0b1936);overflow:hidden}
+.ico .ph{position:absolute;inset:0;display:grid;place-items:center;color:#5f86c9}
+.ico .ph svg{width:55%;height:55%}
+.ico img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ico.big{width:64px;height:64px;border-radius:18px}
+.ttl{font:900 15px/1.2 var(--f);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.sub{color:var(--mu);font:700 12px var(--f);display:flex;gap:5px;align-items:center;margin-top:3px}
+.sub svg{width:15px;height:15px;flex:none}
+.sub .s-ok{color:var(--ok)}.sub .s-low{color:var(--gd)}.sub .s-out{color:var(--no)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;min-height:30px;align-content:flex-start}
+.chip{display:inline-flex;align-items:center;gap:4px;background:#16223f;border:1px solid var(--ln2);border-radius:10px;padding:5px 8px;font:800 12px var(--f);color:#d7e2ff;max-width:100%}
+.chip svg{width:14px;height:14px;flex:none;color:#aab7d6}
+.chip.more{background:#0f2f5c;border-color:#1f5cb3;color:var(--bl)}
+.bot{margin-top:auto;border-top:1px dashed #2a3a63;padding-top:10px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.from small{display:block;color:var(--mu);font:700 12px var(--f)}
+.pz{font:900 17px/1.15 var(--f);color:var(--gd);font-variant-numeric:tabular-nums}
+.pz.free{color:var(--ok);text-shadow:0 0 14px #38e8a066}
+.old{text-decoration:line-through;color:#7d8fb3;font:700 12px var(--f)}
+.go{flex:none;background:#0b2a55;border:1.5px solid var(--bl2);color:var(--bl);border-radius:12px;padding:9px 10px;font:900 13px var(--f);white-space:nowrap}
+.go:disabled{border-color:var(--ln2);color:var(--mu);background:#0d1630}
+.empty{text-align:center;color:var(--mu);padding:44px 12px;grid-column:1/-1}
+.empty b{display:block;font:900 18px var(--f);color:var(--tx);margin-bottom:4px}
 
 /* ===== panels ===== */
-.c{background:linear-gradient(180deg,var(--sf),#120e2b);border:1px solid var(--ln);padding:16px;margin-bottom:12px;position:relative;
- clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
-.c.in{background:var(--bg2)}
-.mu{color:var(--mu);font-size:13px}
-.r{display:flex;gap:8px;align-items:center}.r>*{flex:1}
-.r.fit>*{flex:none}
+.c{background:linear-gradient(180deg,#0e1d3ccc,#09122bee);border:1px solid var(--ln);border-radius:20px;padding:16px;margin-bottom:12px}
+.r{display:flex;gap:8px;align-items:center}.r>*{flex:1}.r.fit>*{flex:none}
 .sp{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.empty{text-align:center;color:var(--mu);padding:40px 12px}
-.empty b{display:block;font:700 17px var(--hd);color:var(--tx);margin-bottom:4px}
+.bt{display:block;width:100%;padding:13px 16px;border-radius:14px;background:linear-gradient(135deg,#2a9bff,#1f5fe0);color:#fff;font:900 15px var(--f);box-shadow:0 6px 18px #1f5fe055}
+.bt.gd{background:linear-gradient(135deg,#ffe27a,var(--gd) 50%,#ff9d2e);color:#3a2300;box-shadow:0 6px 18px #ffc83d44}
+.bt.ok{background:linear-gradient(135deg,#38e8a0,#16b57a);color:#032a1b;box-shadow:0 6px 18px #16b57a55}
+.bt.no{background:linear-gradient(135deg,#ff5470,#d12a58);color:#fff;box-shadow:none}
+.bt.g{background:#122246;color:var(--tx);box-shadow:inset 0 0 0 1px var(--ln2)}
+.bt.s{padding:9px 12px;font-size:13px;border-radius:12px;width:auto;box-shadow:none}
+.od .t{font:900 16px var(--f)}
+pre{background:#050a18;border:1px dashed #2a64b5;color:var(--bl);padding:11px;border-radius:12px;white-space:pre-wrap;word-break:break-all;user-select:all;font:600 13px ui-monospace,Menlo,monospace;margin:10px 0}
+.idc{display:inline-flex;align-items:center;gap:5px;font:600 12px ui-monospace,Menlo,monospace;color:var(--bl);background:#3fc8ff14;border:1px solid #3fc8ff40;padding:3px 8px;border-radius:8px;cursor:pointer}
 
-/* ===== search + shop grid ===== */
-.search{position:relative;margin-bottom:14px}
-.search input{padding-left:40px;margin:0;background:var(--sf)}
-.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--mu)}
-.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:2px 2px 14px}
-.hero .mu{margin-top:3px}
-.cnt{font:700 12px var(--hd);color:var(--cy);border:1px solid #22e3ff55;padding:4px 9px;background:#22e3ff12;white-space:nowrap}
-
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-@media(min-width:520px){.grid{grid-template-columns:repeat(3,1fr)}}
-.card{background:linear-gradient(160deg,var(--ln),#1d1741 40%,var(--vi));padding:1px;
- clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));transition:transform .15s}
-.card:hover{transform:translateY(-3px)}
-.card.free{background:linear-gradient(160deg,var(--ok),#1d1741 45%,var(--cy))}
-.card.out{background:var(--ln);opacity:.6}
-.card .in{background:var(--sf);height:100%;display:flex;flex-direction:column;
- clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
-.im{position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#2a1a6e,#0e3b5c);overflow:hidden;flex:none}
-.im .ph{position:absolute;inset:0;display:grid;place-items:center;color:#ffffff44}
-.im .ph svg{width:44%;height:44%}
-.im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.im:after{content:"";position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(transparent,var(--sf))}
-.tag{position:absolute;left:8px;top:8px;z-index:2;font:700 11px var(--hd);padding:3px 8px;background:#0a0816cc;color:var(--ok);border:1px solid #35f0a055}
-.tag.low{color:var(--gd);border-color:#ffc83d55}.tag.out{color:var(--no);border-color:#ff547055}
-.bd{padding:2px 11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
-.nm{font:700 15px/1.25 var(--hd);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ds{font-size:12px;color:var(--mu);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}
-.ft{margin-top:auto;padding-top:8px;display:flex;flex-direction:column;gap:8px}
-.pr{font:700 18px var(--hd);color:var(--gd);font-variant-numeric:tabular-nums}
-.pr.free{color:var(--ok);text-shadow:0 0 14px #35f0a066}
-.ft button{width:100%}
-
-/* ===== orders ===== */
-.od .t{font:700 16px var(--hd)}
-pre{background:#07050f;border:1px dashed #22e3ff55;color:var(--cy);padding:11px;white-space:pre-wrap;word-break:break-all;user-select:all;font:13px ui-monospace,Menlo,monospace;margin:10px 0;border-radius:4px}
+/* ===== profile ===== */
+.pf{text-align:center;padding:22px 16px}
+.pf .ava{margin:4px auto 14px}
+.pf h2{margin-bottom:6px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.kv div{background:#091328;border:1px solid var(--ln);border-radius:14px;padding:10px}
+.kv small{display:block;color:var(--mu);font-size:12px}.kv b{font:900 17px var(--f);color:var(--gd)}
 
 /* ===== nav ===== */
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#0d0a20ee;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom);z-index:6}
-nav button{flex:1;background:none;color:var(--mu);clip-path:none;padding:9px 4px 8px;font:600 11px var(--hd);display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
-nav button svg{width:22px;height:22px}
-nav button.on{color:var(--cy)}
-nav button.on:before{content:"";position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--cy);box-shadow:0 0 12px var(--cy)}
-nav button:hover{filter:none}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;gap:2px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+ background:linear-gradient(180deg,#1a1408f5,#0a0d1af8);border-top:1px solid #6b4e10;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 7px;border-radius:18px;border:1.5px solid transparent;color:#9aa0b4;font:800 11px var(--f)}
+nav button svg{width:23px;height:23px}
+nav button.on{color:var(--gd);border-color:#8a6414;background:#3a2a0a66;box-shadow:0 0 18px #ffc83d33}
 
-/* ===== segmented (admin) ===== */
-.seg{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;scrollbar-width:none}
-.seg::-webkit-scrollbar{display:none}
-.seg button{flex:none;background:var(--sf);color:var(--mu);box-shadow:inset 0 0 0 1px var(--ln);padding:9px 14px;font-size:13px}
-.seg button.on{background:linear-gradient(135deg,var(--cy),var(--vi));color:#06051a;box-shadow:none}
-
-/* ===== admin rows ===== */
+/* ===== admin ===== */
+.seg{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}
+.seg button{flex:none;padding:9px 15px;border-radius:999px;border:1px solid var(--ln2);background:#0b1633cc;color:var(--mu);font:800 13px var(--f)}
+.seg button.on{background:#0f2f5c;border-color:var(--bl2);color:var(--bl)}
 .stat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.stat .c{margin:0;padding:12px 14px}
-.stat b{display:block;font:700 22px var(--hd);color:var(--cy)}
-.stat .gdv{color:var(--gd)}
-.row{display:flex;gap:11px;align-items:center;padding:11px 0}
-.row+.row{border-top:1px solid var(--ln)}
-.av{width:42px;height:42px;flex:none;display:grid;place-items:center;font:700 17px var(--hd);color:#06051a;background:linear-gradient(135deg,var(--cy),var(--mg));clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.stat .c{margin:0;padding:12px 14px}.stat b{display:block;font:900 23px var(--f);color:var(--bl)}.stat .gdv{color:var(--gd)}
+.row{display:flex;gap:11px;align-items:center;padding:11px 0}.row+.row{border-top:1px solid #1a2a52}
 .row .inf{min-width:0;flex:1}
-.row .inf b{display:block;font:700 15px var(--hd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.idc{display:inline-flex;align-items:center;gap:5px;font:12px ui-monospace,Menlo,monospace;color:var(--cy);background:#22e3ff14;border:1px solid #22e3ff40;padding:2px 7px;margin-top:3px;cursor:pointer;border-radius:3px}
-.thumb{width:48px;height:48px;flex:none;background:linear-gradient(135deg,#2a1a6e,#0e3b5c);position:relative;overflow:hidden;border-radius:4px}
-.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.pill{display:inline-block;font:700 11px var(--hd);padding:2px 7px;border:1px solid var(--ln);color:var(--mu);margin-left:4px}
-.pill.on{color:var(--ok);border-color:#35f0a055}.pill.off{color:var(--no);border-color:#ff547055}
+.row .inf b{display:block;font:900 15px var(--f);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-block;font:800 11px var(--f);padding:2px 8px;border-radius:999px;border:1px solid var(--ln2);color:var(--mu);margin-top:3px}
+.pill.on{color:var(--ok);border-color:#38e8a055}.pill.off{color:var(--no);border-color:#ff547055}
+.pe{background:#091328;border:1px solid var(--ln);border-radius:16px;padding:12px;margin:8px 0}
+.pe .x{color:var(--no);font:800 12px var(--f)}
+.lb{display:block;font:800 12px var(--f);color:var(--mu);margin-top:10px}
+.up{display:flex;gap:12px;align-items:center;margin:6px 0}
 
-/* ===== modal ===== */
-.m{position:fixed;inset:0;background:#02010acc;backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:9}
-.m>div{background:linear-gradient(180deg,var(--sf2),var(--sf));border:1px solid var(--ln);border-bottom:0;border-top:2px solid var(--cy);
- padding:20px 18px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:520px;max-height:90vh;overflow:auto;animation:up .2s ease-out;box-shadow:0 -10px 40px #22e3ff22}
+/* ===== modal / sheet ===== */
+.m{position:fixed;inset:0;background:#01040ccc;backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:9}
+.m>div{background:linear-gradient(180deg,#112147,#0a1430);border:1px solid var(--ln);border-bottom:0;border-radius:26px 26px 0 0;
+ padding:18px 18px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:560px;max-height:92vh;overflow:auto;animation:up .2s ease-out}
+.m>div:before{content:"";display:block;width:42px;height:4px;border-radius:4px;background:#2b3b5f;margin:-6px auto 14px}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
-@media(prefers-reduced-motion:reduce){.m>div{animation:none}.card{transition:none}}
-.mimg{aspect-ratio:16/9;margin:-4px 0 12px;position:relative;overflow:hidden;background:linear-gradient(135deg,#2a1a6e,#0e3b5c);border-radius:4px}
-.mimg .ph{position:absolute;inset:0;display:grid;place-items:center;color:#ffffff44}.mimg .ph svg{width:20%;height:20%}
-.mimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.qty{display:flex;align-items:center;gap:8px;margin:10px 0}
-.qty button{width:44px;padding:11px 0}
-.qty input{text-align:center;margin:0;font:700 17px var(--hd)}
-.tot{display:flex;justify-content:space-between;align-items:center;margin:10px 0 14px;font:600 14px var(--hd);color:var(--mu)}
-.tot b{font-size:20px;color:var(--gd)}.tot b.free{color:var(--ok)}
-.err{color:var(--no);margin:8px 0 0;font-size:13px}
-img.qr{display:block;width:100%;max-width:260px;margin:12px auto;background:#fff;padding:8px;border-radius:6px}
-.up{display:flex;gap:10px;align-items:center;margin:6px 0}
-.up .thumb{width:72px;height:72px}
-.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--sf2);border:1px solid var(--cy);color:var(--tx);padding:9px 16px;font:600 13px var(--hd);z-index:20;box-shadow:0 0 24px #22e3ff44;display:none}
+@media(prefers-reduced-motion:reduce){.m>div{animation:none}}
+.sh-h{display:flex;gap:13px;align-items:center;margin-bottom:10px}.sh-h h3{margin:0 0 6px}
+.pls{display:grid;gap:8px;margin:8px 0 4px}
+.pl{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:12px 14px;border-radius:14px;border:1.5px solid var(--ln2);background:#0b1633}
+.pl.on{border-color:var(--bl);background:#0f2f5c;box-shadow:0 0 0 3px #3fc8ff22}
+.pl b{font:900 15px var(--f)}.pl small{display:block;color:var(--mu);font:700 12px var(--f)}
+.pl .pz{font-size:16px;text-align:right}
+.qty{display:flex;align-items:center;gap:8px;margin:12px 0 4px}
+.qty button{width:46px;height:46px;border-radius:12px;background:#122246;border:1px solid var(--ln2);font:900 20px var(--f)}
+.qty input{text-align:center;margin:0;font:900 18px var(--f)}
+.tot{display:flex;justify-content:space-between;align-items:center;margin:10px 0 14px;font:800 14px var(--f);color:var(--mu)}
+.tot b{font-size:21px;color:var(--gd)}.tot b.free{color:var(--ok)}
+img.qr{display:block;width:100%;max-width:260px;margin:12px auto;background:#fff;padding:8px;border-radius:12px}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#122246;border:1px solid var(--bl);color:var(--tx);padding:10px 18px;border-radius:999px;font:800 13px var(--f);z-index:20;box-shadow:0 0 24px #3fc8ff44;display:none;white-space:nowrap}
 </style></head><body>
-<header>
- <div class="brand"><div class="lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></svg></div><span>SHOP<i>KEY</i></span></div>
- <div id="hd"></div>
-</header>
+<header id="hd"></header>
 <div class="w"><div id="v"></div></div><nav id="tb"></nav>
 <div class="m" id="m"><div id="mc"></div></div>
 <div class="toast" id="ts"></div>
@@ -175,92 +183,139 @@ const ADMINS=["8618983578"];          // Telegram ID admin
 // =======================
 firebase.initializeApp(firebaseConfig);const db=firebase.firestore(),FV=firebase.firestore.FieldValue;
 const tg=window.Telegram&&Telegram.WebApp;
-if(tg){try{tg.ready();tg.expand();tg.setHeaderColor('#0a0816');tg.setBackgroundColor('#0a0816')}catch(e){}}
+if(tg){try{tg.ready();tg.expand();tg.setHeaderColor('#0b0f1f');tg.setBackgroundColor('#050b1d')}catch(e){}}
 const $=s=>document.querySelector(s),
  F=n=>Number(n||0).toLocaleString('vi-VN')+'đ',
  PR=n=>Number(n)>0?F(n):'Miễn phí',
  E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let U=null,P=[],TAB='shop',AT='tp',AP=[],USERS=[],IMG='';
+let U=null,P=[],TAB='shop',AT='tp',AP=[],USERS=[],IMG='',PL=[],SEL=null,PF='',unsub=null;
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 const isAdmin=()=>U&&ADMINS.includes(U.tgid||'');
+const S=(p,w)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w||2}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 const IC={
- shop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
- orders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 8-9-5-9 5v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>',
- topup:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>',
- admin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
- search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
- key:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></svg>'
+ shop:S('<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>'),
+ topup:S('<path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14v13a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V5"/><path d="M16 14h.01"/>'),
+ orders:S('<path d="m21 8-9-5-9 5v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>'),
+ me:S('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'),
+ admin:S('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'),
+ search:S('<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',2.2),
+ key:S('<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',1.8),
+ clock:S('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+ layers:S('<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5M3 17.5l9 5 9-5" opacity=".6"/>'),
+ chip:S('<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>'),
+ menu:S('<path d="M4 7h16M4 12h16M4 17h16"/>',2.4)
 };
+// ---------- gói (plans) ----------
+const uid=()=>'p'+Math.random().toString(36).slice(2,8);
+const norm=p=>Array.isArray(p.plans)&&p.plans.length
+ ?p.plans.map((x,i)=>({id:x.id||'p'+i,label:x.label||'Gói '+(i+1),price:+x.price||0,old:+x.old||0,keys:x.keys||[]}))
+ :[{id:'p0',label:'Mặc định',price:+p.price||0,old:0,keys:p.keys||[],legacy:1}];
+const stock=p=>norm(p).reduce((a,x)=>a+x.keys.length,0);
+const minPlan=p=>{const L=norm(p),A=L.filter(x=>x.keys.length),B=A.length?A:L;return B.reduce((m,x)=>x.price<m.price?x:m,B[0])};
+// ---------- tiện ích ----------
 const ph=`<div class="ph">${IC.key}</div>`;
-const imgBox=(src,cls,extra)=>`<div class="${cls}">${ph}${src?`<img src="${E(src)}" alt="" loading="lazy" onerror="this.remove()">`:''}${extra||''}</div>`;
+const imgBox=(src,cls)=>`<div class="${cls}">${ph}${src?`<img src="${E(src)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''}</div>`;
+const avatar=(u,cls)=>{const n=String((u&&(u.name||u.id))||'?').trim();return `<div class="ava ${cls||''}">${E(n.charAt(0).toUpperCase()||'?')}${u&&u.photo?`<img src="${E(u.photo)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:''}</div>`};
 function toast(t){const e=$('#ts');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',1800)}
 function modal(h){$('#mc').innerHTML=h;$('#m').style.display='flex'}function closeM(){$('#m').style.display='none'}
 $('#m').onclick=e=>{if(e.target.id=='m')closeM()};
+const lines=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);
+// ---------- khởi động / đăng nhập ----------
 async function init(){
  if(!firebaseConfig.projectId){hd();tabs();return showErr('thiếu config')}
  try{
  const t=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
- if(t){await load('tg_'+t.id,{name:t.first_name||t.username||'User',tgid:String(t.id),username:t.username||''})}
+ if(t){await load('tg_'+t.id,{name:[t.first_name,t.last_name].filter(Boolean).join(' ')||t.username||'User',tgid:String(t.id),username:t.username||'',photo:t.photo_url||''})}
  else{const s=localStorage.getItem('uid');if(s)await load(s)}
  }catch(e){hd();tabs();return showErr(e)}
  hd();tabs();go('shop')}
 async function load(id,extra){const r=db.collection('shop_users').doc(id);let d=await r.get();
  if(!d.exists){await r.set({balance:0,created:FV.serverTimestamp(),...(extra||{})});d=await r.get()}
- else if(extra&&(d.data().username===undefined)){await r.update({username:extra.username||''});d=await r.get()}
- U={id,...d.data()};r.onSnapshot(s=>{if(s.exists){U={id,...s.data()};hd()}})}
-function hd(){$('#hd').innerHTML=U?`<div class="wal"><div class="coin">$</div><b>${F(U.balance)}</b>${tg?'':'<button class="g sm" onclick="out()">Thoát</button>'}</div>`:`<button onclick="auth()">Đăng nhập</button>`}
-function tabs(){const T=[['shop','Cửa hàng'],['orders','Đơn hàng'],['topup','Nạp tiền']];if(isAdmin())T.push(['admin','Admin']);
+ else if(extra){const o=d.data(),ch={};for(const k in extra)if(extra[k]!==undefined&&o[k]!==extra[k])ch[k]=extra[k];
+  if(Object.keys(ch).length){await r.update(ch);d=await r.get()}}   // tự cập nhật avatar / tên mới nhất từ Telegram
+ U={id,...d.data()};if(unsub)unsub();unsub=r.onSnapshot(s=>{if(s.exists){U={id,...s.data()};hd()}})}
+function hd(){
+ $('#hd').innerHTML=U?`<div class="who">${avatar(U,'ring')}<div style="min-width:0"><div class="nm"><b>${E(U.name||U.id)}</b><span class="rl ${isAdmin()?'ad':''}">${isAdmin()?'ADMIN':'MEMBER'}</span></div><span class="uid">ID: ${E(U.tgid||U.id)}</span></div></div>
+ <div class="hr"><div class="bal"><i>$</i>${F(U.balance)}</div><button class="menu" aria-label="Cá nhân" onclick="go('me')">${IC.menu}</button></div>`
+ :`<div class="who"><div class="ava ring">${IC.key.replace('<svg','<svg width="22" height="22"')}</div><b style="font:900 20px var(--f)">Shop Key</b></div><button class="login" onclick="auth()">Đăng nhập</button>`}
+function tabs(){const T=[['shop','Mua Key'],['topup','Nạp Tiền'],['orders','Đơn Hàng'],['me','Cá Nhân']];if(isAdmin())T.push(['admin','Admin']);
  $('#tb').innerHTML=T.map(x=>`<button class="${TAB==x[0]?'on':''}" onclick="go('${x[0]}')">${IC[x[0]]}${x[1]}</button>`).join('')}
-function out(){localStorage.removeItem('uid');U=null;hd();tabs();go('shop')}
-function auth(){modal(`<h3>Đăng nhập / Đăng ký</h3><input id="u" placeholder="Tên đăng nhập"><input id="p" type="password" placeholder="Mật khẩu (≥6 ký tự)"><button style="width:100%;margin-top:6px" onclick="sub()">Vào game</button><p id="e" class="err"></p>`)}
+function out(){localStorage.removeItem('uid');if(unsub)unsub();U=null;hd();tabs();go('shop')}
+function auth(){modal(`<h3>Đăng nhập / Đăng ký</h3><input id="u" placeholder="Tên đăng nhập"><input id="p" type="password" placeholder="Mật khẩu (≥6 ký tự)"><button class="bt gd" style="margin-top:8px" onclick="sub()">Vào shop</button><p id="e" class="err"></p>`)}
 async function sub(){const u=$('#u').value.trim().toLowerCase(),p=$('#p').value;
  if(!/^[a-z0-9_]{3,20}$/.test(u)||p.length<6)return $('#e').textContent='Tên 3-20 ký tự a-z0-9_, mật khẩu ≥ 6 ký tự';
  const id='u_'+u,h=await sha(p),r=db.collection('shop_users').doc(id),d=await r.get();
  if(d.exists){if(d.data().pw!==h)return $('#e').textContent='Sai mật khẩu'}else await r.set({balance:0,pw:h,name:u,created:FV.serverTimestamp()});
  localStorage.setItem('uid',id);await load(id);closeM();hd();tabs();go(TAB)}
-async function go(t){TAB=t;tabs();try{await go0(t)}catch(e){showErr(e)}}
+async function go(t){TAB=t;tabs();window.scrollTo(0,0);try{await go0(t)}catch(e){showErr(e)}}
 function showErr(e){const m=String(e&&e.message||e),c=e&&e.code||'';let h='';
  if(!firebaseConfig.projectId)h='Chưa dán firebaseConfig vào file index.html (đang để trống).';
  else if(/permission|insufficient/i.test(c+m))h='Firestore đang chặn truy cập. Vào Firebase → Firestore Database → Rules, đổi thành <code>allow read, write: if true;</code> rồi Publish.';
  else if(/offline|unavailable/i.test(c+m))h='Không kết nối được Firestore. Kiểm tra mạng, hoặc chưa tạo Firestore Database trong project.';
  else h='Lỗi không rõ.';
  $('#v').innerHTML='<div class="c"><b style="color:var(--no)">Không tải được dữ liệu</b><p>'+h+'</p><pre>'+E(c+' '+m)+'</pre></div>'}
-async function go0(t){TAB=t;const v=$('#v');
+async function go0(t){const v=$('#v');
  if(t=='shop'){v.innerHTML='<div class="empty">Đang tải kho hàng...</div>';const s=await db.collection('shop_products').where('active','==',true).get();
-  P=s.docs.map(d=>({id:d.id,...d.data()}));
-  v.innerHTML=`<div class="hero"><div><h2>Cửa hàng</h2><div class="mu">Chọn vật phẩm, mua là nhận key ngay.</div></div><span class="cnt" id="cn"></span></div><div class="search">${IC.search}<input id="q" placeholder="Tìm sản phẩm..." oninput="draw()"></div><div class="grid" id="g"></div>`;draw()}
+  P=s.docs.map(d=>({id:d.id,...d.data()}));PF='';
+  const pls=[...new Set(P.map(p=>(p.platform||'').trim()).filter(Boolean))];
+  v.innerHTML=`<div class="hero"><h2>Mua Key</h2><div class="mu">Chọn sản phẩm, chọn gói, nhận key ngay.</div></div>
+  <div class="search">${IC.search}<input id="q" placeholder="Tìm sản phẩm..." oninput="draw()"></div>
+  ${pls.length?`<div class="fl" id="fl"><button class="on" onclick="pf('')">Tất cả</button>${pls.map(x=>`<button onclick="pf(this.dataset.p)" data-p="${E(x)}">${E(x)}</button>`).join('')}</div>`:''}
+  <div class="grid" id="g"></div>`;draw()}
+ else if(t=='me'){if(!U)return auth();
+  v.innerHTML=`<div class="c pf">${avatar(U,'ring lg')}<h2>${E(U.name||U.id)}</h2><span class="rl ${isAdmin()?'ad':''}">${isAdmin()?'ADMIN':'MEMBER'}</span>
+  <div class="kv"><div><small>Số dư</small><b>${F(U.balance)}</b></div><div><small>${U.tgid?'Telegram ID':'Tài khoản'}</small><b style="font-size:14px;color:var(--bl)">${E(U.tgid||U.id)}</b></div></div>
+  ${U.username?`<p class="mu">@${E(U.username)}</p>`:''}
+  <div class="r"><button class="bt s" style="flex:1" onclick="cpt('${E(U.tgid||U.id)}')">Sao chép ID</button><button class="bt gd s" style="flex:1" onclick="go('topup')">Nạp tiền</button></div>
+  ${tg?'':'<button class="bt g" style="margin-top:10px" onclick="out()">Đăng xuất</button>'}</div>`}
  else if(!U)auth();
  else if(t=='orders'){const s=await db.collection('shop_orders').where('uid','==',U.id).get();
   const o=s.docs.map(d=>d.data()).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
-  v.innerHTML=`<div class="hero"><div><h2>Đơn hàng</h2><div class="mu">Key bạn đã mua nằm ở đây.</div></div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''}</div></div><b class="pr ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="g sm" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào tab Cửa hàng chọn món đầu tiên.</div>')}
- else if(t=='topup'){v.innerHTML=`<div class="hero"><div><h2>Nạp tiền</h2><div class="mu">Chuyển khoản qua mã QR, admin duyệt là có tiền.</div></div></div>
-  <div class="c"><div class="mu">ID của bạn</div><div class="idc" style="font-size:14px;margin:4px 0 0" onclick="cpt('${E(U.tgid||U.id)}')">${E(U.tgid||U.id)} ⧉</div></div>
-  <div class="c"><h3>Chọn số tiền</h3><div class="r" style="margin-bottom:8px">${[20000,50000,100000,200000].map(n=>`<button class="g sm" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 10.000đ)"><button style="width:100%;margin-top:6px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>`}
+  v.innerHTML=`<div class="hero"><h2>Đơn Hàng</h2><div class="mu">Key bạn đã mua nằm ở đây.</div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)}${x.plan?` · ${E(x.plan)}`:''} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''}</div></div><b class="pz ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="bt g s" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào Mua Key chọn món đầu tiên.</div>')}
+ else if(t=='topup'){v.innerHTML=`<div class="hero"><h2>Nạp Tiền</h2><div class="mu">Chuyển khoản qua mã QR, admin duyệt là có tiền.</div></div>
+  <div class="c"><div class="mu">ID của bạn</div><span class="idc" style="font-size:14px;margin-top:5px" onclick="cpt('${E(U.tgid||U.id)}')">${E(U.tgid||U.id)} ⧉</span></div>
+  <div class="c"><h3>Chọn số tiền</h3><div class="r" style="margin-bottom:8px">${[20000,50000,100000,200000].map(n=>`<button class="bt g s" style="flex:1;padding:10px 0" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 10.000đ)"><button class="bt gd" style="margin-top:8px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>`}
  else if(t=='admin'&&isAdmin())adm()}
+function pf(x){PF=x;document.querySelectorAll('#fl button').forEach(b=>b.classList.toggle('on',(b.dataset.p||'')==x));draw()}
 function draw(){const q=($('#q').value||'').toLowerCase();
- const L=P.filter(p=>(p.name||'').toLowerCase().includes(q));$('#cn').textContent=L.length+' món';
- $('#g').innerHTML=L.map(p=>{const n=(p.keys||[]).length,c=n==0?'out':n<=5?'low':'',fr=!(p.price>0);
- return `<div class="card ${fr?'free':''} ${n?'':'out'}"><div class="in">${imgBox(p.img,'im',`<span class="tag ${c}">${n?'Còn '+n:'Hết hàng'}</span>`)}<div class="bd"><div class="nm">${E(p.name)}</div><div class="ds">${E(p.desc||'')}</div><div class="ft"><div class="pr ${fr?'free':''}">${PR(p.price)}</div><button class="${fr?'ok':''}" ${n?'':'disabled'} onclick="bm('${p.id}')">${n?(fr?'Nhận miễn phí':'Mua'):'Hết hàng'}</button></div></div></div></div>`}).join('')||'<div class="empty" style="grid-column:1/-1"><b>Chưa có sản phẩm nào</b>Quay lại sau nhé.</div>'}
+ const L=P.filter(p=>(p.name||'').toLowerCase().includes(q)&&(!PF||(p.platform||'').trim()==PF));
+ $('#g').innerHTML=L.map(p=>{const pl=norm(p),n=stock(p),mp=minPlan(p),fr=!(mp.price>0),disc=mp.old>mp.price?Math.round((mp.old-mp.price)/mp.old*100):0,
+  chips=pl[0].legacy?'':pl.slice(0,3).map(x=>`<span class="chip">${IC.clock}<span>${E(x.label)}</span></span>`).join('')+(pl.length>3?`<span class="chip more">+${pl.length-3}</span>`:''),
+  sc=n==0?'s-out':n<=5?'s-low':'s-ok';
+  return `<div class="card ${n?'':'out'}" onclick="op('${p.id}')"><div class="top"><span class="plat">${IC.chip}<span>${E(p.platform||'Sản phẩm')}</span></span>${disc?`<span class="disc">-${disc}%</span>`:''}</div>
+  <div class="mid">${imgBox(p.img,'ico')}<div style="min-width:0"><div class="ttl">${E(p.name)}</div><div class="sub">${IC.layers}${pl[0].legacy?'1 gói':pl.length+' gói'}</div><div class="sub ${sc}"><span class="${sc}">${n?'Còn '+n:'Hết hàng'}</span></div></div></div>
+  <div class="chips">${chips}</div>
+  <div class="bot"><div class="from"><small>Chỉ từ</small><div class="pz ${fr?'free':''}">${PR(mp.price)}</div>${mp.old>mp.price?`<div class="old">${F(mp.old)}</div>`:''}</div><button class="go" ${n?'':'disabled'}>${n?'Chọn gói ›':'Hết hàng'}</button></div></div>`}).join('')||'<div class="empty"><b>Chưa có sản phẩm nào</b>Quay lại sau nhé.</div>'}
 function cp(b){navigator.clipboard.writeText((b.closest('.c,.m>div').querySelector('pre')).innerText).then(()=>{b.textContent='Đã sao chép';setTimeout(()=>b.textContent='Sao chép',1500)})}
 function cpt(t){navigator.clipboard.writeText(t).then(()=>toast('Đã sao chép: '+t))}
-function bm(id){if(!U)return auth();const p=P.find(x=>x.id==id),fr=!(p.price>0),mx=Math.min(100,(p.keys||[]).length);
- window._p=p;
- modal(`${imgBox(p.img,'mimg')}<h3>${E(p.name)}</h3>${p.desc?`<p class="mu" style="margin:-4px 0 8px">${E(p.desc)}</p>`:''}<div class="pr ${fr?'free':''}">${PR(p.price)}</div>
- <div class="qty"><button class="g" onclick="qd(-1,${mx})">−</button><input id="n" type="number" min="1" max="${mx}" value="1" oninput="qd(0,${mx})"><button class="g" onclick="qd(1,${mx})">+</button></div>
- <div class="tot"><span>Tổng cộng</span><b id="tt" class="${fr?'free':''}">${PR(p.price)}</b></div>
- <div class="r"><button class="${fr?'ok':''}" onclick="buy('${id}')">${fr?'Nhận ngay':'Xác nhận mua'}</button><button class="g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`)}
-function qd(d,mx){const i=$('#n');let v=Math.max(1,Math.min(mx||100,(+i.value||1)+d));i.value=v;const p=window._p;$('#tt').textContent=PR(p.price*v)}
-async function buy(id){const qty=Math.max(1,Math.min(100,+$('#n').value||1));let got=[];
+// ---------- chọn gói & mua ----------
+function op(id){const p=P.find(x=>x.id==id);if(!p)return;const L=norm(p),f=L.find(x=>x.keys.length)||L[0];SEL={p,pid:f.id,q:1};sh()}
+function sp(pid){SEL.pid=pid;SEL.q=1;sh()}
+function sh(){const {p,pid}=SEL,L=norm(p),pl=L.find(x=>x.id==pid),mx=Math.max(1,Math.min(100,pl.keys.length));SEL.q=Math.max(1,Math.min(mx,SEL.q));
+ const fr=!(pl.price>0);
+ modal(`<div class="sh-h">${imgBox(p.img,'ico big')}<div style="min-width:0"><h3>${E(p.name)}</h3><span class="plat">${IC.chip}<span>${E(p.platform||'Sản phẩm')}</span></span></div></div>
+ ${p.desc?`<p class="mu" style="margin:0 0 6px">${E(p.desc)}</p>`:''}
+ ${L[0].legacy?'':`<div class="lb" style="margin-top:4px">Chọn gói</div>`}
+ <div class="pls">${L.map(x=>`<button class="pl ${x.id==pid?'on':''}" ${x.keys.length?'':'disabled'} onclick="sp('${x.id}')"><div><b>${E(L[0].legacy?'Số lượng':x.label)}</b><small>${x.keys.length?'Còn '+x.keys.length:'Hết hàng'}</small></div><div class="pz ${x.price>0?'':'free'}">${PR(x.price)}${x.old>x.price?`<div class="old">${F(x.old)}</div>`:''}</div></button>`).join('')}</div>
+ <div class="qty"><button onclick="qd(-1)">−</button><input id="n" type="number" min="1" max="${mx}" value="${SEL.q}" oninput="qd(0)"><button onclick="qd(1)">+</button></div>
+ <div class="tot"><span>Tổng cộng</span><b id="tt" class="${fr?'free':''}">${PR(pl.price*SEL.q)}</b></div>
+ <div class="r"><button class="bt ${fr?'ok':'gd'}" onclick="buy()">${fr?'Nhận ngay':'Xác nhận mua'}</button><button class="bt g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`)}
+function qd(d){const L=norm(SEL.p),pl=L.find(x=>x.id==SEL.pid),mx=Math.max(1,Math.min(100,pl.keys.length)),i=$('#n');
+ const v=Math.max(1,Math.min(mx,(+i.value||1)+d));i.value=v;SEL.q=v;$('#tt').textContent=PR(pl.price*v)}
+async function buy(){if(!U){closeM();return auth()}
+ const id=SEL.p.id,pid=SEL.pid,qty=Math.max(1,Math.min(100,+$('#n').value||1));let got=[];
  try{await db.runTransaction(async t=>{
   const pr=db.collection('shop_products').doc(id),ur=db.collection('shop_users').doc(U.id);
   const [p,u]=await Promise.all([t.get(pr),t.get(ur)]);
   if(!p.exists||!p.data().active)throw'Sản phẩm không còn bán';
-  const keys=p.data().keys||[];if(keys.length<qty)throw'Không đủ hàng';
-  const total=(p.data().price||0)*qty;if((u.data().balance||0)<total)throw'Không đủ số dư, hãy nạp thêm';
-  got=keys.slice(0,qty);
-  t.update(pr,{keys:keys.slice(qty)});if(total>0)t.update(ur,{balance:FV.increment(-total)});
-  t.set(db.collection('shop_orders').doc(),{uid:U.id,name:p.data().name,qty,total,keys:got,ts:FV.serverTimestamp()})});
-  modal(`<h3>✅ Thành công</h3><p class="mu">Key của bạn:</p><pre>${E(got.join('\n'))}</pre><div class="r"><button class="g" onclick="cp(this)">Sao chép</button><button onclick="closeM()">Đóng</button></div>`);go('shop')
+  const d=p.data(),L=norm(d),i=L.findIndex(x=>x.id==pid);if(i<0)throw'Gói không còn tồn tại';
+  const pl=L[i];if(pl.keys.length<qty)throw'Không đủ hàng';
+  const total=pl.price*qty;if((u.data().balance||0)<total)throw'Không đủ số dư, hãy nạp thêm';
+  got=pl.keys.slice(0,qty);
+  if(Array.isArray(d.plans)&&d.plans.length){L[i].keys=pl.keys.slice(qty);t.update(pr,{plans:L})}else t.update(pr,{keys:pl.keys.slice(qty)});
+  if(total>0)t.update(ur,{balance:FV.increment(-total)});
+  t.set(db.collection('shop_orders').doc(),{uid:U.id,name:d.name,plan:pl.legacy?'':pl.label,qty,total,keys:got,ts:FV.serverTimestamp()})});
+  modal(`<h3>✅ Thành công</h3><p class="mu">Key của bạn:</p><pre>${E(got.join('\n'))}</pre><div class="r"><button class="bt g" onclick="cp(this)">Sao chép</button><button class="bt gd" onclick="closeM()">Đóng</button></div>`);go('shop')
  }catch(e){$('#e').textContent=typeof e=='string'?e:'Lỗi, thử lại'}}
 async function tp(){const a=+$('#a').value;if(a<10000)return alert('Nạp tối thiểu 10.000đ');
  const b=(await db.collection('shop_settings').doc('bank').get()).data();if(!b)return alert('Admin chưa cài tài khoản ngân hàng');
@@ -270,48 +325,58 @@ async function tp(){const a=+$('#a').value;if(a<10000)return alert('Nạp tối 
 
 // ================= ADMIN =================
 async function adm(t){if(t)AT=t;const v=$('#v');
- const S=[['tp','Nạp tiền'],['pr','Sản phẩm'],['us','Người dùng'],['bk','Ngân hàng']];
- const seg=`<div class="seg">${S.map(x=>`<button class="${AT==x[0]?'on':''}" onclick="adm('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
+ const SG=[['tp','Nạp tiền'],['pr','Sản phẩm'],['us','Người dùng'],['bk','Ngân hàng']];
+ const seg=`<div class="seg">${SG.map(x=>`<button class="${AT==x[0]?'on':''}" onclick="adm('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
  v.innerHTML=seg+'<div class="empty">Đang tải...</div>';
  if(AT=='tp'){const s=await db.collection('shop_topups').where('status','==','pending').get();
-  v.innerHTML=seg+`<div class="c"><h3>Đơn nạp chờ duyệt</h3>${s.docs.map(d=>{const x=d.data();return `<div class="row"><div class="inf"><b>${E(x.name)}</b><span class="mu">${F(x.amount)} · ${E(x.note||'')}</span><br><span class="idc" onclick="cpt('${E(x.uid)}')">${E(x.uid)}</span></div><div class="r fit"><button class="ok sm" onclick="ap('${d.id}')">Duyệt</button><button class="no sm" onclick="ap('${d.id}',1)">Từ chối</button></div></div>`}).join('')||'<p class="mu">Không có đơn nào đang chờ.</p>'}</div>`}
+  v.innerHTML=seg+`<div class="c"><h3>Đơn nạp chờ duyệt</h3>${s.docs.map(d=>{const x=d.data();return `<div class="row"><div class="inf"><b>${E(x.name)}</b><span class="mu">${F(x.amount)} · ${E(x.note||'')}</span><br><span class="idc" onclick="cpt('${E(x.uid)}')">${E(x.uid)}</span></div><div class="r fit"><button class="bt ok s" onclick="ap('${d.id}')">Duyệt</button><button class="bt no s" onclick="ap('${d.id}',1)">Từ chối</button></div></div>`}).join('')||'<p class="mu">Không có đơn nào đang chờ.</p>'}</div>`}
  else if(AT=='pr'){const s=await db.collection('shop_products').get();AP=s.docs.map(d=>({id:d.id,...d.data()}));
-  v.innerHTML=seg+`<button style="width:100%;margin-bottom:12px" onclick="pe()">+ Thêm sản phẩm</button><div class="c" style="padding-top:6px;padding-bottom:6px">${AP.map(x=>`<div class="row"><div class="thumb">${ph.replace('class="ph"','class="ph" style="transform:scale(.6)"')}${x.img?`<img src="${E(x.img)}" alt="" onerror="this.remove()">`:''}</div><div class="inf"><b>${E(x.name)}</b><span class="mu">${PR(x.price)} · còn ${(x.keys||[]).length}</span><span class="pill ${x.active?'on':'off'}">${x.active?'Đang bán':'Đã tắt'}</span></div><div style="display:flex;flex-direction:column;gap:6px"><button class="sm" onclick="pe('${x.id}')">Sửa</button><button class="g sm" onclick="tgl('${x.id}',${!x.active})">${x.active?'Tắt':'Bật'}</button></div></div>`).join('')||'<p class="mu">Chưa có sản phẩm.</p>'}</div>`}
+  v.innerHTML=seg+`<button class="bt gd" style="margin-bottom:12px" onclick="pe()">+ Thêm sản phẩm</button><div class="c" style="padding-top:6px;padding-bottom:6px">${AP.map(x=>{const pl=norm(x);return `<div class="row">${imgBox(x.img,'ico')}<div class="inf"><b>${E(x.name)}</b><span class="mu">${pl[0].legacy?'1 gói':pl.length+' gói'} · từ ${PR(minPlan(x).price)} · còn ${stock(x)}</span><br><span class="pill ${x.active?'on':'off'}">${x.active?'Đang bán':'Đã tắt'}</span></div><div style="display:flex;flex-direction:column;gap:6px"><button class="bt s" onclick="pe('${x.id}')">Sửa</button><button class="bt g s" onclick="tgl('${x.id}',${!x.active})">${x.active?'Tắt':'Bật'}</button></div></div>`}).join('')||'<p class="mu">Chưa có sản phẩm.</p>'}</div>`}
  else if(AT=='us'){const s=await db.collection('shop_users').get();
   USERS=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.created?.seconds||0)-(a.created?.seconds||0));
   const tot=USERS.reduce((a,u)=>a+(u.balance||0),0),tgn=USERS.filter(u=>u.tgid).length;
-  v.innerHTML=seg+`<div class="stat"><div class="c"><span class="mu">Tổng người dùng</span><b>${USERS.length}</b><span class="mu">${tgn} từ Telegram</span></div><div class="c"><span class="mu">Tổng số dư</span><b class="gdv">${F(tot)}</b></div></div><div class="search"><input id="uq" placeholder="Tìm theo tên, ID, @username..." oninput="ul()">${IC.search}</div><div class="c" style="padding-top:6px;padding-bottom:6px" id="ul"></div>`;ul()}
+  v.innerHTML=seg+`<div class="stat"><div class="c"><span class="mu">Tổng người dùng</span><b>${USERS.length}</b><span class="mu">${tgn} từ Telegram</span></div><div class="c"><span class="mu">Tổng số dư</span><b class="gdv">${F(tot)}</b></div></div><div class="search">${IC.search}<input id="uq" placeholder="Tìm theo tên, ID, @username..." oninput="ul()"></div><div class="c" style="padding-top:6px;padding-bottom:6px" id="ul"></div>`;ul()}
  else if(AT=='bk'){const b=(await db.collection('shop_settings').doc('bank').get()).data()||{};
-  v.innerHTML=seg+`<div class="c"><h3>Tài khoản ngân hàng nhận tiền</h3><input id="bb" placeholder="Mã NH: MB, VCB, ACB, TCB... (hoặc BIN 970422)" value="${E(b.bank||'')}"><input id="ba" placeholder="Số tài khoản" value="${E(b.acc||'')}"><input id="bo" placeholder="Chủ tài khoản" value="${E(b.owner||'')}"><button style="width:100%;margin-top:6px" onclick="saveB()">Lưu</button></div>`}}
+  v.innerHTML=seg+`<div class="c"><h3>Tài khoản ngân hàng nhận tiền</h3><input id="bb" placeholder="Mã NH: MB, VCB, ACB, TCB... (hoặc BIN 970422)" value="${E(b.bank||'')}"><input id="ba" placeholder="Số tài khoản" value="${E(b.acc||'')}"><input id="bo" placeholder="Chủ tài khoản" value="${E(b.owner||'')}"><button class="bt gd" style="margin-top:8px" onclick="saveB()">Lưu</button></div>`}}
 function ul(){const q=($('#uq').value||'').toLowerCase().trim();
  const L=USERS.filter(u=>!q||[u.name,u.id,u.tgid,u.username].some(x=>String(x||'').toLowerCase().includes(q)));
- $('#ul').innerHTML=L.map(u=>{const nm=u.name||u.id;
-  return `<div class="row"><div class="av">${E(nm.trim().charAt(0).toUpperCase()||'?')}</div><div class="inf"><b>${E(nm)}${u.username?` <span class="mu" style="font-weight:400">@${E(u.username)}</span>`:''}</b><span class="idc" onclick="cpt('${E(u.tgid||u.id)}')">${u.tgid?'ID '+E(u.tgid):E(u.id)} ⧉</span><div class="mu" style="font-size:12px;margin-top:2px">${u.tgid?'Telegram':'Web'}${u.created?' · '+new Date(u.created.seconds*1000).toLocaleDateString('vi-VN'):''}</div></div><div style="text-align:right;flex:none"><div class="pr" style="font-size:15px">${F(u.balance)}</div><button class="g sm" style="margin-top:6px" onclick="adj('${u.id}')">± Tiền</button></div></div>`}).join('')||'<p class="mu">Không tìm thấy ai.</p>'}
+ $('#ul').innerHTML=L.map(u=>`<div class="row">${avatar(u,'sm')}<div class="inf"><b>${E(u.name||u.id)}${u.username?` <span class="mu">@${E(u.username)}</span>`:''}</b><span class="idc" onclick="cpt('${E(u.tgid||u.id)}')">${u.tgid?'ID '+E(u.tgid):E(u.id)} ⧉</span><div class="mu" style="font-size:12px;margin-top:2px">${u.tgid?'Telegram':'Web'}${u.created?' · '+new Date(u.created.seconds*1000).toLocaleDateString('vi-VN'):''}</div></div><div style="text-align:right;flex:none"><div class="pz" style="font-size:15px">${F(u.balance)}</div><button class="bt g s" style="margin-top:6px" onclick="adj('${u.id}')">± Tiền</button></div></div>`).join('')||'<p class="mu">Không tìm thấy ai.</p>'}
 async function adj(id){const u=USERS.find(x=>x.id==id);const s=prompt('Cộng/trừ tiền cho '+(u.name||id)+'\nNhập số tiền (số âm để trừ):','0');if(s===null)return;const n=parseInt(s,10);if(!n)return;
  await db.collection('shop_users').doc(id).update({balance:FV.increment(n)});toast('Đã cập nhật số dư');adm()}
-const lines=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
-// ---- thêm / sửa sản phẩm (có ảnh) ----
+// ---- thêm / sửa sản phẩm: ảnh + nhiều gói ----
 function pe(id){const x=id?AP.find(p=>p.id==id):{};IMG=x.img||'';
+ PL=id?norm(x).map(p=>({id:p.id,label:p.legacy?'':p.label,price:String(p.price),old:p.old?String(p.old):'',keys:p.keys,add:''})):[{id:uid(),label:'',price:'',old:'',keys:[],add:''}];
  modal(`<h3>${id?'Sửa sản phẩm':'Thêm sản phẩm'}</h3>
  <label class="lb">Tên</label><input id="pn" value="${E(x.name||'')}" placeholder="Tên sản phẩm">
- <label class="lb">Giá (nhập 0 = Miễn phí)</label><input id="pp" type="number" min="0" value="${x.price??''}" placeholder="Ví dụ 50000, hoặc 0">
+ <label class="lb">Nền tảng (hiện ở nhãn xanh trên thẻ)</label><input id="pt" value="${E(x.platform||'')}" placeholder="Ví dụ: ANDROID &amp; PC">
  <label class="lb">Mô tả</label><input id="pd" value="${E(x.desc||'')}" placeholder="Mô tả ngắn">
- <label class="lb">Ảnh sản phẩm</label>
- <div class="up"><div class="thumb" id="pv"></div><div style="flex:1"><input id="pu" placeholder="Dán link ảnh (https://...)" value="${E(x.img&&!x.img.startsWith('data:')?x.img:'')}" oninput="IMG=this.value.trim();pvw()"><button class="g sm" onclick="$('#pf').click()">Tải ảnh từ máy</button><input id="pf" type="file" accept="image/*" hidden onchange="fimg(this)"></div></div>
- <label class="lb">${id?'Nhập thêm key (mỗi dòng 1 cái)':'Key / nội dung (mỗi dòng 1 cái)'}</label><textarea id="pk" rows="4" placeholder="KEY-AAAA&#10;KEY-BBBB"></textarea>
- <div class="r" style="margin-top:8px"><button onclick="saveP('${id||''}')">Lưu</button>${id?`<button class="no" onclick="delP('${id}')">Xóa</button>`:''}<button class="g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`);pvw()}
-function pvw(){const e=$('#pv');if(!e)return;e.innerHTML=ph.replace('class="ph"','class="ph" style="transform:scale(.6)"')+(IMG?`<img src="${E(IMG)}" alt="" onerror="this.remove()">`:'')}
+ <label class="lb">Ảnh / icon sản phẩm</label>
+ <div class="up"><div id="pv"></div><div style="flex:1"><input id="pu" placeholder="Dán link ảnh (https://...)" value="${E(x.img&&!x.img.startsWith('data:')?x.img:'')}" oninput="IMG=this.value.trim();pvw()"><button class="bt g s" onclick="$('#pf').click()">Tải ảnh từ máy</button><input id="pf" type="file" accept="image/*" hidden onchange="fimg(this)"></div></div>
+ <label class="lb">Các gói (tên gói + giá, nhập 0 = Miễn phí)</label>
+ <div id="pl"></div><button class="bt g s" onclick="padd()">+ Thêm gói</button>
+ <div class="r" style="margin-top:14px"><button class="bt gd" onclick="saveP('${id||''}')">Lưu</button>${id?`<button class="bt no" onclick="delP('${id}')">Xóa</button>`:''}<button class="bt g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`);pvw();plr()}
+function plr(){$('#pl').innerHTML=PL.map((x,i)=>`<div class="pe"><div class="sp"><b>Gói ${i+1}</b><span class="mu">Kho hiện có: ${x.keys.length}</span>${PL.length>1?`<button class="x" onclick="pdel(${i})">Xóa gói</button>`:''}</div>
+ <input placeholder="Tên gói (vd: 1 Ngày)" value="${E(x.label)}" oninput="PL[${i}].label=this.value">
+ <div class="r"><input type="number" min="0" placeholder="Giá (0 = miễn phí)" value="${E(x.price)}" oninput="PL[${i}].price=this.value"><input type="number" min="0" placeholder="Giá gốc (tuỳ chọn)" value="${E(x.old)}" oninput="PL[${i}].old=this.value"></div>
+ <textarea rows="3" placeholder="Thêm key vào kho, mỗi dòng 1 cái" oninput="PL[${i}].add=this.value">${E(x.add)}</textarea></div>`).join('')}
+function padd(){PL.push({id:uid(),label:'',price:'',old:'',keys:[],add:''});plr()}
+function pdel(i){if(PL[i].keys.length&&!confirm('Gói này còn '+PL[i].keys.length+' key, xóa luôn?'))return;PL.splice(i,1);plr()}
+function pvw(){const e=$('#pv');if(e)e.outerHTML=imgBox(IMG,'ico big').replace('class="ico big"','class="ico big" id="pv"')}
 function fimg(inp){const f=inp.files[0];if(!f)return;const fr=new FileReader();
- fr.onload=()=>{const im=new Image();im.onload=()=>{const M=640,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement('canvas');
+ fr.onload=()=>{const im=new Image();im.onload=()=>{const M=400,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement('canvas');
   c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-  IMG=c.toDataURL('image/jpeg',.78);$('#pu').value='';pvw();toast('Đã nạp ảnh ('+Math.round(IMG.length/1024)+' KB)')};im.src=fr.result};fr.readAsDataURL(f)}
-async function saveP(id){const n=$('#pn').value.trim(),ps=$('#pp').value.trim(),p=+ps;
- if(!n||ps===''||isNaN(p)||p<0)return $('#e').textContent='Nhập tên và giá (giá 0 = miễn phí)';
+  IMG=c.toDataURL('image/jpeg',.82);$('#pu').value='';pvw();toast('Đã nạp ảnh ('+Math.round(IMG.length/1024)+' KB)')};im.src=fr.result};fr.readAsDataURL(f)}
+async function saveP(id){const n=$('#pn').value.trim();
+ if(!n)return $('#e').textContent='Nhập tên sản phẩm';
+ for(const x of PL){if(!x.label.trim())return $('#e').textContent='Mỗi gói cần có tên gói';const p=+x.price;if(String(x.price).trim()===''||isNaN(p)||p<0)return $('#e').textContent='Mỗi gói cần có giá (0 = miễn phí)'}
  if(IMG.length>900000)return $('#e').textContent='Ảnh quá nặng, chọn ảnh nhỏ hơn';
- const k=lines($('#pk').value),d={name:n,price:p,desc:$('#pd').value.trim(),img:IMG||''};
- try{if(id){if(k.length)d.keys=FV.arrayUnion(...k);await db.collection('shop_products').doc(id).update(d)}
- else await db.collection('shop_products').add({...d,keys:k,active:true});
- closeM();toast('Đã lưu sản phẩm');adm('pr')}catch(e){$('#e').textContent='Lỗi lưu: '+(e.message||e)}}
+ const base={name:n,platform:$('#pt').value.trim(),desc:$('#pd').value.trim(),img:IMG||''};
+ const mk=cur=>PL.map(x=>({id:x.id,label:x.label.trim(),price:+x.price,old:+x.old||0,keys:[...((cur.find(c=>c.id==x.id)||{}).keys||x.keys),...lines(x.add)]}));
+ try{
+  if(id){await db.runTransaction(async t=>{const r=db.collection('shop_products').doc(id),d=await t.get(r),plans=mk(norm(d.data()));
+    t.update(r,{...base,plans,price:Math.min(...plans.map(p=>p.price)),keys:FV.delete()})})}
+  else{const plans=mk([]);await db.collection('shop_products').add({...base,plans,price:Math.min(...plans.map(p=>p.price)),active:true})}
+  closeM();toast('Đã lưu sản phẩm');adm('pr')}catch(e){$('#e').textContent='Lỗi lưu: '+(e.message||e)}}
 async function tgl(id,a){await db.collection('shop_products').doc(id).update({active:a});adm('pr')}
 async function delP(id){if(confirm('Xóa sản phẩm này?')){await db.collection('shop_products').doc(id).delete();closeM();adm('pr')}}
 async function saveB(){await db.collection('shop_settings').doc('bank').set({bank:$('#bb').value.trim(),acc:$('#ba').value.trim(),owner:$('#bo').value.trim()});toast('Đã lưu')}
