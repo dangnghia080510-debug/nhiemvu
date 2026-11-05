@@ -37,9 +37,12 @@ const isAdmin=()=>U&&ADMINS.includes(U.tgid||'');
 function modal(h){$('#mc').innerHTML=h;$('#m').style.display='flex'}function closeM(){$('#m').style.display='none'}
 $('#m').onclick=e=>{if(e.target.id=='m')closeM()};
 async function init(){
+ if(!firebaseConfig.projectId){hd();tabs();return showErr('thiếu config')}
+ try{
  const t=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
  if(t){await load('tg_'+t.id,{name:t.first_name||t.username||'User',tgid:String(t.id)})}
  else{const s=localStorage.getItem('uid');if(s)await load(s)}
+ }catch(e){hd();tabs();return showErr(e)}
  hd();tabs();go('shop')}
 async function load(id,extra){const r=db.collection('users').doc(id);let d=await r.get();
  if(!d.exists){await r.set({balance:0,created:FV.serverTimestamp(),...(extra||{})});d=await r.get()}
@@ -53,7 +56,14 @@ async function sub(){const u=$('#u').value.trim().toLowerCase(),p=$('#p').value;
  const id='u_'+u,h=await sha(p),r=db.collection('users').doc(id),d=await r.get();
  if(d.exists){if(d.data().pw!==h)return $('#e').textContent='Sai mật khẩu'}else await r.set({balance:0,pw:h,name:u,created:FV.serverTimestamp()});
  localStorage.setItem('uid',id);await load(id);closeM();hd();tabs();go(TAB)}
-async function go(t){TAB=t;const v=$('#v');
+async function go(t){try{await go0(t)}catch(e){showErr(e)}}
+function showErr(e){const m=String(e&&e.message||e),c=e&&e.code||'';let h='';
+ if(!firebaseConfig.projectId)h='Chưa dán firebaseConfig vào file index.html (đang để trống).';
+ else if(/permission|insufficient/i.test(c+m))h='Firestore đang chặn truy cập. Vào Firebase → Firestore Database → Rules, đổi thành <code>allow read, write: if true;</code> rồi Publish.';
+ else if(/offline|unavailable/i.test(c+m))h='Không kết nối được Firestore. Kiểm tra mạng, hoặc chưa tạo Firestore Database trong project.';
+ else h='Lỗi không rõ.';
+ $('#v').innerHTML='<div class="c"><b style="color:var(--no)">Không tải được dữ liệu</b><p>'+h+'</p><pre>'+E(c+' '+m)+'</pre></div>'}
+async function go0(t){TAB=t;const v=$('#v');
  if(t=='shop'){v.innerHTML='Đang tải...';const s=await db.collection('products').where('active','==',true).get();
   P=s.docs.map(d=>({id:d.id,...d.data()}));
   v.innerHTML=`<input id="q" placeholder="Tìm sản phẩm..." oninput="draw()"><div class="grid" id="g"></div>`;draw()}
