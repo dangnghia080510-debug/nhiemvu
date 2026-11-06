@@ -1,7 +1,7 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#060d20">
-<title>Shop NOX MOD</title>
+<title>shop 👑Mr.mướp👑</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -172,6 +172,9 @@ nav button.on{color:var(--gd);border-color:#8a6414;background:#3a2a0a66;box-shad
 .tot b{font-size:21px;color:var(--gd)}.tot b.free{color:var(--ok)}
 img.qr{display:block;width:100%;max-width:260px;margin:12px auto;background:#fff;padding:8px;border-radius:12px}
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#122246;border:1px solid var(--bl);color:var(--tx);padding:10px 18px;border-radius:999px;font:800 13px var(--f);z-index:20;box-shadow:0 0 24px #3fc8ff44;display:none;white-space:nowrap}
+.vt{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#1d9bf0;color:#fff;font:900 10px/1 var(--f);margin-left:4px;vertical-align:middle;flex:none}
+.fn{font:900 14px var(--f)}
+.rl.sl{color:#fff;background:linear-gradient(135deg,#a855f7,#6d28d9);border-color:#c084fc}
 </style></head><body>
 <header id="hd"></header>
 <div class="w"><div id="v"></div></div><nav id="tb"></nav>
@@ -187,7 +190,7 @@ const SRC2={base:"",token:""};
 const MARKUP=36;
 const SRC_API="";
 // Gmail: dán link Web App của Google Apps Script (xem file apps-script-gmail.gs) + key bí mật trùng với SECRET trong script
-const MAIL_API="https://script.google.com/macros/s/AKfycbzsj6gnWCjEOOtuoWkOJhES8pC9YGq767Wts_F09EsBvHOsY8xzEWjXjXZs74RBkkzu/exec";
+const MAIL_API="https://script.google.com/macros/s/AKfycbw1wZslGsb3M7249lm4NahhThgMF_srrdUypAQS-_yfp39wzrvbYcYwOMl0y9RliHqL/exec";
 const MAIL_KEY="ahnghia86";
 // =======================
 firebase.initializeApp(firebaseConfig);const db=firebase.firestore(),FV=firebase.firestore.FieldValue;
@@ -202,6 +205,8 @@ let SERR='',SC=[],SM={},U=null,P=[],TAB='shop',AT='tp',AP=[],USERS=[],IMG='',PL=
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 const isAdmin=()=>U&&ADMINS.includes(U.tgid||'');
 const isBanned=()=>U&&U.banned===true;
+const dOf=u=>u&&u.seller===true?Math.min(90,Math.max(0,Math.floor(+u.disc||0))):0,sd=()=>dOf(U);
+const sellerP=p=>{const d=sd();if(!d)return p;return {...p,plans:norm(p).map(x=>({...x,old:x.price>0?Math.max(x.old||0,x.price):0,price:x.price>0?Math.round(x.price*(100-d)/100):0}))}};
 const S=(p,w)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w||2}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 const IC={
  shop:S('<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>'),
@@ -219,7 +224,7 @@ const IC={
 // ---------- gói (plans) ----------
 const uid=()=>'p'+Math.random().toString(36).slice(2,8);
 const norm=p=>Array.isArray(p.plans)&&p.plans.length
- ?p.plans.map((x,i)=>({id:x.id||'p'+i,label:x.label||'Gói '+(i+1),price:+x.price||0,old:+x.old||0,keys:x.keys||[],n:x.n,cost:+x.cost||0}))
+ ?p.plans.map((x,i)=>({id:x.id||'p'+i,label:x.label||'Gói '+(i+1),price:+x.price||0,old:+x.old||0,keys:x.keys||[],n:x.n,cost:+x.cost||0,...(x.legacy?{legacy:1}:{})}))
  :[{id:'p0',label:'Mặc định',price:+p.price||0,old:0,keys:p.keys||[],legacy:1,cost:0}];
 const sk=x=>x.n!=null?x.n:x.keys.length;
 const stock=p=>norm(p).reduce((a,x)=>a+sk(x),0);
@@ -250,9 +255,9 @@ async function load(id,extra){const r=db.collection('shop_users').doc(id);let d=
   if(Object.keys(ch).length){await r.update(ch);d=await r.get()}}
  U={id,...d.data()};if(unsub)unsub();unsub=r.onSnapshot(s=>{if(s.exists){U={id,...s.data()};hd()}})}
 function hd(){
- $('#hd').innerHTML=U?`<div class="who">${avatar(U,'ring')}<div style="min-width:0"><div class="nm"><b>${E(U.name||U.id)}</b><span class="rl ${isAdmin()?'ad':(isBanned()?'ban':'')}">${isAdmin()?'ADMIN':(isBanned()?'BANNED':'MEMBER')}</span></div><span class="uid">ID: ${E(U.tgid||U.email||U.id)}</span></div></div>
+ $('#hd').innerHTML=U?`<div class="who">${avatar(U,'ring')}<div style="min-width:0"><div class="nm"><b>${E(U.name||U.id)}</b>${isAdmin()?VT:''}<span class="rl ${isAdmin()?'ad':(isBanned()?'ban':(sd()?'sl':''))}">${isAdmin()?'ADMIN':(isBanned()?'BANNED':(sd()?'SELLER VIP':'MEMBER'))}</span></div><span class="uid">ID: ${E(U.tgid||U.email||U.id)}</span></div></div>
  <div class="hr"><div class="bal"><i>$</i>${F(U.balance)}</div><button class="menu" aria-label="Cá nhân" onclick="go('me')">${IC.menu}</button></div>`
- :`<div class="who"><div class="ava ring">${IC.key.replace('<svg','<svg width="22" height="22"')}</div><b style="font:900 20px var(--f)">Shop NOX MOD</b></div><button class="login" onclick="auth()">Đăng nhập</button>`}
+ :`<div class="who"><div class="ava ring">${IC.key.replace('<svg','<svg width="22" height="22"')}</div><b style="font:900 20px var(--f)">shop 👑Mr.mướp👑</b></div><button class="login" onclick="auth()">Đăng nhập</button>`}
 function tabs(){const T=[['shop','Mua Đồ'],['topup','Nạp Tiền'],['orders','Đơn Hàng'],['me','Cá Nhân']];if(isAdmin())T.push(['admin','Admin']);
  $('#tb').innerHTML=T.map(x=>`<button class="${TAB==x[0]?'on':''}" onclick="go('${x[0]}')">${IC[x[0]]}${x[1]}</button>`).join('')}
 function out(){if(!confirm('Đăng xuất khỏi tài khoản?'))return;localStorage.removeItem('uid');if(unsub)unsub();U=null;hd();tabs();go('shop')}
@@ -339,14 +344,14 @@ async function go0(t){const v=$('#v');
   P=s.docs.map(d=>({id:d.id,...d.data()}));PF='';
   await loadSrc();P=P.concat(srcCards());
   // Ẩn sản phẩm hết hàng hoàn toàn
-  P=P.filter(p=>stock(p)>0);
+  P=P.filter(p=>stock(p)>0).map(sellerP);
   const pls=[...new Set(P.map(p=>(p.platform||'').trim()).filter(Boolean))];
-  v.innerHTML=`<div class="hero"><h2>Mua Đồ</h2><div class="mu">Chọn sản phẩm, chọn gói, nhận hàng ngay.</div></div>${SW()}
+  v.innerHTML=`<div class="hero"><h2>Mua Đồ</h2><div class="mu">Chọn sản phẩm, chọn gói, nhận hàng ngay.</div></div>${SW()}${sd()?`<div class="c" style="border-color:#7c3aed"><b>👑 Giá Seller VIP: giảm ${sd()}% mọi sản phẩm</b></div>`:''}
   <div class="search">${IC.search}<input id="q" placeholder="Tìm sản phẩm..." oninput="draw()"></div>
   ${pls.length?`<div class="fl" id="fl"><button class="on" onclick="pf('')">Tất cả</button>${pls.map(x=>`<button onclick="pf(this.dataset.p)" data-p="${E(x)}">${E(x)}</button>`).join('')}</div>`:''}
   <div class="grid" id="g"></div>`;draw()}
  else if(t=='me'){if(!U)return auth();
-  v.innerHTML=`<div class="c pf">${avatar(U,'ring lg')}<h2>${E(U.name||U.id)}</h2><span class="rl ${isAdmin()?'ad':(isBanned()?'ban':'')}">${isAdmin()?'ADMIN':(isBanned()?'BANNED':'MEMBER')}</span>
+  v.innerHTML=`<div class="c pf">${avatar(U,'ring lg')}<h2>${E(U.name||U.id)}${isAdmin()?VT:''}</h2><span class="rl ${isAdmin()?'ad':(isBanned()?'ban':(sd()?'sl':''))}">${isAdmin()?'ADMIN':(isBanned()?'BANNED':(sd()?'SELLER VIP':'MEMBER'))}</span>
   <div class="kv"><div><small>Số dư</small><b>${F(U.balance)}</b></div><div><small>${U.tgid?'Telegram ID':'Tài khoản'}</small><b style="font-size:14px;color:var(--bl)">${E(U.tgid||U.email||U.id)}</b></div></div>
   ${U.username?`<p class="mu">@${E(U.username)}</p>`:''}
   ${U.email?`<p class="mu">✉ ${E(U.email)}</p>`:`<button class="bt g" style="margin-top:10px" onclick="linkMail()">✉ Liên kết Gmail nhận thông báo</button>`}
@@ -354,13 +359,13 @@ async function go0(t){const v=$('#v');
   <button class="bt g" style="margin-top:10px" onclick="showRedeem()">Nhập mã giảm giá / Giftcode</button>
   ${inTG?'':'<button class="bt g" style="margin-top:10px;color:var(--no);border-color:var(--no)" onclick="out()">⎋ Đăng xuất</button>'}</div>`}
  else if(!U)auth();
- else if(t=='orders'){const s=await db.collection('shop_orders').where('uid','==',U.id).get();
+ else if(t=='orders'){if(OV=='all')return feed();const s=await db.collection('shop_orders').where('uid','==',U.id).get();
   const o=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
-  v.innerHTML=`<div class="hero"><h2>Đơn Hàng</h2><div class="mu">Đồ bạn đã mua nằm ở đây.</div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)}${x.plan?` · ${E(x.plan)}`:''} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''} · #${x.id.slice(0,8)}</div></div><b class="pz ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="bt g s" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào Mua Đồ chọn món đầu tiên.</div>')}
+  v.innerHTML=`<div class="hero"><h2>Đơn Hàng</h2><div class="mu">Đồ bạn đã mua nằm ở đây.</div></div>${ovSeg()}`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)}${x.plan?` · ${E(x.plan)}`:''} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''} · #${x.id.slice(0,8)}</div></div><b class="pz ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="bt g s" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào Mua Đồ chọn món đầu tiên.</div>')}
  else if(t=='topup'){v.innerHTML=`<div class="hero"><h2>Nạp Tiền</h2><div class="mu">Chuyển khoản qua mã QR, admin duyệt là có tiền.</div></div>
   <div class="c"><div class="mu">ID của bạn</div><span class="idc" style="font-size:14px;margin-top:5px" onclick="cpt('${E(U.tgid||U.email||U.id)}')">${E(U.tgid||U.email||U.id)} ⧉</span></div>
   <div class="c"><h3>Chọn số tiền</h3><div class="r" style="margin-bottom:8px">${[20000,50000,100000,200000].map(n=>`<button class="bt g s" style="flex:1;padding:10px 0" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 2.000đ)"><button class="bt gd" style="margin-top:8px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>
-  <div class="c"><h3>Nhập mã giảm giá / Giftcode</h3><input id="gc" placeholder="Nhập mã..."><button class="bt g" style="margin-top:8px" onclick="redeemCode()">Áp dụng</button><p id="gce" class="err"></p></div>`}
+  <div class="c"><h3>Nhập mã giảm giá / Giftcode</h3><input id="gc" placeholder="Nhập mã..."><button class="bt g" style="margin-top:8px" onclick="redeemCode()">Áp dụng</button><p id="gce" class="err"></p></div>`;restoreQR()}
  else if(t=='admin'&&isAdmin())adm()}
 function pf(x){PF=x;document.querySelectorAll('#fl button').forEach(b=>b.classList.toggle('on',(b.dataset.p||'')==x));draw()}
 function draw(){const q=($('#q').value||'').toLowerCase();
@@ -390,7 +395,7 @@ function qd(d){const L=norm(SEL.p),pl=L.find(x=>x.id==SEL.pid),mx=Math.max(1,Mat
  const v=Math.max(1,Math.min(mx,(+i.value||1)+d));i.value=v;SEL.q=v;$('#tt').textContent=PR(pl.price*v)}
 async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').textContent='Tài khoản bị khóa';
  if(SEL.p.ext)return SRC_API?buyS():buyD();
- const id=SEL.p.id,pid=SEL.pid,qty=Math.max(1,Math.min(100,+$('#n').value||1));let got=[];
+ const id=SEL.p.id,pid=SEL.pid,qty=Math.max(1,Math.min(100,+$('#n').value||1));let got=[],paid=0;
  try{await db.runTransaction(async t=>{
   const pr=db.collection('shop_products').doc(id),ur=db.collection('shop_users').doc(U.id);
   const [p,u]=await Promise.all([t.get(pr),t.get(ur)]);
@@ -398,17 +403,17 @@ async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').
   if(u.data().banned)throw'Tài khoản bị khóa';
   const d=p.data(),L=norm(d),i=L.findIndex(x=>x.id==pid);if(i<0)throw'Gói không còn tồn tại';
   const pl=L[i];if(pl.keys.length<qty)throw'Không đủ hàng';
-  const total=pl.price*qty;if((u.data().balance||0)<total)throw'Không đủ số dư, hãy nạp thêm';
+  const dd=dOf(u.data()),total=(pl.price>0?Math.round(pl.price*(100-dd)/100):0)*qty;if((u.data().balance||0)<total)throw'Không đủ số dư, hãy nạp thêm';paid=total;
   got=pl.keys.slice(0,qty);
   if(Array.isArray(d.plans)&&d.plans.length){L[i].keys=pl.keys.slice(qty);t.update(pr,{plans:L})}else t.update(pr,{keys:pl.keys.slice(qty)});
   if(total>0)t.update(ur,{balance:FV.increment(-total)});
   const cost=(pl.cost||0)*qty;
   t.set(db.collection('shop_orders').doc(),{uid:U.id,name:d.name,plan:pl.legacy?'':pl.label,qty,total,cost,profit:total-cost,keys:got,ts:FV.serverTimestamp()})});
-  if(got.length)try{await logBal(U.id,- (norm(SEL.p).find(x=>x.id==pid).price*qty),'buy','Mua '+SEL.p.name,U.id)}catch(e){}
+  if(got.length)try{await logBal(U.id,-paid,'buy','Mua '+SEL.p.name,U.id)}catch(e){}
   modal(`<h3>✅ Thành công</h3><p class="mu">Hàng của bạn:</p><pre>${E(got.join('\n'))}</pre><div class="r"><button class="bt g" onclick="cp(this)">Sao chép</button><button class="bt gd" onclick="closeM()">Đóng</button></div>`);
-  buyNote({name:SEL.p.name,plan:(norm(SEL.p).find(x=>x.id==pid)||{}).label||'',qty,total:norm(SEL.p).find(x=>x.id==pid).price*qty});
+  buyNote({name:SEL.p.name,plan:(norm(SEL.p).find(x=>x.id==pid)||{}).label||'',qty,total:paid});
   // Thông báo admin nếu đơn lớn
-  if(norm(SEL.p).find(x=>x.id==pid).price*qty>=100000)notifyAdmin('Đơn mua lớn: '+U.name+' mua '+SEL.p.name+' ×'+qty+' = '+F(norm(SEL.p).find(x=>x.id==pid).price*qty));
+  if(paid>=100000)notifyAdmin('Đơn mua lớn: '+U.name+' mua '+SEL.p.name+' ×'+qty+' = '+F(paid));
   go('shop')
  }catch(e){$('#e').textContent=typeof e=='string'?e:'Lỗi, thử lại'}}
 // ---------- Nguồn hàng ngoài ----------
@@ -503,12 +508,33 @@ async function buyD(){const pl=norm(SEL.p).find(x=>x.id==SEL.pid),qty=Math.max(1
  buyNote({name:SEL.p.name,plan:pl.label||'',qty,total});
  if(total>=100000)notifyAdmin('Đơn mua lớn: '+U.name+' · '+SEL.p.name+' ×'+qty+' = '+F(total));
  modal(`<h3>✅ Thành công</h3><p class="mu">Hàng của bạn:</p><pre>${E(keys.join('\n')||'(chưa có key, liên hệ admin)')}</pre><div class="r"><button class="bt g" onclick="cp(this)">Sao chép</button><button class="bt gd" onclick="closeM()">Đóng</button></div>`);go('shop')}
-async function tp(){const a=+$('#a').value;if(!(a>=2000))return alert('Nạp tối thiểu 2.000đ');
+// ---- QR nạp tiền: hết hạn sau 15 phút, chống spam ----
+const QRTTL=15*60*1000,p2=n=>String(n).padStart(2,'0');
+let QT=null,TPB=0,OV='mine',NC={};
+const tsMs=x=>x&&x.ts&&x.ts.seconds?x.ts.seconds*1000:Date.now();
+const isAdm=u=>ADMINS.includes(String(u||'').replace(/^tg_/,''));
+const VT='<span class="vt" title="Admin">✓</span>';
+async function activeTopup(){const s=await db.collection('shop_topups').where('uid','==',U.id).where('status','==','pending').get();
+ return s.docs.map(d=>({id:d.id,...d.data()})).filter(x=>Date.now()-tsMs(x)<QRTTL).sort((a,b)=>tsMs(b)-tsMs(a))[0]||null}
+function showQR(o,b){clearInterval(QT);const end=tsMs(o)+QRTTL;
+ $('#qr').innerHTML=`<img class="qr" onerror="this.outerHTML='<p style=color:var(--no)>Không tạo được ảnh QR (mã ngân hàng sai?). Hãy chuyển khoản thủ công theo thông tin bên dưới.</p>'" src="https://img.vietqr.io/image/${E(b.bank)}-${E(b.acc)}-compact2.png?amount=${o.amount}&addInfo=${E(o.note)}&accountName=${encodeURIComponent(b.owner)}"><p>Số tiền: <b>${F(o.amount)}</b><br>Nội dung CK: <b>${E(o.note)}</b><br>${E(b.bank)} - ${E(b.acc)} - ${E(b.owner)}</p><p class="mu">Chuyển đúng nội dung, admin duyệt xong tiền sẽ vào ví.</p><p>⏳ Mã hết hạn sau <b id="cd">15:00</b></p><button class="bt g s" onclick="cancelTp('${o.id}')">Hủy đơn này</button>`;
+ const tick=()=>{const el=$('#cd');if(!el){clearInterval(QT);return}const r=end-Date.now();
+  if(r<=0){clearInterval(QT);$('#qr').innerHTML='<p style="color:var(--no)"><b>Mã QR đã hết hạn.</b> Hãy bấm Tạo mã QR để lấy mã mới. Nếu bạn đã chuyển khoản rồi, hãy nhắn admin kèm nội dung '+E(o.note)+'.</p>';return}
+  el.textContent=p2(Math.floor(r/60000))+':'+p2(Math.floor(r/1000)%60)};
+ tick();QT=setInterval(tick,1000)}
+async function restoreQR(){try{if(!U)return;const o=await activeTopup();if(!o||!$('#qr'))return;const b=(await db.collection('shop_settings').doc('bank').get()).data();if(b&&$('#qr'))showQR(o,b)}catch(e){}}
+async function cancelTp(id){try{const r=db.collection('shop_topups').doc(id),d=await r.get();if(d.exists&&d.data().status==='pending')await r.update({status:'cancelled'});clearInterval(QT);$('#qr').innerHTML='';toast('Đã hủy đơn')}catch(e){alert('Không hủy được')}}
+async function tp(){if(TPB)return;const a=+$('#a').value;if(!(a>=2000))return alert('Nạp tối thiểu 2.000đ');
+ TPB=1;try{
  const b=(await db.collection('shop_settings').doc('bank').get()).data();if(!b)return alert('Admin chưa cài tài khoản ngân hàng');
+ const cur=await activeTopup();if(cur){showQR(cur,b);return toast('Bạn đang có 1 đơn nạp chưa hết hạn')}
+ const hs=await db.collection('shop_topups').where('uid','==',U.id).get();
+ if(hs.docs.filter(d=>Date.now()-tsMs(d.data())<3600000).length>=5)return alert('Bạn tạo quá nhiều mã nạp trong 1 giờ, vui lòng thử lại sau');
  const r=await db.collection('shop_topups').add({uid:U.id,name:U.name||U.id,amount:a,status:'pending',ts:FV.serverTimestamp()});
  const note='NAP'+r.id.slice(0,6).toUpperCase();await r.update({note});
  notifyAdmin('Đơn nạp mới: '+U.name+' · '+F(a)+' · '+note);
- $('#qr').innerHTML=`<img class="qr" onerror="this.outerHTML='<p style=color:var(--no)>Không tạo được ảnh QR (mã ngân hàng sai?). Hãy chuyển khoản thủ công theo thông tin bên dưới.</p>'" src="https://img.vietqr.io/image/${E(b.bank)}-${E(b.acc)}-compact2.png?amount=${a}&addInfo=${note}&accountName=${encodeURIComponent(b.owner)}"><p>Số tiền: <b>${F(a)}</b><br>Nội dung CK: <b>${note}</b><br>${E(b.bank)} - ${E(b.acc)} - ${E(b.owner)}</p><p class="mu">Chuyển đúng nội dung, admin duyệt xong tiền sẽ vào ví.</p>`}
+ showQR({id:r.id,amount:a,note},b)
+ }catch(e){alert('Lỗi, thử lại')}finally{TPB=0}}
 // Giftcode / mã giảm giá
 function showRedeem(){modal(`<h3>Nhập mã giảm giá / Giftcode</h3><input id="gc2" placeholder="Nhập mã..."><button class="bt gd" style="margin-top:8px" onclick="redeemCode(1)">Áp dụng</button><p id="gce2" class="err"></p>`)}
 async function redeemCode(fromModal){const el=fromModal?$('#gc2'):$('#gc'),err=fromModal?$('#gce2'):$('#gce');
@@ -536,7 +562,10 @@ async function adm(t){if(t)AT=t;const v=$('#v');
  const seg=`<div class="seg">${SG.map(x=>`<button class="${AT==x[0]?'on':''}" onclick="adm('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
  v.innerHTML=seg+'<div class="empty">Đang tải...</div>';
  if(AT=='tp'){const s=await db.collection('shop_topups').where('status','==','pending').get();
-  v.innerHTML=seg+`<div class="c"><h3>Đơn nạp chờ duyệt</h3>${s.docs.map(d=>{const x=d.data();return `<div class="row"><div class="inf"><b>${E(x.name)}</b><span class="mu">${F(x.amount)} · ${E(x.note||'')}</span><br><span class="idc" onclick="cpt('${E(x.uid)}')">${E(x.uid)}</span></div><div class="r fit"><button class="bt ok s" onclick="ap('${d.id}')">Duyệt</button><button class="bt no s" onclick="ap('${d.id}',1)">Từ chối</button></div></div>`}).join('')||'<p class="mu">Không có đơn nào đang chờ.</p>'}</div>`}
+  const all=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>tsMs(a)-tsMs(b)),live=all.filter(x=>Date.now()-tsMs(x)<QRTTL),old=all.filter(x=>Date.now()-tsMs(x)>=QRTTL);
+  const row=(x,e)=>`<div class="row"><div class="inf"><div style="white-space:normal"><span class="fn">${E(x.name)}</span>${isAdm(x.uid)?VT:''}</div><span class="mu">${F(x.amount)} · ${E(x.note||'')}${e?' · hết hạn':''}</span><br><span class="idc" onclick="cpt('${E(x.uid)}')">${E(x.uid)}</span></div><div class="r fit"><button class="bt ok s" onclick="ap('${x.id}')">Duyệt</button><button class="bt no s" onclick="ap('${x.id}',1)">Từ chối</button></div></div>`;
+  v.innerHTML=seg+`<div class="c"><h3>Đơn nạp chờ duyệt (${live.length})</h3>${live.length?`<div class="r" style="margin-bottom:10px"><button class="bt ok s" style="flex:1" onclick="apAll(0)">✔ Duyệt tất cả</button><button class="bt no s" style="flex:1" onclick="apAll(1)">✖ Từ chối tất cả</button></div>`:''}${live.map(x=>row(x)).join('')||'<p class="mu">Không có đơn nào đang chờ.</p>'}</div>`
+   +(old.length?`<div class="c"><h3>QR đã hết hạn (${old.length})</h3><p class="mu" style="margin:0 0 10px">Khách tạo mã quá 15 phút. Vẫn duyệt riêng được nếu khách đã chuyển khoản.</p><button class="bt no s" style="margin-bottom:10px" onclick="apAll(1,1)">✖ Từ chối tất cả đơn hết hạn</button>${old.map(x=>row(x,1)).join('')}</div>`:'')}
  else if(AT=='pr'){const s=await db.collection('shop_products').get();AP=s.docs.map(d=>({id:d.id,...d.data()}));
   v.innerHTML=seg+`<button class="bt gd" style="margin-bottom:12px" onclick="pe()">+ Thêm sản phẩm</button><div class="c" style="padding-top:6px;padding-bottom:6px">${AP.map(x=>{const pl=norm(x);return `<div class="row">${imgBox(x.img,'ico')}<div class="inf"><b>${E(x.name)}</b><span class="mu">${pl[0].legacy?'1 gói':pl.length+' gói'} · từ ${PR(minPlan(x).price)} · còn ${stock(x)}</span><br><span class="pill ${x.active?'on':'off'}">${x.active?'Đang bán':'Đã tắt'}</span></div><div style="display:flex;flex-direction:column;gap:6px"><button class="bt s" onclick="pe('${x.id}')">Sửa</button><button class="bt g s" onclick="tgl('${x.id}',${!x.active})">${x.active?'Tắt':'Bật'}</button></div></div>`}).join('')||'<p class="mu">Chưa có sản phẩm.</p>'}</div>`}
  else if(AT=='sl'){await loadSrc();
@@ -566,7 +595,7 @@ async function adm(t){if(t)AT=t;const v=$('#v');
   v.innerHTML=seg+`<div class="c"><h3>Tài khoản ngân hàng nhận tiền</h3><input id="bb" placeholder="Mã NH: MB, VCB, ACB, TCB... (hoặc BIN 970422)" value="${E(b.bank||'')}"><input id="ba" placeholder="Số tài khoản" value="${E(b.acc||'')}"><input id="bo" placeholder="Chủ tài khoản" value="${E(b.owner||'')}"><button class="bt gd" style="margin-top:8px" onclick="saveB()">Lưu</button></div>`}}
 function ul(){const q=($('#uq').value||'').toLowerCase().trim();
  const L=USERS.filter(u=>!q||[u.name,u.id,u.tgid,u.username].some(x=>String(x||'').toLowerCase().includes(q)));
- $('#ul').innerHTML=L.map(u=>`<div class="row">${avatar(u,'sm')}<div class="inf"><b>${E(u.name||u.id)}${u.username?` <span class="mu">@${E(u.username)}</span>`:''}${u.banned?' <span class="rl ban">BAN</span>':''}</b><span class="idc" onclick="cpt('${E(u.tgid||u.id)}')">${u.tgid?'ID '+E(u.tgid):E(u.id)} ⧉</span><div class="mu" style="font-size:12px;margin-top:2px">${u.tgid?'Telegram':'Web'}${u.created?' · '+new Date(u.created.seconds*1000).toLocaleDateString('vi-VN'):''}</div></div><div style="text-align:right;flex:none"><div class="pz" style="font-size:15px">${F(u.balance)}</div><button class="bt g s" style="margin-top:6px" onclick="adj('${u.id}')">± Tiền</button> <button class="bt g s" style="margin-top:6px;color:#ff6b6b" onclick="rst('${u.id}')">Reset 0đ</button><br><button class="bt ${u.banned?'ok':'no'} s" style="margin-top:6px" onclick="banU('${u.id}',${!u.banned})">${u.banned?'Mở ban':'Ban'}</button></div></div>`).join('')||'<p class="mu">Không tìm thấy ai.</p>'}
+ $('#ul').innerHTML=L.map(u=>`<div class="row">${avatar(u,'sm')}<div class="inf"><b>${E(u.name||u.id)}${u.username?` <span class="mu">@${E(u.username)}</span>`:''}${u.banned?' <span class="rl ban">BAN</span>':''}${u.seller?` <span class="rl sl">SELLER -${dOf(u)}%</span>`:''}</b><span class="idc" onclick="cpt('${E(u.tgid||u.id)}')">${u.tgid?'ID '+E(u.tgid):E(u.id)} ⧉</span><div class="mu" style="font-size:12px;margin-top:2px">${u.tgid?'Telegram':'Web'}${u.created?' · '+new Date(u.created.seconds*1000).toLocaleDateString('vi-VN'):''}</div></div><div style="text-align:right;flex:none"><div class="pz" style="font-size:15px">${F(u.balance)}</div><button class="bt g s" style="margin-top:6px" onclick="adj('${u.id}')">± Tiền</button> <button class="bt g s" style="margin-top:6px;color:#ff6b6b" onclick="rst('${u.id}')">Reset 0đ</button> <button class="bt g s" style="margin-top:6px;color:#c084fc" onclick="slr('${u.id}')">👑 Seller</button><br><button class="bt ${u.banned?'ok':'no'} s" style="margin-top:6px" onclick="banU('${u.id}',${!u.banned})">${u.banned?'Mở ban':'Ban'}</button></div></div>`).join('')||'<p class="mu">Không tìm thấy ai.</p>'}
 async function odSearch(){const q=($('#oq').value||'').trim().toLowerCase();if(!q)return $('#odl').innerHTML='<p class="mu">Nhập từ khóa để tìm đơn hàng.</p>';
  const s=await db.collection('shop_orders').orderBy('ts','desc').limit(200).get();
  const L=s.docs.map(d=>({id:d.id,...d.data()})).filter(o=>o.id.toLowerCase().includes(q)||(o.uid||'').toLowerCase().includes(q)||(o.name||'').toLowerCase().includes(q));
@@ -578,6 +607,10 @@ async function adj(id){const u=USERS.find(x=>x.id==id);const s=prompt('Cộng/tr
 async function rst(id){const u=USERS.find(x=>x.id==id);if(!u)return;if(!confirm('Reset số dư của '+(u.name||id)+' (đang '+F(u.balance)+') về 0đ?'))return;
  const old=u.balance||0;
  try{await db.collection('shop_users').doc(id).update({balance:0});await logBal(id,-old,'reset','Reset về 0đ (trước đó '+F(old)+')',U.id);toast('Đã reset về 0đ');adm()}catch(e){toast('Lỗi: '+(e.message||e))}}
+async function slr(id){const u=USERS.find(x=>x.id==id);if(!u)return;
+ const s=prompt('Seller VIP cho '+(u.name||id)+'\nNhập % giảm giá cho mọi sản phẩm (1-90).\nNhập 0 để gỡ Seller:',u.seller?String(dOf(u)):'10');if(s===null)return;
+ const n=Math.floor(+s);if(isNaN(n)||n<0||n>90)return alert('Nhập số từ 0 đến 90');
+ try{await db.collection('shop_users').doc(id).update(n>0?{seller:true,disc:n}:{seller:false,disc:0});toast(n>0?'Đã đặt Seller giảm '+n+'%':'Đã gỡ Seller');adm('us')}catch(e){alert('Lỗi, thử lại')}}
 async function banU(id,ban){if(!confirm((ban?'Ban':'Mở ban')+' người dùng này?'))return;
  await db.collection('shop_users').doc(id).update({banned:!!ban});toast(ban?'Đã ban':'Đã mở ban');adm('us')}
 // ---- thêm / sửa sản phẩm ----
@@ -630,15 +663,36 @@ async function sv(i){const c=SC[i];const PR={};document.querySelectorAll('.pp').
 async function tgl(id,a){await db.collection('shop_products').doc(id).update({active:a});adm('pr')}
 async function delP(id){if(confirm('Xóa sản phẩm này?')){await db.collection('shop_products').doc(id).delete();closeM();adm('pr')}}
 async function saveB(){await db.collection('shop_settings').doc('bank').set({bank:$('#bb').value.trim(),acc:$('#ba').value.trim(),owner:$('#bo').value.trim()});toast('Đã lưu')}
-async function ap(id,rej){let done=false;try{await db.runTransaction(async t=>{const r=db.collection('shop_topups').doc(id),d=await t.get(r);
- if(!d.exists||d.data().status!=='pending')throw'Đơn đã xử lý';
- if(rej)t.update(r,{status:'rejected'});else{t.update(r,{status:'approved'});t.update(db.collection('shop_users').doc(d.data().uid),{balance:FV.increment(d.data().amount)});
-  // log
- }});done=true}catch(e){alert(e)}
- if(!rej){const d=(await db.collection('shop_topups').doc(id).get()).data();if(d)await logBal(d.uid,d.amount,'topup','Nạp tiền duyệt #'+id.slice(0,6),U.id)}
- if(done&&!rej){try{const d=(await db.collection('shop_topups').doc(id).get()).data(),ud=d&&(await db.collection('shop_users').doc(d.uid).get()).data();
-  if(ud&&ud.email)mailNotify('topup_ok',{amount:d.amount,note:d.note||''},ud.email)}catch(e){}}
- adm('tp')}
+async function apOne(id,rej){let done=false;
+ try{await db.runTransaction(async t=>{const r=db.collection('shop_topups').doc(id),d=await t.get(r);
+  if(!d.exists||d.data().status!=='pending')throw'Đơn đã xử lý';
+  if(rej)t.update(r,{status:'rejected'});else{t.update(r,{status:'approved'});t.update(db.collection('shop_users').doc(d.data().uid),{balance:FV.increment(d.data().amount)})}});done=true}catch(e){return false}
+ if(done&&!rej){try{const d=(await db.collection('shop_topups').doc(id).get()).data();await logBal(d.uid,d.amount,'topup','Nạp tiền duyệt #'+id.slice(0,6),U.id);
+  const ud=(await db.collection('shop_users').doc(d.uid).get()).data();if(ud&&ud.email)mailNotify('topup_ok',{amount:d.amount,note:d.note||''},ud.email)}catch(e){}}
+ return done}
+async function ap(id,rej){if(!(await apOne(id,rej)))alert('Đơn đã xử lý');adm('tp')}
+async function apAll(rej,exp){const s=await db.collection('shop_topups').where('status','==','pending').get();
+ const l=s.docs.filter(d=>{const old=Date.now()-tsMs(d.data())>=QRTTL;return exp?old:!old});
+ if(!l.length)return toast('Không có đơn nào');
+ const tot=l.reduce((a,d)=>a+(+d.data().amount||0),0);
+ if(!confirm((rej?'TỪ CHỐI ':'DUYỆT ')+l.length+' đơn nạp, tổng '+F(tot)+'?'))return;
+ toast('Đang xử lý '+l.length+' đơn...');let ok=0;
+ for(const d of l){if(await apOne(d.id,rej))ok++}
+ toast('Xong: '+ok+'/'+l.length+' đơn');adm('tp')}
+// ---- Lịch sử mua/nạp của mọi người ----
+const mk=n=>Array.from(String(n||'Ẩn danh')).slice(0,2).join('')+'***';
+const ago=ms=>{const m=Math.max(0,Math.floor((Date.now()-ms)/60000));return m<1?'vừa xong':m<60?m+' phút trước':m<1440?Math.floor(m/60)+' giờ trước':Math.floor(m/1440)+' ngày trước'};
+function ovSeg(){return `<div class="seg"><button class="${OV=='mine'?'on':''}" onclick="ov('mine')">Của tôi</button><button class="${OV=='all'?'on':''}" onclick="ov('all')">Mọi người</button></div>`}
+function ov(x){OV=x;go('orders')}
+async function feed(){const v=$('#v'),head=`<div class="hero"><h2>Lịch Sử</h2><div class="mu">Mua và nạp gần đây của mọi người.</div></div>${ovSeg()}`;
+ v.innerHTML=head+'<div class="empty">Đang tải...</div>';
+ const [o,t]=await Promise.all([db.collection('shop_orders').orderBy('ts','desc').limit(40).get(),db.collection('shop_topups').orderBy('ts','desc').limit(60).get()]);
+ const A=[...o.docs.map(d=>({k:'buy',...d.data()})),...t.docs.map(d=>({k:'top',...d.data()})).filter(x=>x.status==='approved')].filter(x=>x.ts).sort((a,b)=>tsMs(b)-tsMs(a)).slice(0,50);
+ await Promise.all([...new Set(A.filter(x=>x.k=='buy'&&!NC[x.uid]).map(x=>x.uid))].map(async u=>{try{NC[u]=((await db.collection('shop_users').doc(u).get()).data()||{}).name||'Ẩn danh'}catch(e){NC[u]='Ẩn danh'}}));
+ const nm=x=>{const n=x.k=='buy'?NC[x.uid]:x.name;return isAdm(x.uid)?`<span class="fn">${E(n)}</span>${VT}`:`<span class="fn">${E(mk(n))}</span>`};
+ v.innerHTML=head+`<div class="c" style="padding-top:6px;padding-bottom:6px">${A.map(x=>x.k=='buy'
+  ?`<div class="row"><div class="inf"><div style="white-space:normal">${nm(x)} <span class="mu">đã mua</span></div><span class="mu" style="display:block;white-space:normal">${E(x.name)}${x.plan?' · '+E(x.plan):''} ×${x.qty} · ${ago(tsMs(x))}</span></div><b style="flex:none;color:var(--gd)">${x.total>0?'-'+F(x.total):'Miễn phí'}</b></div>`
+  :`<div class="row"><div class="inf"><div style="white-space:normal">${nm(x)} <span class="mu">đã nạp</span></div><span class="mu" style="display:block">Nạp tiền vào ví · ${ago(tsMs(x))}</span></div><b style="flex:none;color:#2ee59d">+${F(x.amount)}</b></div>`).join('')||'<div class="empty"><b>Chưa có hoạt động nào</b></div>'}</div>`}
 function addCode(){modal(`<h3>Tạo Giftcode</h3>
  <label class="lb">Mã (viết hoa)</label><input id="cc" placeholder="VD: SALE50K" style="text-transform:uppercase">
  <label class="lb">Số tiền cộng vào ví</label><input id="ca" type="number" placeholder="50000">
