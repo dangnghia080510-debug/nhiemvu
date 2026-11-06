@@ -187,11 +187,12 @@ const SRC2={base:"",token:""};
 const MARKUP=36;
 const SRC_API="";
 // Gmail: dán link Web App của Google Apps Script (xem file apps-script-gmail.gs) + key bí mật trùng với SECRET trong script
-const MAIL_API="https://script.google.com/macros/s/AKfycbyOQBRvyX_vcex_yEHQaZAo9aYS9iVwCfdrooXlMedto5u0JopzYplYuOOgUoDAPL-Y/exec";
+const MAIL_API="https://script.google.com/macros/s/AKfycbwBJ9Vs8hOaK23qVwvin4iMGsU1r6y2d4e-tztYptYzASP_aW79c2bTywcCvvlLFYKG/exec";
 const MAIL_KEY="ahnghia86";
 // =======================
 firebase.initializeApp(firebaseConfig);const db=firebase.firestore(),FV=firebase.firestore.FieldValue;
 const tg=window.Telegram&&Telegram.WebApp;
+const inTG=!!(tg&&tg.initData);
 if(tg){try{tg.ready();tg.expand();tg.setHeaderColor('#0b0f1f');tg.setBackgroundColor('#050b1d')}catch(e){}}
 const $=s=>document.querySelector(s),
  F=n=>Number(n||0).toLocaleString('vi-VN')+'đ',
@@ -244,7 +245,7 @@ async function init(){
  }catch(e){hd();tabs();return showErr(e)}
  hd();tabs();go('shop')}
 async function load(id,extra){const r=db.collection('shop_users').doc(id);let d=await r.get();
- if(!d.exists){await r.set({balance:0,banned:false,created:FV.serverTimestamp(),...(extra||{})});d=await r.get()}
+ if(!d.exists){await r.set({balance:0,banned:false,created:FV.serverTimestamp(),...(extra||{})});d=await r.get();if(extra)tgNotify('reg',{who:(extra.name||id)+(extra.username?' @'+extra.username:''),via:'Telegram'})}
  else if(extra){const o=d.data(),ch={};for(const k in extra)if(extra[k]!==undefined&&o[k]!==extra[k])ch[k]=extra[k];
   if(Object.keys(ch).length){await r.update(ch);d=await r.get()}}
  U={id,...d.data()};if(unsub)unsub();unsub=r.onSnapshot(s=>{if(s.exists){U={id,...s.data()};hd()}})}
@@ -254,13 +255,15 @@ function hd(){
  :`<div class="who"><div class="ava ring">${IC.key.replace('<svg','<svg width="22" height="22"')}</div><b style="font:900 20px var(--f)">Shop Key</b></div><button class="login" onclick="auth()">Đăng nhập</button>`}
 function tabs(){const T=[['shop','Mua Key'],['topup','Nạp Tiền'],['orders','Đơn Hàng'],['me','Cá Nhân']];if(isAdmin())T.push(['admin','Admin']);
  $('#tb').innerHTML=T.map(x=>`<button class="${TAB==x[0]?'on':''}" onclick="go('${x[0]}')">${IC[x[0]]}${x[1]}</button>`).join('')}
-function out(){localStorage.removeItem('uid');if(unsub)unsub();U=null;hd();tabs();go('shop')}
+function out(){if(!confirm('Đăng xuất khỏi tài khoản?'))return;localStorage.removeItem('uid');if(unsub)unsub();U=null;hd();tabs();go('shop')}
 // ---------- Gmail + mã xác nhận ----------
 async function mailApi(b){if(!MAIL_API)throw'Admin chưa cài MAIL_API trong index.html';
  const r=await fetch(MAIL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...b,key:MAIL_KEY})});
  const j=await r.json();if(!j.ok)throw j.msg||'Lỗi gửi mail';return j}
 const gm=x=>String(x||'').trim().toLowerCase(),isGm=x=>/^[a-z0-9._+-]+@gmail\.com$/.test(x);
 async function mailNotify(type,data,email){email=email||(U&&U.email);if(!email||!MAIL_API)return;try{await mailApi({action:'notify',email,type,data})}catch(e){}}
+function buyNote(d){mailNotify('buy',d);tgNotify('buy',{...d,who:(U&&(U.name||U.email))||''})}
+async function tgNotify(type,data){if(!MAIL_API)return;try{await mailApi({action:'tg',type,data})}catch(e){}}
 let AM='login',RG=null,LK=null;
 function auth(m){AM=m||'login';RG=null;authUI()}
 function authUI(){
@@ -288,7 +291,7 @@ async function regDone(){const e=$('#e'),c=$('#cd').value.trim();
   const id='e_'+RG.email,r=db.collection('shop_users').doc(id);
   if((await r.get()).exists)return e.textContent='Gmail này đã đăng ký';
   await r.set({balance:0,pw:RG.pw,pwv:2,email:RG.email,emailVerified:true,name:RG.email.split('@')[0],banned:false,created:FV.serverTimestamp()});
-  RG=null;localStorage.setItem('uid',id);await load(id);closeM();hd();tabs();go(TAB);toast('Tạo tài khoản thành công')
+  tgNotify('reg',{who:RG.email,via:'Web'});RG=null;localStorage.setItem('uid',id);await load(id);closeM();hd();tabs();go(TAB);toast('Tạo tài khoản thành công')
  }catch(x){e.textContent=typeof x=='string'?x:'Lỗi, thử lại'}}
 async function sub(){const e=$('#e'),a=gm($('#em').value),p=$('#p').value;
  if(!a||!p)return e.textContent='Nhập đầy đủ thông tin';
@@ -349,14 +352,14 @@ async function go0(t){const v=$('#v');
   ${U.email?`<p class="mu">✉ ${E(U.email)}</p>`:`<button class="bt g" style="margin-top:10px" onclick="linkMail()">✉ Liên kết Gmail nhận thông báo</button>`}
   <div class="r"><button class="bt s" style="flex:1" onclick="cpt('${E(U.tgid||U.email||U.id)}')">Sao chép ID</button><button class="bt gd s" style="flex:1" onclick="go('topup')">Nạp tiền</button></div>
   <button class="bt g" style="margin-top:10px" onclick="showRedeem()">Nhập mã giảm giá / Giftcode</button>
-  ${tg?'':'<button class="bt g" style="margin-top:10px" onclick="out()">Đăng xuất</button>'}</div>`}
+  ${inTG?'':'<button class="bt g" style="margin-top:10px;color:var(--no);border-color:var(--no)" onclick="out()">⎋ Đăng xuất</button>'}</div>`}
  else if(!U)auth();
  else if(t=='orders'){const s=await db.collection('shop_orders').where('uid','==',U.id).get();
   const o=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
   v.innerHTML=`<div class="hero"><h2>Đơn Hàng</h2><div class="mu">Key bạn đã mua nằm ở đây.</div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)}${x.plan?` · ${E(x.plan)}`:''} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''} · #${x.id.slice(0,8)}</div></div><b class="pz ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="bt g s" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào Mua Key chọn món đầu tiên.</div>')}
  else if(t=='topup'){v.innerHTML=`<div class="hero"><h2>Nạp Tiền</h2><div class="mu">Chuyển khoản qua mã QR, admin duyệt là có tiền.</div></div>
   <div class="c"><div class="mu">ID của bạn</div><span class="idc" style="font-size:14px;margin-top:5px" onclick="cpt('${E(U.tgid||U.email||U.id)}')">${E(U.tgid||U.email||U.id)} ⧉</span></div>
-  <div class="c"><h3>Chọn số tiền</h3><div class="r" style="margin-bottom:8px">${[20000,50000,100000,200000].map(n=>`<button class="bt g s" style="flex:1;padding:10px 0" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 10.000đ)"><button class="bt gd" style="margin-top:8px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>
+  <div class="c"><h3>Chọn số tiền</h3><div class="r" style="margin-bottom:8px">${[20000,50000,100000,200000].map(n=>`<button class="bt g s" style="flex:1;padding:10px 0" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 2.000đ)"><button class="bt gd" style="margin-top:8px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>
   <div class="c"><h3>Nhập mã giảm giá / Giftcode</h3><input id="gc" placeholder="Nhập mã..."><button class="bt g" style="margin-top:8px" onclick="redeemCode()">Áp dụng</button><p id="gce" class="err"></p></div>`}
  else if(t=='admin'&&isAdmin())adm()}
 function pf(x){PF=x;document.querySelectorAll('#fl button').forEach(b=>b.classList.toggle('on',(b.dataset.p||'')==x));draw()}
@@ -403,7 +406,7 @@ async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').
   t.set(db.collection('shop_orders').doc(),{uid:U.id,name:d.name,plan:pl.legacy?'':pl.label,qty,total,cost,profit:total-cost,keys:got,ts:FV.serverTimestamp()})});
   if(got.length)try{await logBal(U.id,- (norm(SEL.p).find(x=>x.id==pid).price*qty),'buy','Mua '+SEL.p.name,U.id)}catch(e){}
   modal(`<h3>✅ Thành công</h3><p class="mu">Key của bạn:</p><pre>${E(got.join('\n'))}</pre><div class="r"><button class="bt g" onclick="cp(this)">Sao chép</button><button class="bt gd" onclick="closeM()">Đóng</button></div>`);
-  mailNotify('buy',{name:SEL.p.name,plan:(norm(SEL.p).find(x=>x.id==pid)||{}).label||'',qty,total:norm(SEL.p).find(x=>x.id==pid).price*qty});
+  buyNote({name:SEL.p.name,plan:(norm(SEL.p).find(x=>x.id==pid)||{}).label||'',qty,total:norm(SEL.p).find(x=>x.id==pid).price*qty});
   // Thông báo admin nếu đơn lớn
   if(norm(SEL.p).find(x=>x.id==pid).price*qty>=100000)notifyAdmin('Đơn mua lớn: '+U.name+' mua '+SEL.p.name+' ×'+qty+' = '+F(norm(SEL.p).find(x=>x.id==pid).price*qty));
   go('shop')
@@ -497,15 +500,15 @@ async function buyD(){const pl=norm(SEL.p).find(x=>x.id==SEL.pid),qty=Math.max(1
   return $('#e').textContent=crash?'Lỗi kết nối nguồn hàng, đã hoàn tiền.':'Lỗi: '+(res.message||res.error||res.msg||'Unknown')+'. Đã hoàn tiền.'}
  const keys=is2?s2keys(res):(res.keys||[]).map(String);_dc=null;_errCount=0;
  try{await db.collection('shop_orders').add({uid:U.id,name:SEL.p.name,plan:pl.label,qty,total,cost,profit:total-cost,keys,ts:FV.serverTimestamp()});await logBal(U.id,-total,'buy','Mua '+SEL.p.name,U.id)}catch(e){}
- mailNotify('buy',{name:SEL.p.name,plan:pl.label||'',qty,total});
+ buyNote({name:SEL.p.name,plan:pl.label||'',qty,total});
  if(total>=100000)notifyAdmin('Đơn mua lớn: '+U.name+' · '+SEL.p.name+' ×'+qty+' = '+F(total));
  modal(`<h3>✅ Thành công</h3><p class="mu">Key của bạn:</p><pre>${E(keys.join('\n')||'(chưa có key, liên hệ admin)')}</pre><div class="r"><button class="bt g" onclick="cp(this)">Sao chép</button><button class="bt gd" onclick="closeM()">Đóng</button></div>`);go('shop')}
-async function tp(){const a=+$('#a').value;if(a<10000)return alert('Nạp tối thiểu 10.000đ');
+async function tp(){const a=+$('#a').value;if(!(a>=2000))return alert('Nạp tối thiểu 2.000đ');
  const b=(await db.collection('shop_settings').doc('bank').get()).data();if(!b)return alert('Admin chưa cài tài khoản ngân hàng');
  const r=await db.collection('shop_topups').add({uid:U.id,name:U.name||U.id,amount:a,status:'pending',ts:FV.serverTimestamp()});
  const note='NAP'+r.id.slice(0,6).toUpperCase();await r.update({note});
  notifyAdmin('Đơn nạp mới: '+U.name+' · '+F(a)+' · '+note);
- mailNotify('topup_new',{amount:a,note});
+ mailNotify('topup_new',{amount:a,note});tgNotify('topup',{who:U.name||U.email||U.id,amount:a,note});
  $('#qr').innerHTML=`<img class="qr" onerror="this.outerHTML='<p style=color:var(--no)>Không tạo được ảnh QR (mã ngân hàng sai?). Hãy chuyển khoản thủ công theo thông tin bên dưới.</p>'" src="https://img.vietqr.io/image/${E(b.bank)}-${E(b.acc)}-compact2.png?amount=${a}&addInfo=${note}&accountName=${encodeURIComponent(b.owner)}"><p>Số tiền: <b>${F(a)}</b><br>Nội dung CK: <b>${note}</b><br>${E(b.bank)} - ${E(b.acc)} - ${E(b.owner)}</p><p class="mu">Chuyển đúng nội dung, admin duyệt xong tiền sẽ vào ví.</p>`}
 // Giftcode / mã giảm giá
 function showRedeem(){modal(`<h3>Nhập mã giảm giá / Giftcode</h3><input id="gc2" placeholder="Nhập mã..."><button class="bt gd" style="margin-top:8px" onclick="redeemCode(1)">Áp dụng</button><p id="gce2" class="err"></p>`)}
