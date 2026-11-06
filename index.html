@@ -205,6 +205,7 @@ let SERR='',SC=[],SM={},U=null,P=[],TAB='shop',AT='tp',AP=[],USERS=[],IMG='',PL=
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 const isAdmin=()=>U&&ADMINS.includes(U.tgid||'');
 const isBanned=()=>U&&U.banned===true;
+const cleanPlans=L=>L.map(x=>{const o={};for(const k in x)if(x[k]!==undefined&&k!=='legacy')o[k]=x[k];return o});
 const dOf=u=>u&&u.seller===true?Math.min(90,Math.max(0,Math.floor(+u.disc||0))):0,sd=()=>dOf(U);
 const sellerP=p=>{const d=sd();if(!d)return p;return {...p,plans:norm(p).map(x=>({...x,old:x.price>0?Math.max(x.old||0,x.price):0,price:x.price>0?Math.round(x.price*(100-d)/100):0}))}};
 const S=(p,w)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w||2}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
@@ -405,7 +406,7 @@ async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').
   const pl=L[i];if(pl.keys.length<qty)throw'Không đủ hàng';
   const dd=dOf(u.data()),total=(pl.price>0?Math.round(pl.price*(100-dd)/100):0)*qty;if((u.data().balance||0)<total)throw'Không đủ số dư, hãy nạp thêm';paid=total;
   got=pl.keys.slice(0,qty);
-  if(Array.isArray(d.plans)&&d.plans.length){L[i].keys=pl.keys.slice(qty);t.update(pr,{plans:L})}else t.update(pr,{keys:pl.keys.slice(qty)});
+  if(Array.isArray(d.plans)&&d.plans.length){L[i].keys=pl.keys.slice(qty);t.update(pr,{plans:cleanPlans(L)})}else t.update(pr,{keys:pl.keys.slice(qty)});
   if(total>0)t.update(ur,{balance:FV.increment(-total)});
   const cost=(pl.cost||0)*qty;
   t.set(db.collection('shop_orders').doc(),{uid:U.id,name:d.name,plan:pl.legacy?'':pl.label,qty,total,cost,profit:total-cost,keys:got,ts:FV.serverTimestamp()})});
@@ -415,7 +416,7 @@ async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').
   // Thông báo admin nếu đơn lớn
   if(paid>=100000)notifyAdmin('Đơn mua lớn: '+U.name+' mua '+SEL.p.name+' ×'+qty+' = '+F(paid));
   go('shop')
- }catch(e){$('#e').textContent=typeof e=='string'?e:'Lỗi, thử lại'}}
+ }catch(e){console.error(e);$('#e').textContent=typeof e=='string'?e:'Lỗi: '+String((e&&e.message)||e).slice(0,140)}}
 // ---------- Nguồn hàng ngoài ----------
 const initData=()=>(tg&&tg.initData)||'';
 const mid=k=>'s_'+btoa(unescape(encodeURIComponent(k))).replace(/[+/=]/g,c=>({'+':'-','/':'_','=':''}[c])).slice(0,120);
