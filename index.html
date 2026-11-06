@@ -1,7 +1,7 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#060d20">
-<title>Shop NOX MOD</title>
+<title>Shop Key</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -186,6 +186,9 @@ const SRC1={base:"https://seller1.dangnghia080510.workers.dev/",key:"x"};
 const SRC2={base:"",token:""};
 const MARKUP=36;
 const SRC_API="";
+// Gmail: dán link Web App của Google Apps Script (xem file apps-script-gmail.gs) + key bí mật trùng với SECRET trong script
+const MAIL_API="https://script.google.com/macros/s/AKfycbyOQBRvyX_vcex_yEHQaZAo9aYS9iVwCfdrooXlMedto5u0JopzYplYuOOgUoDAPL-Y/exec";
+const MAIL_KEY="ahnghia86";
 // =======================
 firebase.initializeApp(firebaseConfig);const db=firebase.firestore(),FV=firebase.firestore.FieldValue;
 const tg=window.Telegram&&Telegram.WebApp;
@@ -246,19 +249,80 @@ async function load(id,extra){const r=db.collection('shop_users').doc(id);let d=
   if(Object.keys(ch).length){await r.update(ch);d=await r.get()}}
  U={id,...d.data()};if(unsub)unsub();unsub=r.onSnapshot(s=>{if(s.exists){U={id,...s.data()};hd()}})}
 function hd(){
- $('#hd').innerHTML=U?`<div class="who">${avatar(U,'ring')}<div style="min-width:0"><div class="nm"><b>${E(U.name||U.id)}</b><span class="rl ${isAdmin()?'ad':(isBanned()?'ban':'')}">${isAdmin()?'ADMIN':(isBanned()?'BANNED':'MEMBER')}</span></div><span class="uid">ID: ${E(U.tgid||U.id)}</span></div></div>
+ $('#hd').innerHTML=U?`<div class="who">${avatar(U,'ring')}<div style="min-width:0"><div class="nm"><b>${E(U.name||U.id)}</b><span class="rl ${isAdmin()?'ad':(isBanned()?'ban':'')}">${isAdmin()?'ADMIN':(isBanned()?'BANNED':'MEMBER')}</span></div><span class="uid">ID: ${E(U.tgid||U.email||U.id)}</span></div></div>
  <div class="hr"><div class="bal"><i>$</i>${F(U.balance)}</div><button class="menu" aria-label="Cá nhân" onclick="go('me')">${IC.menu}</button></div>`
  :`<div class="who"><div class="ava ring">${IC.key.replace('<svg','<svg width="22" height="22"')}</div><b style="font:900 20px var(--f)">Shop Key</b></div><button class="login" onclick="auth()">Đăng nhập</button>`}
 function tabs(){const T=[['shop','Mua Key'],['topup','Nạp Tiền'],['orders','Đơn Hàng'],['me','Cá Nhân']];if(isAdmin())T.push(['admin','Admin']);
  $('#tb').innerHTML=T.map(x=>`<button class="${TAB==x[0]?'on':''}" onclick="go('${x[0]}')">${IC[x[0]]}${x[1]}</button>`).join('')}
 function out(){localStorage.removeItem('uid');if(unsub)unsub();U=null;hd();tabs();go('shop')}
-function auth(){modal(`<h3>Đăng nhập / Đăng ký</h3><input id="u" placeholder="Tên đăng nhập"><input id="p" type="password" placeholder="Mật khẩu (≥6 ký tự)"><button class="bt gd" style="margin-top:8px" onclick="sub()">Vào shop</button><p id="e" class="err"></p>`)}
-async function sub(){const u=$('#u').value.trim().toLowerCase(),p=$('#p').value;
- if(!/^[a-z0-9_]{3,20}$/.test(u)||p.length<6)return $('#e').textContent='Tên 3-20 ký tự a-z0-9_, mật khẩu ≥ 6 ký tự';
- const id='u_'+u,h=await sha(p),r=db.collection('shop_users').doc(id),d=await r.get();
- if(d.exists){if(d.data().pw!==h)return $('#e').textContent='Sai mật khẩu';if(d.data().banned)return $('#e').textContent='Tài khoản đã bị khóa'}
- else await r.set({balance:0,pw:h,name:u,banned:false,created:FV.serverTimestamp()});
- localStorage.setItem('uid',id);await load(id);closeM();hd();tabs();go(TAB)}
+// ---------- Gmail + mã xác nhận ----------
+async function mailApi(b){if(!MAIL_API)throw'Admin chưa cài MAIL_API trong index.html';
+ const r=await fetch(MAIL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...b,key:MAIL_KEY})});
+ const j=await r.json();if(!j.ok)throw j.msg||'Lỗi gửi mail';return j}
+const gm=x=>String(x||'').trim().toLowerCase(),isGm=x=>/^[a-z0-9._+-]+@gmail\.com$/.test(x);
+async function mailNotify(type,data,email){email=email||(U&&U.email);if(!email||!MAIL_API)return;try{await mailApi({action:'notify',email,type,data})}catch(e){}}
+let AM='login',RG=null,LK=null;
+function auth(m){AM=m||'login';RG=null;authUI()}
+function authUI(){
+ const tb=`<div class="r" style="margin-bottom:10px"><button class="bt s ${AM=='login'?'gd':'g'}" style="flex:1" onclick="auth('login')">Đăng nhập</button><button class="bt s ${AM=='reg'?'gd':'g'}" style="flex:1" onclick="auth('reg')">Đăng ký</button></div>`;
+ if(AM=='login')modal(`<h3>Đăng nhập</h3>${tb}<input id="em" type="text" inputmode="email" autocapitalize="none" placeholder="Gmail (hoặc tên đăng nhập cũ)" autocomplete="username"><input id="p" type="password" placeholder="Mật khẩu" autocomplete="current-password"><button class="bt gd" style="margin-top:8px" onclick="sub()">Vào shop</button><p id="e" class="err"></p>`);
+ else if(!RG)modal(`<h3>Đăng ký tài khoản</h3>${tb}<input id="em" type="email" autocapitalize="none" placeholder="Gmail của bạn (@gmail.com)" autocomplete="email"><input id="p" type="password" inputmode="numeric" maxlength="6" placeholder="Mật khẩu 6 chữ số" autocomplete="new-password"><input id="p2" type="password" inputmode="numeric" maxlength="6" placeholder="Nhập lại mật khẩu"><button class="bt gd" style="margin-top:8px" onclick="regSend()">Gửi mã xác nhận</button><p id="e" class="err"></p>`);
+ else modal(`<h3>Nhập mã xác nhận</h3><p class="mu">Mã 6 số đã gửi tới <b>${E(RG.email)}</b>. Kiểm tra cả mục Spam. Mã có hiệu lực 10 phút.</p><input id="cd" inputmode="numeric" maxlength="6" placeholder="Mã 6 số" autocomplete="one-time-code"><button class="bt gd" style="margin-top:8px" onclick="regDone()">Xác nhận & tạo tài khoản</button><div class="r" style="margin-top:8px"><button class="bt g s" style="flex:1" onclick="regSend(1)">Gửi lại mã</button><button class="bt g s" style="flex:1" onclick="auth('reg')">Đổi Gmail</button></div><p id="e" class="err"></p>`)}
+async function regSend(re){const e=$('#e');let em,p;
+ if(re)em=RG.email;else{em=gm($('#em').value);p=$('#p').value;
+  if(!isGm(em))return e.textContent='Hãy nhập đúng Gmail (đuôi @gmail.com)';
+  if(!/^\d{6}$/.test(p))return e.textContent='Mật khẩu phải đúng 6 chữ số';
+  if(p!==$('#p2').value)return e.textContent='Hai mật khẩu không khớp'}
+ e.textContent='Đang gửi mã...';
+ try{
+  if(!re&&(await db.collection('shop_users').doc('e_'+em).get()).exists)return e.textContent='Gmail này đã đăng ký, hãy đăng nhập';
+  await mailApi({action:'send_otp',email:em});
+  if(!re)RG={email:em,pw:await sha('v2:'+em+':'+p)};
+  authUI();toast('Đã gửi mã tới Gmail')
+ }catch(x){e.textContent=typeof x=='string'?x:'Không gửi được mã, thử lại'}}
+async function regDone(){const e=$('#e'),c=$('#cd').value.trim();
+ if(!/^\d{6}$/.test(c))return e.textContent='Mã gồm 6 chữ số';
+ e.textContent='Đang kiểm tra...';
+ try{
+  await mailApi({action:'verify_otp',email:RG.email,code:c});
+  const id='e_'+RG.email,r=db.collection('shop_users').doc(id);
+  if((await r.get()).exists)return e.textContent='Gmail này đã đăng ký';
+  await r.set({balance:0,pw:RG.pw,pwv:2,email:RG.email,emailVerified:true,name:RG.email.split('@')[0],banned:false,created:FV.serverTimestamp()});
+  RG=null;localStorage.setItem('uid',id);await load(id);closeM();hd();tabs();go(TAB);toast('Tạo tài khoản thành công')
+ }catch(x){e.textContent=typeof x=='string'?x:'Lỗi, thử lại'}}
+async function sub(){const e=$('#e'),a=gm($('#em').value),p=$('#p').value;
+ if(!a||!p)return e.textContent='Nhập đầy đủ thông tin';
+ const em=a.includes('@');
+ if(em&&!isGm(a))return e.textContent='Gmail không hợp lệ';
+ if(!em&&!/^[a-z0-9_]{3,20}$/.test(a))return e.textContent='Tên đăng nhập không hợp lệ';
+ try{
+  const id=(em?'e_':'u_')+a,d=await db.collection('shop_users').doc(id).get();
+  if(!d.exists)return e.textContent=em?'Gmail chưa đăng ký, hãy chuyển sang Đăng ký':'Tài khoản không tồn tại';
+  const x=d.data(),h=x.pwv==2?await sha('v2:'+a+':'+p):await sha(p);
+  if(x.pw!==h)return e.textContent='Sai mật khẩu';
+  if(x.banned)return e.textContent='Tài khoản đã bị khóa';
+  localStorage.setItem('uid',id);await load(id);closeM();hd();tabs();go(TAB)
+ }catch(x){e.textContent='Lỗi kết nối, thử lại'}}
+// Liên kết Gmail (cho tài khoản Telegram / tài khoản cũ) để nhận thông báo
+function linkMail(){LK=null;linkUI()}
+function linkUI(){
+ if(!LK)modal(`<h3>Liên kết Gmail</h3><p class="mu">Nhận thông báo đơn hàng, nạp tiền qua Gmail.</p><input id="em" type="email" autocapitalize="none" placeholder="Gmail của bạn (@gmail.com)"><button class="bt gd" style="margin-top:8px" onclick="linkSend()">Gửi mã xác nhận</button><p id="e" class="err"></p>`);
+ else modal(`<h3>Nhập mã xác nhận</h3><p class="mu">Mã 6 số đã gửi tới <b>${E(LK)}</b>. Kiểm tra cả mục Spam.</p><input id="cd" inputmode="numeric" maxlength="6" placeholder="Mã 6 số"><button class="bt gd" style="margin-top:8px" onclick="linkDone()">Xác nhận</button><div class="r" style="margin-top:8px"><button class="bt g s" style="flex:1" onclick="linkSend(1)">Gửi lại mã</button><button class="bt g s" style="flex:1" onclick="linkMail()">Đổi Gmail</button></div><p id="e" class="err"></p>`)}
+async function linkSend(re){const e=$('#e'),em=re?LK:gm($('#em').value);
+ if(!isGm(em))return e.textContent='Hãy nhập đúng Gmail (đuôi @gmail.com)';
+ e.textContent='Đang gửi mã...';
+ try{
+  if(!re){const q=await db.collection('shop_users').where('email','==',em).limit(1).get();
+   if(!q.empty&&q.docs[0].id!==U.id)return e.textContent='Gmail này đã được dùng cho tài khoản khác'}
+  await mailApi({action:'send_otp',email:em});LK=em;linkUI();toast('Đã gửi mã tới Gmail')
+ }catch(x){e.textContent=typeof x=='string'?x:'Không gửi được mã, thử lại'}}
+async function linkDone(){const e=$('#e'),c=$('#cd').value.trim();
+ if(!/^\d{6}$/.test(c))return e.textContent='Mã gồm 6 chữ số';
+ e.textContent='Đang kiểm tra...';
+ try{await mailApi({action:'verify_otp',email:LK,code:c});
+  await db.collection('shop_users').doc(U.id).update({email:LK,emailVerified:true});
+  LK=null;closeM();toast('Đã liên kết Gmail');go('me')
+ }catch(x){e.textContent=typeof x=='string'?x:'Lỗi, thử lại'}}
 async function go(t){TAB=t;tabs();window.scrollTo(0,0);try{await go0(t)}catch(e){showErr(e)}}
 function showErr(e){const m=String(e&&e.message||e),c=e&&e.code||'';let h='';
  if(!firebaseConfig.projectId)h='Chưa dán firebaseConfig vào file index.html (đang để trống).';
@@ -280,17 +344,18 @@ async function go0(t){const v=$('#v');
   <div class="grid" id="g"></div>`;draw()}
  else if(t=='me'){if(!U)return auth();
   v.innerHTML=`<div class="c pf">${avatar(U,'ring lg')}<h2>${E(U.name||U.id)}</h2><span class="rl ${isAdmin()?'ad':(isBanned()?'ban':'')}">${isAdmin()?'ADMIN':(isBanned()?'BANNED':'MEMBER')}</span>
-  <div class="kv"><div><small>Số dư</small><b>${F(U.balance)}</b></div><div><small>${U.tgid?'Telegram ID':'Tài khoản'}</small><b style="font-size:14px;color:var(--bl)">${E(U.tgid||U.id)}</b></div></div>
+  <div class="kv"><div><small>Số dư</small><b>${F(U.balance)}</b></div><div><small>${U.tgid?'Telegram ID':'Tài khoản'}</small><b style="font-size:14px;color:var(--bl)">${E(U.tgid||U.email||U.id)}</b></div></div>
   ${U.username?`<p class="mu">@${E(U.username)}</p>`:''}
-  <div class="r"><button class="bt s" style="flex:1" onclick="cpt('${E(U.tgid||U.id)}')">Sao chép ID</button><button class="bt gd s" style="flex:1" onclick="go('topup')">Nạp tiền</button></div>
+  ${U.email?`<p class="mu">✉ ${E(U.email)}</p>`:`<button class="bt g" style="margin-top:10px" onclick="linkMail()">✉ Liên kết Gmail nhận thông báo</button>`}
+  <div class="r"><button class="bt s" style="flex:1" onclick="cpt('${E(U.tgid||U.email||U.id)}')">Sao chép ID</button><button class="bt gd s" style="flex:1" onclick="go('topup')">Nạp tiền</button></div>
   <button class="bt g" style="margin-top:10px" onclick="showRedeem()">Nhập mã giảm giá / Giftcode</button>
   ${tg?'':'<button class="bt g" style="margin-top:10px" onclick="out()">Đăng xuất</button>'}</div>`}
  else if(!U)auth();
  else if(t=='orders'){const s=await db.collection('shop_orders').where('uid','==',U.id).get();
   const o=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
-  v.innerHTML=`<div class="hero"><h2>Đơn Hàng</h2><div class="mu">Sản phẩm bạn đã mua nằm ở đây.</div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)}${x.plan?` · ${E(x.plan)}`:''} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''} · #${x.id.slice(0,8)}</div></div><b class="pz ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="bt g s" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào Mua Key chọn món đầu tiên.</div>')}
- else if(t=='topup'){v.innerHTML=`<div class="hero"><h2>Nạp Tiền</h2><div class="mu">Chuyển khoản qua mã QR, bot duyệt tự động là có tiền.</div></div>
-  <div class="c"><div class="mu">ID của bạn</div><span class="idc" style="font-size:14px;margin-top:5px" onclick="cpt('${E(U.tgid||U.id)}')">${E(U.tgid||U.id)} ⧉</span></div>
+  v.innerHTML=`<div class="hero"><h2>Đơn Hàng</h2><div class="mu">Key bạn đã mua nằm ở đây.</div></div>`+(o.map(x=>`<div class="c od"><div class="sp" style="align-items:flex-start"><div><div class="t">${E(x.name)}${x.plan?` · ${E(x.plan)}`:''} ×${x.qty}</div><div class="mu">${x.ts?new Date(x.ts.seconds*1000).toLocaleString('vi-VN'):''} · #${x.id.slice(0,8)}</div></div><b class="pz ${x.total>0?'':'free'}" style="flex:none">${PR(x.total)}</b></div><pre>${E((x.keys||[]).join('\n'))}</pre><button class="bt g s" onclick="cp(this)">Sao chép</button></div>`).join('')||'<div class="empty"><b>Chưa có đơn nào</b>Vào Mua Key chọn món đầu tiên.</div>')}
+ else if(t=='topup'){v.innerHTML=`<div class="hero"><h2>Nạp Tiền</h2><div class="mu">Chuyển khoản qua mã QR, admin duyệt là có tiền.</div></div>
+  <div class="c"><div class="mu">ID của bạn</div><span class="idc" style="font-size:14px;margin-top:5px" onclick="cpt('${E(U.tgid||U.email||U.id)}')">${E(U.tgid||U.email||U.id)} ⧉</span></div>
   <div class="c"><h3>Chọn số tiền</h3><div class="r" style="margin-bottom:8px">${[20000,50000,100000,200000].map(n=>`<button class="bt g s" style="flex:1;padding:10px 0" onclick="$('#a').value=${n}">${n/1000}k</button>`).join('')}</div><input id="a" type="number" placeholder="Số tiền (tối thiểu 10.000đ)"><button class="bt gd" style="margin-top:8px" onclick="tp()">Tạo mã QR</button><div id="qr"></div></div>
   <div class="c"><h3>Nhập mã giảm giá / Giftcode</h3><input id="gc" placeholder="Nhập mã..."><button class="bt g" style="margin-top:8px" onclick="redeemCode()">Áp dụng</button><p id="gce" class="err"></p></div>`}
  else if(t=='admin'&&isAdmin())adm()}
@@ -320,7 +385,7 @@ function sh(){const {p,pid}=SEL,L=norm(p).filter(x=>sk(x)>0||x.id==pid),pl=L.fin
  <div class="r"><button class="bt ${fr?'ok':'gd'}" onclick="buy()">${fr?'Nhận ngay':'Xác nhận mua'}</button><button class="bt g" onclick="closeM()">Hủy</button></div><p id="e" class="err"></p>`)}
 function qd(d){const L=norm(SEL.p),pl=L.find(x=>x.id==SEL.pid),mx=Math.max(1,Math.min(100,sk(pl))),i=$('#n');
  const v=Math.max(1,Math.min(mx,(+i.value||1)+d));i.value=v;SEL.q=v;$('#tt').textContent=PR(pl.price*v)}
-async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').textContent='Tài khoản của bạn đã bị khóa';
+async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').textContent='Tài khoản bị khóa';
  if(SEL.p.ext)return SRC_API?buyS():buyD();
  const id=SEL.p.id,pid=SEL.pid,qty=Math.max(1,Math.min(100,+$('#n').value||1));let got=[];
  try{await db.runTransaction(async t=>{
@@ -338,6 +403,7 @@ async function buy(){if(!U){closeM();return auth()}if(isBanned())return $('#e').
   t.set(db.collection('shop_orders').doc(),{uid:U.id,name:d.name,plan:pl.legacy?'':pl.label,qty,total,cost,profit:total-cost,keys:got,ts:FV.serverTimestamp()})});
   if(got.length)try{await logBal(U.id,- (norm(SEL.p).find(x=>x.id==pid).price*qty),'buy','Mua '+SEL.p.name,U.id)}catch(e){}
   modal(`<h3>✅ Thành công</h3><p class="mu">Key của bạn:</p><pre>${E(got.join('\n'))}</pre><div class="r"><button class="bt g" onclick="cp(this)">Sao chép</button><button class="bt gd" onclick="closeM()">Đóng</button></div>`);
+  mailNotify('buy',{name:SEL.p.name,plan:(norm(SEL.p).find(x=>x.id==pid)||{}).label||'',qty,total:norm(SEL.p).find(x=>x.id==pid).price*qty});
   // Thông báo admin nếu đơn lớn
   if(norm(SEL.p).find(x=>x.id==pid).price*qty>=100000)notifyAdmin('Đơn mua lớn: '+U.name+' mua '+SEL.p.name+' ×'+qty+' = '+F(norm(SEL.p).find(x=>x.id==pid).price*qty));
   go('shop')
@@ -431,6 +497,7 @@ async function buyD(){const pl=norm(SEL.p).find(x=>x.id==SEL.pid),qty=Math.max(1
   return $('#e').textContent=crash?'Lỗi kết nối nguồn hàng, đã hoàn tiền.':'Lỗi: '+(res.message||res.error||res.msg||'Unknown')+'. Đã hoàn tiền.'}
  const keys=is2?s2keys(res):(res.keys||[]).map(String);_dc=null;_errCount=0;
  try{await db.collection('shop_orders').add({uid:U.id,name:SEL.p.name,plan:pl.label,qty,total,cost,profit:total-cost,keys,ts:FV.serverTimestamp()});await logBal(U.id,-total,'buy','Mua '+SEL.p.name,U.id)}catch(e){}
+ mailNotify('buy',{name:SEL.p.name,plan:pl.label||'',qty,total});
  if(total>=100000)notifyAdmin('Đơn mua lớn: '+U.name+' · '+SEL.p.name+' ×'+qty+' = '+F(total));
  modal(`<h3>✅ Thành công</h3><p class="mu">Key của bạn:</p><pre>${E(keys.join('\n')||'(chưa có key, liên hệ admin)')}</pre><div class="r"><button class="bt g" onclick="cp(this)">Sao chép</button><button class="bt gd" onclick="closeM()">Đóng</button></div>`);go('shop')}
 async function tp(){const a=+$('#a').value;if(a<10000)return alert('Nạp tối thiểu 10.000đ');
@@ -438,6 +505,7 @@ async function tp(){const a=+$('#a').value;if(a<10000)return alert('Nạp tối 
  const r=await db.collection('shop_topups').add({uid:U.id,name:U.name||U.id,amount:a,status:'pending',ts:FV.serverTimestamp()});
  const note='NAP'+r.id.slice(0,6).toUpperCase();await r.update({note});
  notifyAdmin('Đơn nạp mới: '+U.name+' · '+F(a)+' · '+note);
+ mailNotify('topup_new',{amount:a,note});
  $('#qr').innerHTML=`<img class="qr" onerror="this.outerHTML='<p style=color:var(--no)>Không tạo được ảnh QR (mã ngân hàng sai?). Hãy chuyển khoản thủ công theo thông tin bên dưới.</p>'" src="https://img.vietqr.io/image/${E(b.bank)}-${E(b.acc)}-compact2.png?amount=${a}&addInfo=${note}&accountName=${encodeURIComponent(b.owner)}"><p>Số tiền: <b>${F(a)}</b><br>Nội dung CK: <b>${note}</b><br>${E(b.bank)} - ${E(b.acc)} - ${E(b.owner)}</p><p class="mu">Chuyển đúng nội dung, admin duyệt xong tiền sẽ vào ví.</p>`}
 // Giftcode / mã giảm giá
 function showRedeem(){modal(`<h3>Nhập mã giảm giá / Giftcode</h3><input id="gc2" placeholder="Nhập mã..."><button class="bt gd" style="margin-top:8px" onclick="redeemCode(1)">Áp dụng</button><p id="gce2" class="err"></p>`)}
@@ -560,12 +628,14 @@ async function sv(i){const c=SC[i];const PR={};document.querySelectorAll('.pp').
 async function tgl(id,a){await db.collection('shop_products').doc(id).update({active:a});adm('pr')}
 async function delP(id){if(confirm('Xóa sản phẩm này?')){await db.collection('shop_products').doc(id).delete();closeM();adm('pr')}}
 async function saveB(){await db.collection('shop_settings').doc('bank').set({bank:$('#bb').value.trim(),acc:$('#ba').value.trim(),owner:$('#bo').value.trim()});toast('Đã lưu')}
-async function ap(id,rej){try{await db.runTransaction(async t=>{const r=db.collection('shop_topups').doc(id),d=await t.get(r);
+async function ap(id,rej){let done=false;try{await db.runTransaction(async t=>{const r=db.collection('shop_topups').doc(id),d=await t.get(r);
  if(!d.exists||d.data().status!=='pending')throw'Đơn đã xử lý';
  if(rej)t.update(r,{status:'rejected'});else{t.update(r,{status:'approved'});t.update(db.collection('shop_users').doc(d.data().uid),{balance:FV.increment(d.data().amount)});
   // log
- }})}catch(e){alert(e)}
+ }});done=true}catch(e){alert(e)}
  if(!rej){const d=(await db.collection('shop_topups').doc(id).get()).data();if(d)await logBal(d.uid,d.amount,'topup','Nạp tiền duyệt #'+id.slice(0,6),U.id)}
+ if(done){try{const d=(await db.collection('shop_topups').doc(id).get()).data(),ud=d&&(await db.collection('shop_users').doc(d.uid).get()).data();
+  if(ud&&ud.email)mailNotify(rej?'topup_no':'topup_ok',{amount:d.amount,note:d.note||''},ud.email)}catch(e){}}
  adm('tp')}
 function addCode(){modal(`<h3>Tạo Giftcode</h3>
  <label class="lb">Mã (viết hoa)</label><input id="cc" placeholder="VD: SALE50K" style="text-transform:uppercase">
